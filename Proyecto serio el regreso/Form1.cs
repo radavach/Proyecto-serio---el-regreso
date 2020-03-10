@@ -27,9 +27,9 @@ namespace Proyecto_serio_el_regreso
         private int cant_columnas;
         private string datoTexto;
         private string []tipos_dato;
+        private Dictionary<string, int> valores_faltantes;
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
-        private Dictionary<string, int> valores_faltantes;
         private OpenFileDialog archivo;
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
 
@@ -44,6 +44,19 @@ namespace Proyecto_serio_el_regreso
             }
 
             return lista;
+        }
+
+        private void recalcularValores()
+        {
+            cant_instancias = dataGridView1.RowCount;
+            cant_columnas = encabezado.Count;
+            valores_faltantes = valoresFaltantes();
+
+            int cant_faltantes = valores_faltantes.Values.Sum();
+
+            lblCantInstancias.Text = ("Cantidad de instancias:\n" + cant_instancias);
+            lblCantAtributos.Text = ("Cantidad de atributos:\n" + cant_columnas);
+            lblValoresFaltantes.Text = ("Cantidad de valores faltanes:\n" + cant_faltantes + "(" + Convert.ToDecimal((cant_faltantes * 100) / (cant_instancias * cant_columnas)).ToString() + "%" + ")");
         }
 
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,11 +84,8 @@ namespace Proyecto_serio_el_regreso
                 }
                 cargarGrid();
                 this.archivo = archivo;
-                int cant_faltantes = valores_faltantes.Values.Sum();
 
-                lblCantInstancias.Text = ("Cantidad de instancias:\n" + cant_instancias);
-                lblCantAtributos.Text = ("Cantidad de atributos:\n" + cant_columnas);
-                lblValoresFaltantes.Text = ("Cantidad de valores faltanes:\n" + cant_faltantes + "(" + Convert.ToDecimal((cant_faltantes * 100) / (cant_instancias*cant_columnas)).ToString() + "%" + ")");
+                recalcularValores();
             }
             else {
                 MessageBox.Show("El archivo no se abrio");
@@ -228,14 +238,14 @@ namespace Proyecto_serio_el_regreso
             escribir.Close();
         }
 
-        private void actualizarCsv()
+        private void actualizarCsv(string accion)
         {
             //Genera la variante del nombre para guardar el archivo
             DateTime time = System.DateTime.Now;
             string direccionArchivo = archivo.FileName;
 
             string name = Path.GetFileNameWithoutExtension(direccionArchivo);
-            string nuevoNombre = name + time.ToString("_yyyyMMdd_HHmmss");
+            string nuevoNombre = name + time.ToString("_yyyyMMdd_HHmmss_") + accion;
 
             //Obtiene la direccion de la carpeta para guardar el archivo
             string carpeta = Path.GetDirectoryName(direccionArchivo);
@@ -315,7 +325,8 @@ namespace Proyecto_serio_el_regreso
                 dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.WhiteSmoke;
             }
 
-            actualizarCsv();
+            recalcularValores();
+            actualizarCsv("editar valor");
         }
 
         private void btnActualizar_Click(object sender, EventArgs e)
@@ -339,7 +350,7 @@ namespace Proyecto_serio_el_regreso
             valores_faltantes[nombre] = valores_faltantes[columna];
             valores_faltantes.Remove(columna);
 
-            actualizarCsv();
+            actualizarCsv("editar columna");
         }
 
         private void btnInfo_Click(object sender, EventArgs e)//Obteniendo informacion de las instancias
@@ -378,11 +389,12 @@ namespace Proyecto_serio_el_regreso
                 dataGridView1.Rows.RemoveAt(fila.Index);
 
                 //se deben actualizar los valores faltantes
-                cant_instancias--;
+                recalcularValores();
+                //cant_instancias--;
             }
             MessageBox.Show(mensaje);
 
-            actualizarCsv();
+            actualizarCsv("eliminar instancia");
         }
 
         //pendiente
@@ -408,10 +420,10 @@ namespace Proyecto_serio_el_regreso
                     cmboxDatos.SelectedItem = null;
                     txbRegex.Text = "";
                 }
-                
-                //actualizar valores faltantes?
 
-                actualizarCsv();
+                //actualizar valores faltantes?
+                recalcularValores();
+                actualizarCsv("eliminar atributo");
             }
 
         }
@@ -425,7 +437,8 @@ namespace Proyecto_serio_el_regreso
             {
                 instancias[columna].Add("");
             }
-            cant_instancias++;
+            //cant_instancias++;
+            recalcularValores();
         }
 
         //pendiente
@@ -434,10 +447,11 @@ namespace Proyecto_serio_el_regreso
             //Aqui va a haber un problema al asignarle un valor a cada instancia de la columna, el tipo de dato y le expresion regular
             string columna = "columnaN";
             encabezado[columna] = new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value);
-            instancias[columna] = Enumerable.Range(0, cant_instancias).Select(x => x.ToString()).ToList();
+            instancias[columna] = Enumerable.Repeat("?", cant_instancias).Select(x => x.ToString()).ToList();
             valores_faltantes[columna] = valoresFaltantes().Count();
 
             cargarGrid();
+            recalcularValores();
         }
 
         //pendiente
