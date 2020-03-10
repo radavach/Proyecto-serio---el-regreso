@@ -53,6 +53,13 @@
             this.lblCantAtributos = new System.Windows.Forms.Label();
             this.txbNombre = new System.Windows.Forms.TextBox();
             this.lblNombre = new System.Windows.Forms.Label();
+            this.proyectoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tratamientoDeLosDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.analisisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aprendizajeAutomaticoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.univariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bivariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.knnYKmeansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -103,7 +110,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.archivoToolStripMenuItem});
+            this.archivoToolStripMenuItem,
+            this.proyectoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1068, 24);
@@ -117,6 +125,7 @@
             this.cmBoxColumnas.Name = "cmBoxColumnas";
             this.cmBoxColumnas.Size = new System.Drawing.Size(194, 21);
             this.cmBoxColumnas.TabIndex = 3;
+            this.cmBoxColumnas.SelectedIndexChanged += new System.EventHandler(this.cmBoxColumnas_SelectedIndexChanged);
             // 
             // lblTipoDato
             // 
@@ -284,6 +293,59 @@
             this.lblNombre.TabIndex = 22;
             this.lblNombre.Text = "Nombre de la columna";
             // 
+            // proyectoToolStripMenuItem
+            // 
+            this.proyectoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tratamientoDeLosDatosToolStripMenuItem,
+            this.analisisToolStripMenuItem,
+            this.aprendizajeAutomaticoToolStripMenuItem});
+            this.proyectoToolStripMenuItem.Name = "proyectoToolStripMenuItem";
+            this.proyectoToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
+            this.proyectoToolStripMenuItem.Text = "Proyecto";
+            // 
+            // tratamientoDeLosDatosToolStripMenuItem
+            // 
+            this.tratamientoDeLosDatosToolStripMenuItem.Name = "tratamientoDeLosDatosToolStripMenuItem";
+            this.tratamientoDeLosDatosToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.tratamientoDeLosDatosToolStripMenuItem.Text = "Tratamiento de los datos";
+            // 
+            // analisisToolStripMenuItem
+            // 
+            this.analisisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.univariableToolStripMenuItem,
+            this.bivariableToolStripMenuItem});
+            this.analisisToolStripMenuItem.Name = "analisisToolStripMenuItem";
+            this.analisisToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.analisisToolStripMenuItem.Text = "Analisis";
+            // 
+            // aprendizajeAutomaticoToolStripMenuItem
+            // 
+            this.aprendizajeAutomaticoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.knnYKmeansToolStripMenuItem});
+            this.aprendizajeAutomaticoToolStripMenuItem.Name = "aprendizajeAutomaticoToolStripMenuItem";
+            this.aprendizajeAutomaticoToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.aprendizajeAutomaticoToolStripMenuItem.Text = "Aprendizaje Automatico";
+            // 
+            // univariableToolStripMenuItem
+            // 
+            this.univariableToolStripMenuItem.Name = "univariableToolStripMenuItem";
+            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.univariableToolStripMenuItem.Text = "Univariable";
+            this.univariableToolStripMenuItem.Click += new System.EventHandler(this.univariableToolStripMenuItem_Click);
+            // 
+            // bivariableToolStripMenuItem
+            // 
+            this.bivariableToolStripMenuItem.Name = "bivariableToolStripMenuItem";
+            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bivariableToolStripMenuItem.Text = "Bivariable";
+            this.bivariableToolStripMenuItem.Click += new System.EventHandler(this.bivariableToolStripMenuItem_Click);
+            // 
+            // knnYKmeansToolStripMenuItem
+            // 
+            this.knnYKmeansToolStripMenuItem.Name = "knnYKmeansToolStripMenuItem";
+            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.knnYKmeansToolStripMenuItem.Text = "KNN y KMeans";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -347,6 +409,13 @@
         private System.Windows.Forms.Label lblCantAtributos;
         private System.Windows.Forms.TextBox txbNombre;
         private System.Windows.Forms.Label lblNombre;
+        private System.Windows.Forms.ToolStripMenuItem proyectoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tratamientoDeLosDatosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analisisToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem univariableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bivariableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aprendizajeAutomaticoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem knnYKmeansToolStripMenuItem;
     }
 }
 

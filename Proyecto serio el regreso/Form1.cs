@@ -340,15 +340,17 @@ namespace Proyecto_serio_el_regreso
 
             cmBoxColumnas.Items[cmBoxColumnas.SelectedIndex] = nombre;
 
-            encabezado[columna] = new KeyValuePair<string, string>(item, txbRegex.Text);
-            encabezado[nombre] = encabezado[columna];
             encabezado.Remove(columna);
+            encabezado[nombre] = new KeyValuePair<string, string>(item, txbRegex.Text);
 
-            instancias[nombre] = instancias[columna];
+
+            List<string> instanciaAux = instancias[columna];
             instancias.Remove(columna);
+            instancias[nombre] = instanciaAux;
 
-            valores_faltantes[nombre] = valores_faltantes[columna];
+            int faltantesAux = valores_faltantes[columna];
             valores_faltantes.Remove(columna);
+            valores_faltantes[nombre] = faltantesAux;
 
             actualizarCsv("editar columna");
         }
@@ -465,6 +467,28 @@ namespace Proyecto_serio_el_regreso
         {
 
         }
+
+        private void univariableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2(this, encabezado, instancias, valores_faltantes, cant_instancias, cant_columnas, tipos_dato);
+            form2.Show();
+        }
+
+        private void bivariableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmBoxColumnas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox combo = (ComboBox)sender;
+            if (combo.Focused)
+            {
+                string texto = cmBoxColumnas.Text;
+                txbNombre.Text = texto;
+                txbRegex.Text = encabezado[texto].Value;
+                cmboxDatos.SelectedItem = encabezado[texto].Key;
+            }
+        }
     }
 }
-
