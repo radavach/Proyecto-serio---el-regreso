@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Proyecto_serio_el_regreso
 {
@@ -28,6 +29,7 @@ namespace Proyecto_serio_el_regreso
         public Form2(Form1 form1, Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias, Dictionary<string, int> valores_faltantes, int cant_instancias, int cant_columnas, string[] tipos_dato)
         {
             InitializeComponent();
+            form1.Hide();
             this.form1 = form1;
             this.encabezado = encabezado;
             this.instancias = instancias;
@@ -38,6 +40,8 @@ namespace Proyecto_serio_el_regreso
 
             cmBoxColumnas.Items.AddRange(encabezado.Keys.ToArray());
         }
+
+
 
         private void btnAnalizar_Click(object sender, EventArgs e)
         {
@@ -110,6 +114,8 @@ namespace Proyecto_serio_el_regreso
                         "Mediana:" + Environment.NewLine + mediana.ToString() + Environment.NewLine + Environment.NewLine +
                         "Moda:" + Environment.NewLine + moda.ToString() + Environment.NewLine + Environment.NewLine +
                         "Desviacion Estandar:" + Environment.NewLine + desvStd.ToString();
+
+                    pruebaBoxplot(valoresOrdenados, columna, media, mediana);
                 }
                 else if(tipoDato == "Texto")
                 {
@@ -117,6 +123,124 @@ namespace Proyecto_serio_el_regreso
                 }
             }
 
+        }
+
+        private void pruebaBoxplot(List<double> valoresOrdenados, string columna, double media, double mediana)
+        {
+            //BoxPlot
+            double conversion = Convert.ToDouble(cant_instancias);
+            int indiceMedio = cant_instancias / 2;
+
+            double valorMinimo = valoresOrdenados.First();
+            double valorMaximo = valoresOrdenados.Last();
+
+            double q1 = (Convert.ToDouble(cant_instancias) + 1) / 4;
+            double q3 = (3 * ((Convert.ToDouble(cant_instancias) + 1)) / 4);
+            double iqr = 0;
+
+            chart1.Series["s1"].Points.Clear();
+
+            if (q1 % 1 == 0 || q3 % 1 == 0)
+            {
+                q1 = valoresOrdenados.ElementAt((cant_instancias + 1) / 4);
+                q3 = valoresOrdenados.ElementAt((3 * (cant_instancias + 1)) / 4);
+            }
+            else
+            {
+                double indiceCuarto = Convert.ToDouble(indiceMedio) / 2;
+                double valor1 = 0;
+                double valor2 = 0;
+
+                valor1 = ((Convert.ToDouble(cant_instancias) + 1) / 4);
+                valor2 = ((3 * (Convert.ToDouble(cant_instancias) + 1)) / 4);
+
+                // var valores1= valor1.ToString(CultureInfo.InvariantCulture).Split('.');
+                // int indice1 = int.Parse(valores1[0]);
+                // int d1 = int.Parse(valores1[1]);
+                double indice1 = System.Math.Floor(valor1);
+                double d1 = valor1 - indice1;
+                double indice2 = System.Math.Floor(valor2);
+                double d2 = valor2 - indice2;
+                //MessageBox.Show(valor1.ToString(), "Original");
+                //MessageBox.Show(indice1.ToString(), "Dollars");
+                //MessageBox.Show(d1.ToString(), "Cents");
+                //MessageBox.Show(valor2.ToString(), "Original");
+                //MessageBox.Show(indice2.ToString(), "Dollars");
+                //MessageBox.Show(d2.ToString(), "Cents");
+
+                lblDatos.Text += "1. \n" + "Original: " + valor1.ToString() + Environment.NewLine +
+                    "Dollars: " + indice1.ToString() + Environment.NewLine +
+                    "Cents: " + d1.ToString() + Environment.NewLine + Environment.NewLine;
+
+                lblDatos.Text += "2. \n" + "Original: " + valor2.ToString() + Environment.NewLine +
+                    "Dollars: " + indice2.ToString() + Environment.NewLine +
+                    "Cents: " + d2.ToString() + Environment.NewLine + Environment.NewLine;
+
+                int index1 = Convert.ToInt32(indice1);
+                int index2 = Convert.ToInt32(indice2);
+                //double xi1 = Convert.ToDouble(valoresOrdenados.ElementAt(index1));
+                //double xj1 = valoresOrdenados.ElementAt(index1+1);
+                //MessageBox.Show(xi1.ToString(), "Dollars");
+                //MessageBox.Show(xj1.ToString(), "Cents");
+
+                q1 = Convert.ToDouble(valoresOrdenados.ElementAt(index1 - 1)) + (d1 * (Convert.ToDouble(valoresOrdenados.ElementAt(index1)) - Convert.ToDouble(valoresOrdenados.ElementAt(index1 - 1))));
+                q3 = Convert.ToDouble(valoresOrdenados.ElementAt(index2 - 1)) + (d2 * (Convert.ToDouble(valoresOrdenados.ElementAt(index2)) - Convert.ToDouble(valoresOrdenados.ElementAt(index2 - 1))));
+            }
+
+            //MessageBox.Show(q1.ToString(), "Cuartil 1");
+            //MessageBox.Show(q3.ToString(), "Cuartil 3");
+
+            lblDatos.Text += "Cuartil 1: " + q1.ToString() + Environment.NewLine +
+                "Cuartil 2: " + q3.ToString();
+
+            iqr = q3 - q1;
+            double outlierBajo = q1 - (1.5 * iqr);
+            double outlierAlto = q3 + (1.5 * iqr);
+
+            for (int m = 0; m < cant_instancias; m++)
+            {
+                //if (Convert.ToDouble(dataGridView1.Rows[m].Cells[nuValor].Value) > outlierAlto || Convert.ToDouble(dataGridView1.Rows[m].Cells[nuValor].Value) < outlierBajo)
+                if (Convert.ToDouble(instancias[columna][m]) > outlierAlto || Convert.ToDouble(instancias[columna][m]) < outlierBajo)
+                {
+                    DialogResult dialogResult = MessageBox.Show("Se detectaron outliers, ¿Deseas reemplazarlos?", "Outliers detectados", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        for (int n = 0; n < cant_instancias; n++)
+                        {
+                            //if (Convert.ToDouble(dataGridView1.Rows[n].Cells[nuValor].Value) > outlierAlto || Convert.ToDouble(dataGridView1.Rows[n].Cells[nuValor].Value) < outlierBajo)
+                            if (Convert.ToDouble(instancias[columna][n]) > outlierAlto || Convert.ToDouble(instancias[columna][n]) < outlierBajo)
+                            {
+                                //dataGridView1.Rows[n].Cells[nuValor].Value = Convert.ToString(media);
+                                instancias[columna][n] = Convert.ToString(media);
+                            }
+
+                        }
+                    }
+                    else if (dialogResult == DialogResult.No)
+                    {
+                        break;
+                    }
+                }
+
+            }
+
+            //chart1.Series["s1"].Points.AddXY(Nombre del boxplot, valorMinimo, valorMaximo, q1, q3, mediana, media);
+            chart1.Series["s1"].Points.AddXY(columna, valorMinimo, valorMaximo, q1, q3, mediana, media);
+
+            ChartArea ca = chart1.ChartAreas.First();
+            Axis ay = ca.AxisY;
+            Series boxplot = chart1.Series.First();
+
+            double yMin = chart1.Series.Select(s => s.Points.Min(x => x.YValues.Min())).Min();
+            double yMax = chart1.Series.Select(s => s.Points.Max(x => x.YValues.Max())).Max();
+
+            ay.Maximum = yMax + (yMax/10);
+            ay.Minimum = yMin - (yMin/10);
+        }
+
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            form1.Show();
         }
     }
 }

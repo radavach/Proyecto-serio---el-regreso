@@ -370,12 +370,6 @@ namespace Proyecto_serio_el_regreso
         }
 
         //pendiente
-        private void btnModificar_Click(object sender, EventArgs e)//Editando el nombre de las columnas
-        {
-            //Yo diria que se puede hacer en el menú de alado, pero que opinan?
-        }
-
-        //pendiente
         private void btnEliminarSeleccionado_Click(object sender, EventArgs e)//Eliminando una instancia
         {
             string mensaje = "Se van a eliminar las instancias seleccionadas ";
@@ -454,18 +448,6 @@ namespace Proyecto_serio_el_regreso
 
             cargarGrid();
             recalcularValores();
-        }
-
-        //pendiente
-        private void btnEditarTipos_Click(object sender, EventArgs e)//Editando el tipo de datos de las columnas
-        {
-            //La idea es que se pueda editar las columna con el menú que aparace al lado del gatagrid
-        }
-
-        //pendiente
-        private void btnAnalisis_Click(object sender, EventArgs e)//Inicia el analisis de un atributo (media, moda etc)
-        {
-
         }
 
         private void univariableToolStripMenuItem_Click(object sender, EventArgs e)
