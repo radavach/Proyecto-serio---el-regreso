@@ -60,7 +60,7 @@ namespace Proyecto_serio_el_regreso
              
             if (string.IsNullOrEmpty(cmBoxColumnas.Text))
             {
-                MessageBox.Show("Debes seleccionar la columna a eliminar");
+                MessageBox.Show("Debes seleccionar la columna a analizar");
             }
             else
             {
@@ -70,6 +70,14 @@ namespace Proyecto_serio_el_regreso
                 if (tipoDato == "Nominal")
                 {
                     MessageBox.Show("Tabla de frecuencias aquí");
+                    List<KeyValuePair<string, int>> frecuencias = new List<KeyValuePair<string, int>>
+                    {
+                        new KeyValuePair<string, int>("Dinosaurios", 12),
+                        new KeyValuePair<string, int>("Cucarachas", 32),
+                        new KeyValuePair<string, int>("Venados", 20)
+                    };
+                    pruebaHistograma(frecuencias);
+                    tabControl1.SelectedIndex = 1;
                 }
                 else if(tipoDato == "Numerico")
                 {
@@ -116,13 +124,13 @@ namespace Proyecto_serio_el_regreso
                         "Desviacion Estandar:" + Environment.NewLine + desvStd.ToString();
 
                     pruebaBoxplot(valoresOrdenados, columna, media, mediana);
+                    tabControl1.SelectedIndex = 0;
                 }
                 else if(tipoDato == "Texto")
                 {
                     MessageBox.Show("El tipo de dato texto es incompatible para el analisis");
                 }
             }
-
         }
 
         private void pruebaBoxplot(List<double> valoresOrdenados, string columna, double media, double mediana)
@@ -138,7 +146,7 @@ namespace Proyecto_serio_el_regreso
             double q3 = (3 * ((Convert.ToDouble(cant_instancias) + 1)) / 4);
             double iqr = 0;
 
-            chart1.Series["s1"].Points.Clear();
+            chartBoxplot.Series["s1"].Points.Clear();
 
             if (q1 % 1 == 0 || q3 % 1 == 0)
             {
@@ -225,17 +233,29 @@ namespace Proyecto_serio_el_regreso
             }
 
             //chart1.Series["s1"].Points.AddXY(Nombre del boxplot, valorMinimo, valorMaximo, q1, q3, mediana, media);
-            chart1.Series["s1"].Points.AddXY(columna, valorMinimo, valorMaximo, q1, q3, mediana, media);
+            chartBoxplot.Series["s1"].Points.AddXY(columna, valorMinimo, valorMaximo, q1, q3, mediana, media);
 
-            ChartArea ca = chart1.ChartAreas.First();
+            ChartArea ca = chartBoxplot.ChartAreas.First();
             Axis ay = ca.AxisY;
-            Series boxplot = chart1.Series.First();
+            Series boxplot = chartBoxplot.Series.First();
 
-            double yMin = chart1.Series.Select(s => s.Points.Min(x => x.YValues.Min())).Min();
-            double yMax = chart1.Series.Select(s => s.Points.Max(x => x.YValues.Max())).Max();
+            double yMin = chartBoxplot.Series.Select(s => s.Points.Min(x => x.YValues.Min())).Min();
+            double yMax = chartBoxplot.Series.Select(s => s.Points.Max(x => x.YValues.Max())).Max();
 
             ay.Maximum = yMax + (yMax/10);
             ay.Minimum = yMin - (yMin/10);
+        }
+
+        private void pruebaHistograma(List<KeyValuePair<string, int>>frecuencias)
+        {
+            chartHistograma.Series["s1"].Points.Clear();
+            lblFrecuencias.Text = "";
+
+            foreach(KeyValuePair<string, int> valor in frecuencias)
+            {
+                chartHistograma.Series["s1"].Points.AddXY(valor.Key, valor.Value);
+                lblFrecuencias.Text += valor.Key + ": " + valor.Value.ToString() + "\n";
+            }
         }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)

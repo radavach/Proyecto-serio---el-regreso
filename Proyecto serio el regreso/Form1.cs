@@ -31,6 +31,8 @@ namespace Proyecto_serio_el_regreso
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
         private OpenFileDialog archivo;
+        //direccion momentanea del archivo properties
+        private OpenFileDialog properties;
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
 
         private Dictionary<string, int> valoresFaltantes()
@@ -84,6 +86,7 @@ namespace Proyecto_serio_el_regreso
                 }
                 cargarGrid();
                 this.archivo = archivo;
+                this.properties = archivo;
 
                 recalcularValores();
             }
@@ -198,7 +201,8 @@ namespace Proyecto_serio_el_regreso
         //Opcion para guardar las instancias como csv
         private void guardarCsv(string direccionArchivo)
         {
-            StreamWriter escribir = new StreamWriter(direccionArchivo);
+            //StreamWriter escribir = new StreamWriter(direccionArchivo);
+            StreamWriter escribir = File.AppendText(direccionArchivo);
 
             int contador = 1;
             foreach(string columna in encabezado.Keys)
@@ -245,15 +249,25 @@ namespace Proyecto_serio_el_regreso
             string direccionArchivo = archivo.FileName;
 
             string name = Path.GetFileNameWithoutExtension(direccionArchivo);
-            string nuevoNombre = name + time.ToString("_yyyyMMdd_HHmmss_") + accion;
+            string nuevoNombre = time.ToString("yyyyMMdd_HHmmss");
 
             //Obtiene la direccion de la carpeta para guardar el archivo
             string carpeta = Path.GetDirectoryName(direccionArchivo);
 
             //Se crea y abre el nuevo archivo
-            string direccion = carpeta + "\\" + nuevoNombre + Path.GetExtension(direccionArchivo);
+            string direccion = carpeta + "\\" + nuevoNombre;
 
-            guardarCsv(direccion);
+            //actualiza el log con la accion que se realizo y le pasa el nombre del archivo.
+            actualizarLog(time.ToString("yyyyMMdd_HHmmss"), accion);
+
+            guardarCsv(direccion + Path.GetExtension(direccionArchivo));
+        }
+
+        private void actualizarLog(string direccion, string accion)
+        {
+            StreamWriter escribir = File.AppendText(Path.GetDirectoryName(properties.FileName) + "\\" + Path.GetFileNameWithoutExtension(properties.FileName) + ".log");
+            escribir.WriteLine(direccion + " => " + accion);
+            escribir.Close();
         }
 
         private void cargarGrid()
@@ -302,7 +316,7 @@ namespace Proyecto_serio_el_regreso
         
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            string texto;
+            string texto, textoAnterior;
             try
             {
                 texto = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
@@ -314,6 +328,7 @@ namespace Proyecto_serio_el_regreso
 
             int columna = e.ColumnIndex, fila = e.RowIndex;
 
+            textoAnterior = instancias[dataGridView1.Columns[e.ColumnIndex].HeaderText][e.RowIndex];
             instancias[dataGridView1.Columns[e.ColumnIndex].HeaderText][e.RowIndex] = texto;
 
             if(texto == "?")
@@ -326,14 +341,26 @@ namespace Proyecto_serio_el_regreso
             }
 
             recalcularValores();
-            actualizarCsv("editar valor");
+            actualizarCsv("editar valor - " + textoAnterior + " => " + texto);
         }
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
+            List<string> valoresColumnaActuales = new List<string>();
+            List<string> valoresColumnaAnteriores = new List<string>();
+
             string nombre = txbNombre.Text;
-            string item = cmboxDatos.Text;
+            string tipoDato = cmboxDatos.Text;
             string columna = cmBoxColumnas.Text;
+
+            //cargando los valores en una lista para mostrarlos en el mensaje del log
+            valoresColumnaAnteriores.Add(columna);
+            valoresColumnaAnteriores.Add(encabezado[columna].Key);
+            valoresColumnaAnteriores.Add(encabezado[columna].Value);
+
+            valoresColumnaActuales.Add(nombre);
+            valoresColumnaActuales.Add(tipoDato);
+            valoresColumnaActuales.Add(txbRegex.Text);
 
             dataGridView1.Columns[cmBoxColumnas.SelectedIndex].HeaderText = nombre;
             dataGridView1.Columns[cmBoxColumnas.SelectedIndex].Name = nombre;
@@ -341,7 +368,7 @@ namespace Proyecto_serio_el_regreso
             cmBoxColumnas.Items[cmBoxColumnas.SelectedIndex] = nombre;
 
             encabezado.Remove(columna);
-            encabezado[nombre] = new KeyValuePair<string, string>(item, txbRegex.Text);
+            encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, txbRegex.Text);
 
 
             List<string> instanciaAux = instancias[columna];
@@ -352,7 +379,7 @@ namespace Proyecto_serio_el_regreso
             valores_faltantes.Remove(columna);
             valores_faltantes[nombre] = faltantesAux;
 
-            actualizarCsv("editar columna");
+            actualizarCsv("editar columna - " + string.Join("|", valoresColumnaAnteriores) + " => " + string.Join("|", valoresColumnaActuales));
         }
 
         private void btnInfo_Click(object sender, EventArgs e)//Obteniendo informacion de las instancias
@@ -369,31 +396,27 @@ namespace Proyecto_serio_el_regreso
             MessageBox.Show(info);
         }
 
-        //pendiente
         private void btnEliminarSeleccionado_Click(object sender, EventArgs e)//Eliminando una instancia
         {
             string mensaje = "Se van a eliminar las instancias seleccionadas ";
+
             foreach (DataGridViewRow fila in dataGridView1.SelectedRows)
             {
+                List<string> atributosInstancia = new List<string>();
+
                 mensaje += fila.Index.ToString() + " ";
-                //Se reciben las filas en orden ascendente, lo cual ayuda para que no se recorran al momento de elimiar y esto afecte (y) nice.
-                //codigo para eliminar del data grid e instancias(Dictionary)
                 foreach(string columna in encabezado.Keys)
                 {
+                    atributosInstancia.Add(instancias[columna].ElementAt(fila.Index));
                     instancias[columna].RemoveAt(fila.Index);
                 }
                 dataGridView1.Rows.RemoveAt(fila.Index);
 
-                //se deben actualizar los valores faltantes
                 recalcularValores();
-                //cant_instancias--;
+                actualizarCsv("eliminar instancia - " + string.Join(",", atributosInstancia));
             }
-            MessageBox.Show(mensaje);
-
-            actualizarCsv("eliminar instancia");
         }
 
-        //pendiente
         private void btnEliminarAtributo_Click(object sender, EventArgs e)//Eliminando una columna
         {
             if (string.IsNullOrEmpty(cmBoxColumnas.Text))
@@ -417,30 +440,26 @@ namespace Proyecto_serio_el_regreso
                     txbRegex.Text = "";
                 }
 
-                //actualizar valores faltantes?
                 recalcularValores();
-                actualizarCsv("eliminar atributo");
+                actualizarCsv("eliminar atributo - " + columna);
             }
 
         }
 
-        //pendiente
         private void btnAgregarInstancia_Click(object sender, EventArgs e)//Crear una nueva instancia de datos
         {
-            //Mi idea es que se agregue la instancia al data grid y de ahi modificarla
             dataGridView1.Rows.Add();
             foreach(string columna in encabezado.Keys)
             {
                 instancias[columna].Add("");
             }
-            //cant_instancias++;
             recalcularValores();
         }
 
-        //pendiente
+        //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
-            //Aqui va a haber un problema al asignarle un valor a cada instancia de la columna, el tipo de dato y le expresion regular
+            //pendiente revalidar el contenido de la nueva columna con la expresion regular
             string columna = "columnaN";
             encabezado[columna] = new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value);
             instancias[columna] = Enumerable.Repeat("?", cant_instancias).Select(x => x.ToString()).ToList();
