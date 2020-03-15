@@ -447,6 +447,7 @@ namespace Proyecto_serio_el_regreso
         }
 
         //pendiente
+        //Prueba
         private void btnAnalisis_Click(object sender, EventArgs e)//Inicia el analisis de un atributo (media, moda etc)
         {
 
