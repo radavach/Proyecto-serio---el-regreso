@@ -456,7 +456,7 @@ namespace Proyecto_serio_el_regreso
             }
             recalcularValores();
         }
-
+        //Puto el Christian
         //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
