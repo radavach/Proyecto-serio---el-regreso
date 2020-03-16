@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 
 namespace Proyecto_serio_el_regreso
@@ -27,11 +28,15 @@ namespace Proyecto_serio_el_regreso
         private int cant_columnas;
         private string datoTexto;
         private string []tipos_dato;
+        private Dictionary<string, int> valores_faltantes;
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
-        private Dictionary<string, int> valores_faltantes;
         private OpenFileDialog archivo;
+        //direccion momentanea del archivo properties
+        private OpenFileDialog properties;
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
+        List<string> dominios = new List<string>();
+        List<string> tipos = new List<string>();
 
         private Dictionary<string, int> valoresFaltantes()
         {
@@ -46,11 +51,24 @@ namespace Proyecto_serio_el_regreso
             return lista;
         }
 
+        private void recalcularValores()
+        {
+            cant_instancias = dataGridView1.RowCount;
+            cant_columnas = encabezado.Count;
+            valores_faltantes = valoresFaltantes();
+
+            int cant_faltantes = valores_faltantes.Values.Sum();
+
+            lblCantInstancias.Text = ("Cantidad de instancias:\n" + cant_instancias);
+            lblCantAtributos.Text = ("Cantidad de atributos:\n" + cant_columnas);
+            lblValoresFaltantes.Text = ("Cantidad de valores faltanes:\n" + cant_faltantes + "(" + Convert.ToDecimal((cant_faltantes * 100) / (cant_instancias * cant_columnas)).ToString() + "%" + ")");
+        }
+
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog archivo = new OpenFileDialog
             {
-                Filter = "Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data",
+                Filter = "Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data|Archivo propiedades(*.properties)|*.properties",
                 Title = "Indica el archivo que deseas abrir"
             };
             if (archivo.ShowDialog().Equals(DialogResult.OK))
@@ -65,17 +83,15 @@ namespace Proyecto_serio_el_regreso
                 {
                     cargarCsv(archivo.FileName);
                 }
-                else if(extension.Equals(".data"))
+                else if(extension.Equals(".properties"))
                 {
-                    cargarData(archivo.FileName);
+                    cargarProperties(archivo.FileName);
                 }
                 cargarGrid();
                 this.archivo = archivo;
-                int cant_faltantes = valores_faltantes.Values.Sum();
+                this.properties = archivo;
 
-                lblCantInstancias.Text = ("Cantidad de instancias:\n" + cant_instancias);
-                lblCantAtributos.Text = ("Cantidad de atributos:\n" + cant_columnas);
-                lblValoresFaltantes.Text = ("Cantidad de valores faltanes:\n" + cant_faltantes + "(" + Convert.ToDecimal((cant_faltantes * 100) / (cant_instancias*cant_columnas)).ToString() + "%" + ")");
+                recalcularValores();
             }
             else {
                 MessageBox.Show("El archivo no se abrio");
@@ -180,15 +196,125 @@ namespace Proyecto_serio_el_regreso
             leerCsv.Close();
         }
 
-        private void cargarData(string direccionArchivo)
+        private void cargarProperties(string direccionArchivo)
         {
             MessageBox.Show("Se cargara el archivo con la direccion " + direccionArchivo);
+            //Dictionary<string, List<string>> instancias = new Dictionary<string, List<string>>();
+            
+            StreamReader streamReader = new StreamReader(direccionArchivo);
+
+            string nombreColumna;
+            string linea = streamReader.ReadLine();
+            bool existe = linea.Contains("@data");
+            //while((linea = streamReader.ReadLine()) != null)
+            while (existe != true)
+            {
+                linea = streamReader.ReadLine();
+                existe = linea.Contains("@data");
+                //foreach (string palabra in linea.Split('%'))
+                //{
+                if (linea.Contains("@attribute"))
+                {
+                             
+                 
+                    //Para uso futuro
+                    if (linea.Contains("numeric"))
+                    {
+                        tipos.Add("numeric");
+                    }
+                    else if (linea.Contains("nominal"))
+                    {
+                        tipos.Add("nominal");
+                    }
+                    else if (linea.Contains("binary symmetric"))
+                    {
+                        tipos.Add("binary symmetric");
+                    }
+                    else if (linea.Contains("binary asymmetric"))
+                    {
+                        tipos.Add("binary asymmetric");
+                    }
+
+                    if (linea.Contains("["))
+                    {
+                        string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
+                        nombreColumna = linea.Substring(0,linea.IndexOf("numeric"));
+                        nombreColumna=nombreColumna.Replace("@attribute","");
+                        encabezado.Add(nombreColumna,new KeyValuePair<string, string>("Numerico", domNum));
+                        //dominios.Add(domNum);
+                    }
+                    else if (linea.Contains("("))
+                    {
+                        string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
+                        //dominios.Add(Regex.Replace(domNom, @"\s+", ""));
+                        nombreColumna = linea.Substring(0,linea.IndexOf("nominal"));
+                        nombreColumna=nombreColumna.Replace("@attribute","");
+                        encabezado.Add(nombreColumna,new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
+                    }
+                }
+                //}
+            }
+            linea=streamReader.ReadLine();
+            streamReader = new StreamReader(File.OpenRead(linea));
+            
+             while (!streamReader.EndOfStream)
+                {
+                    string[] instancia = streamReader.ReadLine().Split(',');
+                    int indice = encabezado.Count - 1;
+
+                    List<KeyValuePair<string, KeyValuePair<string, string>>> iterador = encabezado.ToList();
+                    List<string> elementos;
+
+                    cant_instancias++;
+
+                    while(indice >= 0)
+                    {
+                        try
+                        { 
+                            for (; indice >= 0;  indice--)
+                            {
+                                if (instancias.ContainsKey(iterador[indice].Key))
+                                {
+                                    elementos = instancias[iterador[indice].Key];
+                                }
+                                else
+                                {
+                                    elementos = new List<string>();
+                                    instancias[iterador[indice].Key] = elementos;
+                                }
+                                elementos.Add(instancia[indice]);
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException) {
+                        
+                            if (instancias.ContainsKey(iterador[indice].Key))
+                            {
+                                elementos = instancias[iterador[indice].Key];
+                            }
+                            else
+                            {
+                                elementos = new List<string>();
+                                instancias[iterador[indice].Key] = elementos;
+                            }
+                            elementos.Add("?");
+
+                            indice--;
+                        }
+                    }
+                    valores_faltantes = valoresFaltantes();
+                }
+
+                //valores_faltantes = valoresFaltantes();
+            streamReader.Close();
         }
+
+        
 
         //Opcion para guardar las instancias como csv
         private void guardarCsv(string direccionArchivo)
         {
-            StreamWriter escribir = new StreamWriter(direccionArchivo);
+            //StreamWriter escribir = new StreamWriter(direccionArchivo);
+            StreamWriter escribir = File.AppendText(direccionArchivo);
 
             int contador = 1;
             foreach(string columna in encabezado.Keys)
@@ -228,22 +354,32 @@ namespace Proyecto_serio_el_regreso
             escribir.Close();
         }
 
-        private void actualizarCsv()
+        private void actualizarCsv(string accion)
         {
             //Genera la variante del nombre para guardar el archivo
             DateTime time = System.DateTime.Now;
             string direccionArchivo = archivo.FileName;
 
             string name = Path.GetFileNameWithoutExtension(direccionArchivo);
-            string nuevoNombre = name + time.ToString("_yyyyMMdd_HHmmss");
+            string nuevoNombre = time.ToString("yyyyMMdd_HHmmss");
 
             //Obtiene la direccion de la carpeta para guardar el archivo
             string carpeta = Path.GetDirectoryName(direccionArchivo);
 
             //Se crea y abre el nuevo archivo
-            string direccion = carpeta + "\\" + nuevoNombre + Path.GetExtension(direccionArchivo);
+            string direccion = carpeta + "\\" + nuevoNombre;
 
-            guardarCsv(direccion);
+            //actualiza el log con la accion que se realizo y le pasa el nombre del archivo.
+            actualizarLog(time.ToString("yyyyMMdd_HHmmss"), accion);
+
+            guardarCsv(direccion + Path.GetExtension(direccionArchivo));
+        }
+
+        private void actualizarLog(string direccion, string accion)
+        {
+            StreamWriter escribir = File.AppendText(Path.GetDirectoryName(properties.FileName) + "\\" + Path.GetFileNameWithoutExtension(properties.FileName) + ".log");
+            escribir.WriteLine(direccion + " => " + accion);
+            escribir.Close();
         }
 
         private void cargarGrid()
@@ -292,7 +428,7 @@ namespace Proyecto_serio_el_regreso
         
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            string texto;
+            string texto, textoAnterior;
             try
             {
                 texto = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
@@ -304,6 +440,7 @@ namespace Proyecto_serio_el_regreso
 
             int columna = e.ColumnIndex, fila = e.RowIndex;
 
+            textoAnterior = instancias[dataGridView1.Columns[e.ColumnIndex].HeaderText][e.RowIndex];
             instancias[dataGridView1.Columns[e.ColumnIndex].HeaderText][e.RowIndex] = texto;
 
             if(texto == "?")
@@ -315,31 +452,46 @@ namespace Proyecto_serio_el_regreso
                 dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.WhiteSmoke;
             }
 
-            actualizarCsv();
+            recalcularValores();
+            actualizarCsv("editar valor - " + textoAnterior + " => " + texto);
         }
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
+            List<string> valoresColumnaActuales = new List<string>();
+            List<string> valoresColumnaAnteriores = new List<string>();
+
             string nombre = txbNombre.Text;
-            string item = cmboxDatos.Text;
+            string tipoDato = cmboxDatos.Text;
             string columna = cmBoxColumnas.Text;
+
+            //cargando los valores en una lista para mostrarlos en el mensaje del log
+            valoresColumnaAnteriores.Add(columna);
+            valoresColumnaAnteriores.Add(encabezado[columna].Key);
+            valoresColumnaAnteriores.Add(encabezado[columna].Value);
+
+            valoresColumnaActuales.Add(nombre);
+            valoresColumnaActuales.Add(tipoDato);
+            valoresColumnaActuales.Add(txbRegex.Text);
 
             dataGridView1.Columns[cmBoxColumnas.SelectedIndex].HeaderText = nombre;
             dataGridView1.Columns[cmBoxColumnas.SelectedIndex].Name = nombre;
 
             cmBoxColumnas.Items[cmBoxColumnas.SelectedIndex] = nombre;
 
-            encabezado[columna] = new KeyValuePair<string, string>(item, txbRegex.Text);
-            encabezado[nombre] = encabezado[columna];
             encabezado.Remove(columna);
+            encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, txbRegex.Text);
 
-            instancias[nombre] = instancias[columna];
+
+            List<string> instanciaAux = instancias[columna];
             instancias.Remove(columna);
+            instancias[nombre] = instanciaAux;
 
-            valores_faltantes[nombre] = valores_faltantes[columna];
+            int faltantesAux = valores_faltantes[columna];
             valores_faltantes.Remove(columna);
+            valores_faltantes[nombre] = faltantesAux;
 
-            actualizarCsv();
+            actualizarCsv("editar columna - " + string.Join("|", valoresColumnaAnteriores) + " => " + string.Join("|", valoresColumnaActuales));
         }
 
         private void btnInfo_Click(object sender, EventArgs e)//Obteniendo informacion de las instancias
@@ -356,36 +508,27 @@ namespace Proyecto_serio_el_regreso
             MessageBox.Show(info);
         }
 
-        //pendiente
-        private void btnModificar_Click(object sender, EventArgs e)//Editando el nombre de las columnas
-        {
-            //Yo diria que se puede hacer en el menú de alado, pero que opinan?
-        }
-
-        //pendiente
         private void btnEliminarSeleccionado_Click(object sender, EventArgs e)//Eliminando una instancia
         {
             string mensaje = "Se van a eliminar las instancias seleccionadas ";
+
             foreach (DataGridViewRow fila in dataGridView1.SelectedRows)
             {
+                List<string> atributosInstancia = new List<string>();
+
                 mensaje += fila.Index.ToString() + " ";
-                //Se reciben las filas en orden ascendente, lo cual ayuda para que no se recorran al momento de elimiar y esto afecte (y) nice.
-                //codigo para eliminar del data grid e instancias(Dictionary)
                 foreach(string columna in encabezado.Keys)
                 {
+                    atributosInstancia.Add(instancias[columna].ElementAt(fila.Index));
                     instancias[columna].RemoveAt(fila.Index);
                 }
                 dataGridView1.Rows.RemoveAt(fila.Index);
 
-                //se deben actualizar los valores faltantes
-                cant_instancias--;
+                recalcularValores();
+                actualizarCsv("eliminar instancia - " + string.Join(",", atributosInstancia));
             }
-            MessageBox.Show(mensaje);
-
-            actualizarCsv();
         }
 
-        //pendiente
         private void btnEliminarAtributo_Click(object sender, EventArgs e)//Eliminando una columna
         {
             if (string.IsNullOrEmpty(cmBoxColumnas.Text))
@@ -408,49 +551,57 @@ namespace Proyecto_serio_el_regreso
                     cmboxDatos.SelectedItem = null;
                     txbRegex.Text = "";
                 }
-                
-                //actualizar valores faltantes?
 
-                actualizarCsv();
+                recalcularValores();
+                actualizarCsv("eliminar atributo - " + columna);
             }
 
         }
 
-        //pendiente
         private void btnAgregarInstancia_Click(object sender, EventArgs e)//Crear una nueva instancia de datos
         {
-            //Mi idea es que se agregue la instancia al data grid y de ahi modificarla
             dataGridView1.Rows.Add();
             foreach(string columna in encabezado.Keys)
             {
                 instancias[columna].Add("");
             }
-            cant_instancias++;
+            recalcularValores();
         }
 
-        //pendiente
+        //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
-            //Aqui va a haber un problema al asignarle un valor a cada instancia de la columna, el tipo de dato y le expresion regular
+            //pendiente revalidar el contenido de la nueva columna con la expresion regular
             string columna = "columnaN";
             encabezado[columna] = new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value);
-            instancias[columna] = Enumerable.Range(0, cant_instancias).Select(x => x.ToString()).ToList();
+            instancias[columna] = Enumerable.Repeat("?", cant_instancias).Select(x => x.ToString()).ToList();
             valores_faltantes[columna] = valoresFaltantes().Count();
 
             cargarGrid();
+            recalcularValores();
         }
 
-        //pendiente
-        private void btnEditarTipos_Click(object sender, EventArgs e)//Editando el tipo de datos de las columnas
+        private void univariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //La idea es que se pueda editar las columna con el menú que aparace al lado del gatagrid
+            Form2 form2 = new Form2(this, encabezado, instancias, valores_faltantes, cant_instancias, cant_columnas, tipos_dato);
+            form2.Show();
         }
 
-        //pendiente
-        private void btnAnalisis_Click(object sender, EventArgs e)//Inicia el analisis de un atributo (media, moda etc)
+        private void bivariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void cmBoxColumnas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox combo = (ComboBox)sender;
+            if (combo.Focused)
+            {
+                string texto = cmBoxColumnas.Text;
+                txbNombre.Text = texto;
+                txbRegex.Text = encabezado[texto].Value;
+                cmboxDatos.SelectedItem = encabezado[texto].Key;
+            }
         }
     }
 }
-

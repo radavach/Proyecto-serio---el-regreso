@@ -34,6 +34,13 @@
             this.guardarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.guardarPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.proyectoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tratamientoDeLosDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.analisisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.univariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bivariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aprendizajeAutomaticoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.knnYKmeansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmBoxColumnas = new System.Windows.Forms.ComboBox();
             this.lblTipoDato = new System.Windows.Forms.Label();
             this.cmboxDatos = new System.Windows.Forms.ComboBox();
@@ -41,12 +48,9 @@
             this.txbRegex = new System.Windows.Forms.TextBox();
             this.btnActualizarColumna = new System.Windows.Forms.Button();
             this.btnInfo = new System.Windows.Forms.Button();
-            this.btnAnalisis = new System.Windows.Forms.Button();
             this.btnAgregarInstancia = new System.Windows.Forms.Button();
             this.btnEliminarAtributo = new System.Windows.Forms.Button();
             this.btnEliminarSeleccionado = new System.Windows.Forms.Button();
-            this.btnModificar = new System.Windows.Forms.Button();
-            this.btnEditarTipos = new System.Windows.Forms.Button();
             this.btnAgregarColumna = new System.Windows.Forms.Button();
             this.lblCantInstancias = new System.Windows.Forms.Label();
             this.lblValoresFaltantes = new System.Windows.Forms.Label();
@@ -103,12 +107,66 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.archivoToolStripMenuItem});
+            this.archivoToolStripMenuItem,
+            this.proyectoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1068, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
+            // 
+            // proyectoToolStripMenuItem
+            // 
+            this.proyectoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tratamientoDeLosDatosToolStripMenuItem,
+            this.analisisToolStripMenuItem,
+            this.aprendizajeAutomaticoToolStripMenuItem});
+            this.proyectoToolStripMenuItem.Name = "proyectoToolStripMenuItem";
+            this.proyectoToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
+            this.proyectoToolStripMenuItem.Text = "Proyecto";
+            // 
+            // tratamientoDeLosDatosToolStripMenuItem
+            // 
+            this.tratamientoDeLosDatosToolStripMenuItem.Name = "tratamientoDeLosDatosToolStripMenuItem";
+            this.tratamientoDeLosDatosToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.tratamientoDeLosDatosToolStripMenuItem.Text = "Tratamiento de los datos";
+            // 
+            // analisisToolStripMenuItem
+            // 
+            this.analisisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.univariableToolStripMenuItem,
+            this.bivariableToolStripMenuItem});
+            this.analisisToolStripMenuItem.Name = "analisisToolStripMenuItem";
+            this.analisisToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.analisisToolStripMenuItem.Text = "Analisis";
+            // 
+            // univariableToolStripMenuItem
+            // 
+            this.univariableToolStripMenuItem.Name = "univariableToolStripMenuItem";
+            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.univariableToolStripMenuItem.Text = "Univariable";
+            this.univariableToolStripMenuItem.Click += new System.EventHandler(this.univariableToolStripMenuItem_Click);
+            // 
+            // bivariableToolStripMenuItem
+            // 
+            this.bivariableToolStripMenuItem.Name = "bivariableToolStripMenuItem";
+            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.bivariableToolStripMenuItem.Text = "Bivariable";
+            this.bivariableToolStripMenuItem.Click += new System.EventHandler(this.bivariableToolStripMenuItem_Click);
+            // 
+            // aprendizajeAutomaticoToolStripMenuItem
+            // 
+            this.aprendizajeAutomaticoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.knnYKmeansToolStripMenuItem});
+            this.aprendizajeAutomaticoToolStripMenuItem.Name = "aprendizajeAutomaticoToolStripMenuItem";
+            this.aprendizajeAutomaticoToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.aprendizajeAutomaticoToolStripMenuItem.Text = "Aprendizaje Automatico";
+            // 
+            // knnYKmeansToolStripMenuItem
+            // 
+            this.knnYKmeansToolStripMenuItem.Name = "knnYKmeansToolStripMenuItem";
+            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.knnYKmeansToolStripMenuItem.Text = "KNN y KMeans";
             // 
             // cmBoxColumnas
             // 
@@ -117,6 +175,7 @@
             this.cmBoxColumnas.Name = "cmBoxColumnas";
             this.cmBoxColumnas.Size = new System.Drawing.Size(194, 21);
             this.cmBoxColumnas.TabIndex = 3;
+            this.cmBoxColumnas.SelectedIndexChanged += new System.EventHandler(this.cmBoxColumnas_SelectedIndexChanged);
             // 
             // lblTipoDato
             // 
@@ -163,7 +222,7 @@
             // 
             // btnInfo
             // 
-            this.btnInfo.Location = new System.Drawing.Point(12, 286);
+            this.btnInfo.Location = new System.Drawing.Point(77, 415);
             this.btnInfo.Name = "btnInfo";
             this.btnInfo.Size = new System.Drawing.Size(127, 24);
             this.btnInfo.TabIndex = 9;
@@ -171,19 +230,9 @@
             this.btnInfo.UseVisualStyleBackColor = true;
             this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
             // 
-            // btnAnalisis
-            // 
-            this.btnAnalisis.Location = new System.Drawing.Point(81, 415);
-            this.btnAnalisis.Name = "btnAnalisis";
-            this.btnAnalisis.Size = new System.Drawing.Size(127, 24);
-            this.btnAnalisis.TabIndex = 10;
-            this.btnAnalisis.Text = "Analisis atributo";
-            this.btnAnalisis.UseVisualStyleBackColor = true;
-            this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
-            // 
             // btnAgregarInstancia
             // 
-            this.btnAgregarInstancia.Location = new System.Drawing.Point(12, 355);
+            this.btnAgregarInstancia.Location = new System.Drawing.Point(12, 385);
             this.btnAgregarInstancia.Name = "btnAgregarInstancia";
             this.btnAgregarInstancia.Size = new System.Drawing.Size(127, 24);
             this.btnAgregarInstancia.TabIndex = 11;
@@ -193,7 +242,7 @@
             // 
             // btnEliminarAtributo
             // 
-            this.btnEliminarAtributo.Location = new System.Drawing.Point(144, 325);
+            this.btnEliminarAtributo.Location = new System.Drawing.Point(144, 355);
             this.btnEliminarAtributo.Name = "btnEliminarAtributo";
             this.btnEliminarAtributo.Size = new System.Drawing.Size(127, 24);
             this.btnEliminarAtributo.TabIndex = 12;
@@ -203,7 +252,7 @@
             // 
             // btnEliminarSeleccionado
             // 
-            this.btnEliminarSeleccionado.Location = new System.Drawing.Point(12, 325);
+            this.btnEliminarSeleccionado.Location = new System.Drawing.Point(12, 355);
             this.btnEliminarSeleccionado.Name = "btnEliminarSeleccionado";
             this.btnEliminarSeleccionado.Size = new System.Drawing.Size(127, 24);
             this.btnEliminarSeleccionado.TabIndex = 13;
@@ -211,29 +260,9 @@
             this.btnEliminarSeleccionado.UseVisualStyleBackColor = true;
             this.btnEliminarSeleccionado.Click += new System.EventHandler(this.btnEliminarSeleccionado_Click);
             // 
-            // btnModificar
-            // 
-            this.btnModificar.Location = new System.Drawing.Point(144, 286);
-            this.btnModificar.Name = "btnModificar";
-            this.btnModificar.Size = new System.Drawing.Size(127, 24);
-            this.btnModificar.TabIndex = 14;
-            this.btnModificar.Text = "Modificar atributos";
-            this.btnModificar.UseVisualStyleBackColor = true;
-            this.btnModificar.Click += new System.EventHandler(this.btnModificar_Click);
-            // 
-            // btnEditarTipos
-            // 
-            this.btnEditarTipos.Location = new System.Drawing.Point(12, 385);
-            this.btnEditarTipos.Name = "btnEditarTipos";
-            this.btnEditarTipos.Size = new System.Drawing.Size(127, 24);
-            this.btnEditarTipos.TabIndex = 17;
-            this.btnEditarTipos.Text = "Agregar Tipos";
-            this.btnEditarTipos.UseVisualStyleBackColor = true;
-            this.btnEditarTipos.Click += new System.EventHandler(this.btnEditarTipos_Click);
-            // 
             // btnAgregarColumna
             // 
-            this.btnAgregarColumna.Location = new System.Drawing.Point(144, 355);
+            this.btnAgregarColumna.Location = new System.Drawing.Point(144, 385);
             this.btnAgregarColumna.Name = "btnAgregarColumna";
             this.btnAgregarColumna.Size = new System.Drawing.Size(127, 24);
             this.btnAgregarColumna.TabIndex = 18;
@@ -295,12 +324,9 @@
             this.Controls.Add(this.lblValoresFaltantes);
             this.Controls.Add(this.lblCantInstancias);
             this.Controls.Add(this.btnAgregarColumna);
-            this.Controls.Add(this.btnEditarTipos);
-            this.Controls.Add(this.btnModificar);
             this.Controls.Add(this.btnEliminarSeleccionado);
             this.Controls.Add(this.btnEliminarAtributo);
             this.Controls.Add(this.btnAgregarInstancia);
-            this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.btnInfo);
             this.Controls.Add(this.btnActualizarColumna);
             this.Controls.Add(this.txbRegex);
@@ -335,18 +361,22 @@
         private System.Windows.Forms.TextBox txbRegex;
         private System.Windows.Forms.Button btnActualizarColumna;
         private System.Windows.Forms.Button btnInfo;
-        private System.Windows.Forms.Button btnAnalisis;
         private System.Windows.Forms.Button btnAgregarInstancia;
         private System.Windows.Forms.Button btnEliminarAtributo;
         private System.Windows.Forms.Button btnEliminarSeleccionado;
-        private System.Windows.Forms.Button btnModificar;
-        private System.Windows.Forms.Button btnEditarTipos;
         private System.Windows.Forms.Button btnAgregarColumna;
         private System.Windows.Forms.Label lblCantInstancias;
         private System.Windows.Forms.Label lblValoresFaltantes;
         private System.Windows.Forms.Label lblCantAtributos;
         private System.Windows.Forms.TextBox txbNombre;
         private System.Windows.Forms.Label lblNombre;
+        private System.Windows.Forms.ToolStripMenuItem proyectoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tratamientoDeLosDatosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem analisisToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem univariableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bivariableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aprendizajeAutomaticoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem knnYKmeansToolStripMenuItem;
     }
 }
 
