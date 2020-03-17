@@ -660,7 +660,7 @@ namespace Proyecto_serio_el_regreso
         private void button1_Click(object sender, EventArgs e)
         {
             server = "localhost";
-            database = "colonias";
+            database = "salones";
             uid = "root";
             password = "";
             string connectionString;
@@ -670,16 +670,28 @@ namespace Proyecto_serio_el_regreso
 
             if (this.OpenConnection() == true)
             {
-                mySqlDataAdapter = new MySqlDataAdapter("select * from postalesm", connection);
+                mySqlDataAdapter = new MySqlDataAdapter("select * from dueno", connection);
                 DataSet DS = new DataSet();
                 mySqlDataAdapter.Fill(DS);
                 dataGridView1.DataSource = DS.Tables[0];
                 //close connection
-                this.CloseConnection();
-            }
-            for (int i = 0; i < dataGridView1.ColumnCount-1; i++)
-            {
-                encabezado.Add(dataGridView1.Columns[i].Name, new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value));
+                this.CloseConnection();;
+
+                encabezado = new Dictionary<string, KeyValuePair<string, string>>();
+                instancias = new Dictionary<string, List<string>>();
+
+                for (int i = 0; i < dataGridView1.ColumnCount; i++)
+                {
+                    string columna = dataGridView1.Columns[i].Name;
+                    encabezado.Add(columna, new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value));
+                    cmBoxColumnas.Items.Add(columna);
+
+                    //instancias[columna] = DS.Tables[0].AsEnumerable().Select(a => a.Field<string>(columna).ToString()).ToList();
+                    instancias[columna] = dataGridView1.Rows.Cast<DataGridViewRow>().Select(a => a.Cells[i].Value.ToString()).ToList();
+                }
+
+                cmboxDatos.Items.AddRange(tipos_dato);
+                valores_faltantes = valoresFaltantes();
             }
 
         }
