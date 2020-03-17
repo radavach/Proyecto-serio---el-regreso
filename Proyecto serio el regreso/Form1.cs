@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
-//Esto es un comentario creado desde mi celular
 
 namespace Proyecto_serio_el_regreso
 {
@@ -35,6 +35,8 @@ namespace Proyecto_serio_el_regreso
         //direccion momentanea del archivo properties
         private OpenFileDialog properties;
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
+        List<string> dominios = new List<string>();
+        List<string> tipos = new List<string>();
 
         private Dictionary<string, int> valoresFaltantes()
         {
@@ -66,7 +68,7 @@ namespace Proyecto_serio_el_regreso
         {
             OpenFileDialog archivo = new OpenFileDialog
             {
-                Filter = "Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data",
+                Filter = "Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data|Archivo propiedades(*.properties)|*.properties",
                 Title = "Indica el archivo que deseas abrir"
             };
             if (archivo.ShowDialog().Equals(DialogResult.OK))
@@ -81,9 +83,9 @@ namespace Proyecto_serio_el_regreso
                 {
                     cargarCsv(archivo.FileName);
                 }
-                else if(extension.Equals(".data"))
+                else if(extension.Equals(".properties"))
                 {
-                    cargarData(archivo.FileName);
+                    cargarProperties(archivo.FileName);
                 }
                 cargarGrid();
                 this.archivo = archivo;
@@ -194,10 +196,119 @@ namespace Proyecto_serio_el_regreso
             leerCsv.Close();
         }
 
-        private void cargarData(string direccionArchivo)
+        private void cargarProperties(string direccionArchivo)
         {
             MessageBox.Show("Se cargara el archivo con la direccion " + direccionArchivo);
+            //Dictionary<string, List<string>> instancias = new Dictionary<string, List<string>>();
+            
+            StreamReader streamReader = new StreamReader(direccionArchivo);
+
+            string nombreColumna;
+            string linea = streamReader.ReadLine();
+            bool existe = linea.Contains("@data");
+            //while((linea = streamReader.ReadLine()) != null)
+            while (existe != true)
+            {
+                linea = streamReader.ReadLine();
+                existe = linea.Contains("@data");
+                //foreach (string palabra in linea.Split('%'))
+                //{
+                if (linea.Contains("@attribute"))
+                {
+                             
+                 
+                    //Para uso futuro
+                    if (linea.Contains("numeric"))
+                    {
+                        tipos.Add("numeric");
+                    }
+                    else if (linea.Contains("nominal"))
+                    {
+                        tipos.Add("nominal");
+                    }
+                    else if (linea.Contains("binary symmetric"))
+                    {
+                        tipos.Add("binary symmetric");
+                    }
+                    else if (linea.Contains("binary asymmetric"))
+                    {
+                        tipos.Add("binary asymmetric");
+                    }
+
+                    if (linea.Contains("["))
+                    {
+                        string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
+                        nombreColumna = linea.Substring(0,linea.IndexOf("numeric"));
+                        nombreColumna=nombreColumna.Replace("@attribute","");
+                        encabezado.Add(nombreColumna,new KeyValuePair<string, string>("Numerico", domNum));
+                        //dominios.Add(domNum);
+                    }
+                    else if (linea.Contains("("))
+                    {
+                        string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
+                        //dominios.Add(Regex.Replace(domNom, @"\s+", ""));
+                        nombreColumna = linea.Substring(0,linea.IndexOf("nominal"));
+                        nombreColumna=nombreColumna.Replace("@attribute","");
+                        encabezado.Add(nombreColumna,new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
+                    }
+                }
+                //}
+            }
+            linea=streamReader.ReadLine();
+            streamReader = new StreamReader(File.OpenRead(linea));
+            
+             while (!streamReader.EndOfStream)
+                {
+                    string[] instancia = streamReader.ReadLine().Split(',');
+                    int indice = encabezado.Count - 1;
+
+                    List<KeyValuePair<string, KeyValuePair<string, string>>> iterador = encabezado.ToList();
+                    List<string> elementos;
+
+                    cant_instancias++;
+
+                    while(indice >= 0)
+                    {
+                        try
+                        { 
+                            for (; indice >= 0;  indice--)
+                            {
+                                if (instancias.ContainsKey(iterador[indice].Key))
+                                {
+                                    elementos = instancias[iterador[indice].Key];
+                                }
+                                else
+                                {
+                                    elementos = new List<string>();
+                                    instancias[iterador[indice].Key] = elementos;
+                                }
+                                elementos.Add(instancia[indice]);
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException) {
+                        
+                            if (instancias.ContainsKey(iterador[indice].Key))
+                            {
+                                elementos = instancias[iterador[indice].Key];
+                            }
+                            else
+                            {
+                                elementos = new List<string>();
+                                instancias[iterador[indice].Key] = elementos;
+                            }
+                            elementos.Add("?");
+
+                            indice--;
+                        }
+                    }
+                    valores_faltantes = valoresFaltantes();
+                }
+
+                //valores_faltantes = valoresFaltantes();
+            streamReader.Close();
         }
+
+        
 
         //Opcion para guardar las instancias como csv
         private void guardarCsv(string direccionArchivo)
@@ -456,7 +567,7 @@ namespace Proyecto_serio_el_regreso
             }
             recalcularValores();
         }
-        //Puto el Christian
+
         //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
