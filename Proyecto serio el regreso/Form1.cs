@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-
+using MySql.Data.MySqlClient;
 
 namespace Proyecto_serio_el_regreso
 {
@@ -37,6 +37,12 @@ namespace Proyecto_serio_el_regreso
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
         List<string> dominios = new List<string>();
         List<string> tipos = new List<string>();
+        private string server;
+        private string database;
+        private string uid;
+        private string password;
+        private MySqlConnection connection;
+        private MySqlDataAdapter mySqlDataAdapter;
 
         private Dictionary<string, int> valoresFaltantes()
         {
@@ -602,6 +608,80 @@ namespace Proyecto_serio_el_regreso
                 txbRegex.Text = encabezado[texto].Value;
                 cmboxDatos.SelectedItem = encabezado[texto].Key;
             }
+        }
+        private bool OpenConnection()
+        {
+            try
+            {
+                connection.Open();
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                //When handling errors, you can your application's response based on the error number.
+                //The two most common error numbers when connecting are as follows:
+                //0: Cannot connect to server.
+                //1045: Invalid user name and/or password.
+                switch (ex.Number)
+                {
+                    case 0:
+                        MessageBox.Show("Cannot connect to server. Contact administrator");
+                        break;
+                    case 1045:
+                        MessageBox.Show("Invalid username/password, please try again");
+                        break;
+                    default:
+                        MessageBox.Show(ex.Message);
+                        break;
+                }
+                return false;
+            }
+        }
+
+        //Close connection
+        private bool CloseConnection()
+        {
+            try
+            {
+                connection.Close();
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            server = "localhost";
+            database = "colonias";
+            uid = "root";
+            password = "";
+            string connectionString;
+            connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+
+            connection = new MySqlConnection(connectionString);
+
+            if (this.OpenConnection() == true)
+            {
+                mySqlDataAdapter = new MySqlDataAdapter("select * from postalesm", connection);
+                DataSet DS = new DataSet();
+                mySqlDataAdapter.Fill(DS);
+                dataGridView1.DataSource = DS.Tables[0];
+                //close connection
+                this.CloseConnection();
+            }
+            for (int i = 0; i < dataGridView1.ColumnCount-1; i++)
+            {
+                encabezado.Add(dataGridView1.Columns[i].Name, new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value));
+            }
+
         }
     }
 }
