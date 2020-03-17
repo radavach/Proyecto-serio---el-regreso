@@ -58,6 +58,11 @@
             this.knnYKmeansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.button1 = new System.Windows.Forms.Button();
+            this.comboBoxTablas = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.sentenciaBox = new System.Windows.Forms.TextBox();
+            this.enviarButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -310,25 +315,80 @@
             this.proyectoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1068, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1056, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 184);
+            this.button1.Location = new System.Drawing.Point(34, 266);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 24;
-            this.button1.Text = "button1";
+            this.button1.Text = "Seleccionar";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // comboBoxTablas
+            // 
+            this.comboBoxTablas.FormattingEnabled = true;
+            this.comboBoxTablas.Location = new System.Drawing.Point(12, 239);
+            this.comboBoxTablas.Name = "comboBoxTablas";
+            this.comboBoxTablas.Size = new System.Drawing.Size(127, 21);
+            this.comboBoxTablas.TabIndex = 25;
+            this.comboBoxTablas.Text = "--Selecciona tu tabla--";
+            this.comboBoxTablas.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 220);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(101, 13);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "Selecciona tu tabla:";
+            this.label1.Visible = false;
+            // 
+            // sentenciaBox
+            // 
+            this.sentenciaBox.Location = new System.Drawing.Point(277, 460);
+            this.sentenciaBox.Name = "sentenciaBox";
+            this.sentenciaBox.Size = new System.Drawing.Size(487, 20);
+            this.sentenciaBox.TabIndex = 27;
+            this.sentenciaBox.Visible = false;
+            // 
+            // enviarButton
+            // 
+            this.enviarButton.Location = new System.Drawing.Point(771, 457);
+            this.enviarButton.Name = "enviarButton";
+            this.enviarButton.Size = new System.Drawing.Size(84, 23);
+            this.enviarButton.TabIndex = 28;
+            this.enviarButton.Text = "Aceptar";
+            this.enviarButton.UseVisualStyleBackColor = true;
+            this.enviarButton.Visible = false;
+            this.enviarButton.Click += new System.EventHandler(this.enviarButton_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(277, 446);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(87, 13);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "Sentencias SQL:";
+            this.label3.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1068, 451);
+            this.ClientSize = new System.Drawing.Size(1056, 492);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.enviarButton);
+            this.Controls.Add(this.sentenciaBox);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboBoxTablas);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txbNombre);
             this.Controls.Add(this.lblNombre);
@@ -390,6 +450,11 @@
         private System.Windows.Forms.ToolStripMenuItem knnYKmeansToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox comboBoxTablas;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox sentenciaBox;
+        private System.Windows.Forms.Button enviarButton;
+        private System.Windows.Forms.Label label3;
     }
 }
 
