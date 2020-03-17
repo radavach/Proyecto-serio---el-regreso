@@ -29,18 +29,6 @@
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.archivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.abrirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.guardarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.guardarPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.proyectoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tratamientoDeLosDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.analisisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.univariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bivariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aprendizajeAutomaticoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.knnYKmeansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmBoxColumnas = new System.Windows.Forms.ComboBox();
             this.lblTipoDato = new System.Windows.Forms.Label();
             this.cmboxDatos = new System.Windows.Forms.ComboBox();
@@ -57,6 +45,19 @@
             this.lblCantAtributos = new System.Windows.Forms.Label();
             this.txbNombre = new System.Windows.Forms.TextBox();
             this.lblNombre = new System.Windows.Forms.Label();
+            this.archivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.abrirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.guardarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.guardarPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.proyectoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tratamientoDeLosDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.analisisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.univariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bivariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aprendizajeAutomaticoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.knnYKmeansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -72,101 +73,6 @@
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
-            // 
-            // archivoToolStripMenuItem
-            // 
-            this.archivoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.abrirToolStripMenuItem,
-            this.guardarToolStripMenuItem,
-            this.guardarPropertiesToolStripMenuItem});
-            this.archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
-            this.archivoToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
-            this.archivoToolStripMenuItem.Text = "Archivo";
-            // 
-            // abrirToolStripMenuItem
-            // 
-            this.abrirToolStripMenuItem.Name = "abrirToolStripMenuItem";
-            this.abrirToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.abrirToolStripMenuItem.Text = "Abrir";
-            this.abrirToolStripMenuItem.Click += new System.EventHandler(this.abrirToolStripMenuItem_Click);
-            // 
-            // guardarToolStripMenuItem
-            // 
-            this.guardarToolStripMenuItem.Name = "guardarToolStripMenuItem";
-            this.guardarToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.guardarToolStripMenuItem.Text = "Guardar";
-            this.guardarToolStripMenuItem.Click += new System.EventHandler(this.guardarToolStripMenuItem_Click);
-            // 
-            // guardarPropertiesToolStripMenuItem
-            // 
-            this.guardarPropertiesToolStripMenuItem.Name = "guardarPropertiesToolStripMenuItem";
-            this.guardarPropertiesToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.guardarPropertiesToolStripMenuItem.Text = "Guardar propiedades";
-            this.guardarPropertiesToolStripMenuItem.Click += new System.EventHandler(this.guardarPropertiesToolStripMenuItem_Click);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.archivoToolStripMenuItem,
-            this.proyectoToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1068, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // proyectoToolStripMenuItem
-            // 
-            this.proyectoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tratamientoDeLosDatosToolStripMenuItem,
-            this.analisisToolStripMenuItem,
-            this.aprendizajeAutomaticoToolStripMenuItem});
-            this.proyectoToolStripMenuItem.Name = "proyectoToolStripMenuItem";
-            this.proyectoToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
-            this.proyectoToolStripMenuItem.Text = "Proyecto";
-            // 
-            // tratamientoDeLosDatosToolStripMenuItem
-            // 
-            this.tratamientoDeLosDatosToolStripMenuItem.Name = "tratamientoDeLosDatosToolStripMenuItem";
-            this.tratamientoDeLosDatosToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.tratamientoDeLosDatosToolStripMenuItem.Text = "Tratamiento de los datos";
-            // 
-            // analisisToolStripMenuItem
-            // 
-            this.analisisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.univariableToolStripMenuItem,
-            this.bivariableToolStripMenuItem});
-            this.analisisToolStripMenuItem.Name = "analisisToolStripMenuItem";
-            this.analisisToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.analisisToolStripMenuItem.Text = "Analisis";
-            // 
-            // univariableToolStripMenuItem
-            // 
-            this.univariableToolStripMenuItem.Name = "univariableToolStripMenuItem";
-            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.univariableToolStripMenuItem.Text = "Univariable";
-            this.univariableToolStripMenuItem.Click += new System.EventHandler(this.univariableToolStripMenuItem_Click);
-            // 
-            // bivariableToolStripMenuItem
-            // 
-            this.bivariableToolStripMenuItem.Name = "bivariableToolStripMenuItem";
-            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.bivariableToolStripMenuItem.Text = "Bivariable";
-            this.bivariableToolStripMenuItem.Click += new System.EventHandler(this.bivariableToolStripMenuItem_Click);
-            // 
-            // aprendizajeAutomaticoToolStripMenuItem
-            // 
-            this.aprendizajeAutomaticoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.knnYKmeansToolStripMenuItem});
-            this.aprendizajeAutomaticoToolStripMenuItem.Name = "aprendizajeAutomaticoToolStripMenuItem";
-            this.aprendizajeAutomaticoToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.aprendizajeAutomaticoToolStripMenuItem.Text = "Aprendizaje Automatico";
-            // 
-            // knnYKmeansToolStripMenuItem
-            // 
-            this.knnYKmeansToolStripMenuItem.Name = "knnYKmeansToolStripMenuItem";
-            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.knnYKmeansToolStripMenuItem.Text = "KNN y KMeans";
             // 
             // cmBoxColumnas
             // 
@@ -313,11 +219,117 @@
             this.lblNombre.TabIndex = 22;
             this.lblNombre.Text = "Nombre de la columna";
             // 
+            // archivoToolStripMenuItem
+            // 
+            this.archivoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.abrirToolStripMenuItem,
+            this.guardarToolStripMenuItem,
+            this.guardarPropertiesToolStripMenuItem});
+            this.archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
+            this.archivoToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.archivoToolStripMenuItem.Text = "Archivo";
+            // 
+            // abrirToolStripMenuItem
+            // 
+            this.abrirToolStripMenuItem.Name = "abrirToolStripMenuItem";
+            this.abrirToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.abrirToolStripMenuItem.Text = "Abrir";
+            this.abrirToolStripMenuItem.Click += new System.EventHandler(this.abrirToolStripMenuItem_Click);
+            // 
+            // guardarToolStripMenuItem
+            // 
+            this.guardarToolStripMenuItem.Name = "guardarToolStripMenuItem";
+            this.guardarToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.guardarToolStripMenuItem.Text = "Guardar";
+            this.guardarToolStripMenuItem.Click += new System.EventHandler(this.guardarToolStripMenuItem_Click);
+            // 
+            // guardarPropertiesToolStripMenuItem
+            // 
+            this.guardarPropertiesToolStripMenuItem.Name = "guardarPropertiesToolStripMenuItem";
+            this.guardarPropertiesToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.guardarPropertiesToolStripMenuItem.Text = "Guardar propiedades";
+            this.guardarPropertiesToolStripMenuItem.Click += new System.EventHandler(this.guardarPropertiesToolStripMenuItem_Click);
+            // 
+            // proyectoToolStripMenuItem
+            // 
+            this.proyectoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tratamientoDeLosDatosToolStripMenuItem,
+            this.analisisToolStripMenuItem,
+            this.aprendizajeAutomaticoToolStripMenuItem});
+            this.proyectoToolStripMenuItem.Name = "proyectoToolStripMenuItem";
+            this.proyectoToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
+            this.proyectoToolStripMenuItem.Text = "Proyecto";
+            // 
+            // tratamientoDeLosDatosToolStripMenuItem
+            // 
+            this.tratamientoDeLosDatosToolStripMenuItem.Name = "tratamientoDeLosDatosToolStripMenuItem";
+            this.tratamientoDeLosDatosToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.tratamientoDeLosDatosToolStripMenuItem.Text = "Tratamiento de los datos";
+            // 
+            // analisisToolStripMenuItem
+            // 
+            this.analisisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.univariableToolStripMenuItem,
+            this.bivariableToolStripMenuItem});
+            this.analisisToolStripMenuItem.Name = "analisisToolStripMenuItem";
+            this.analisisToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.analisisToolStripMenuItem.Text = "Analisis";
+            // 
+            // univariableToolStripMenuItem
+            // 
+            this.univariableToolStripMenuItem.Name = "univariableToolStripMenuItem";
+            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.univariableToolStripMenuItem.Text = "Univariable";
+            this.univariableToolStripMenuItem.Click += new System.EventHandler(this.univariableToolStripMenuItem_Click);
+            // 
+            // bivariableToolStripMenuItem
+            // 
+            this.bivariableToolStripMenuItem.Name = "bivariableToolStripMenuItem";
+            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.bivariableToolStripMenuItem.Text = "Bivariable";
+            this.bivariableToolStripMenuItem.Click += new System.EventHandler(this.bivariableToolStripMenuItem_Click);
+            // 
+            // aprendizajeAutomaticoToolStripMenuItem
+            // 
+            this.aprendizajeAutomaticoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.knnYKmeansToolStripMenuItem});
+            this.aprendizajeAutomaticoToolStripMenuItem.Name = "aprendizajeAutomaticoToolStripMenuItem";
+            this.aprendizajeAutomaticoToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.aprendizajeAutomaticoToolStripMenuItem.Text = "Aprendizaje Automatico";
+            // 
+            // knnYKmeansToolStripMenuItem
+            // 
+            this.knnYKmeansToolStripMenuItem.Name = "knnYKmeansToolStripMenuItem";
+            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.knnYKmeansToolStripMenuItem.Text = "KNN y KMeans";
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.archivoToolStripMenuItem,
+            this.proyectoToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1068, 24);
+            this.menuStrip1.TabIndex = 0;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(12, 184);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 24;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1068, 451);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.txbNombre);
             this.Controls.Add(this.lblNombre);
             this.Controls.Add(this.lblCantAtributos);
@@ -349,11 +361,6 @@
 
         #endregion
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ToolStripMenuItem archivoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem abrirToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem guardarToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem guardarPropertiesToolStripMenuItem;
-        private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ComboBox cmBoxColumnas;
         private System.Windows.Forms.Label lblTipoDato;
         private System.Windows.Forms.ComboBox cmboxDatos;
@@ -370,6 +377,10 @@
         private System.Windows.Forms.Label lblCantAtributos;
         private System.Windows.Forms.TextBox txbNombre;
         private System.Windows.Forms.Label lblNombre;
+        private System.Windows.Forms.ToolStripMenuItem archivoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem abrirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem guardarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem guardarPropertiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem proyectoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tratamientoDeLosDatosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem analisisToolStripMenuItem;
@@ -377,6 +388,8 @@
         private System.Windows.Forms.ToolStripMenuItem bivariableToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aprendizajeAutomaticoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem knnYKmeansToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.Button button1;
     }
 }
 
