@@ -22,6 +22,7 @@ namespace Proyecto_serio_el_regreso
             cant_instancias = 0;
             cant_columnas = 0;
             datoTexto = "";
+            rellenarCombobox();
         }
 
         private int cant_instancias;
@@ -653,14 +654,44 @@ namespace Proyecto_serio_el_regreso
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void rellenarCombobox()
         {
+            button1.Show();
+            comboBoxTablas.Show();
+            label1.Show();
+            sentenciaBox.Show();
+            enviarButton.Show();
+            label3.Show();
+            server = "localhost";
+            database = "hotel";
+            uid = "root";
+            password = "";
+            string connectionString;
+            connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+
+            connection = new MySqlConnection(connectionString);
+            string cmdstr = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='"+database+"';";
+            DataTable dt = new DataTable();
+            MySqlDataAdapter sda = new MySqlDataAdapter(cmdstr, connection);
+            try
+            {
+                sda.Fill(dt);
+                foreach (DataRow row in dt.Rows)
+                {
+                    comboBoxTablas.Items.Add(row[0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            CloseConnection();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void cargarBase(string tabla, string sentencia)
         {
             server = "localhost";
-            database = "salones";
+            database = "hotel";
             uid = "root";
             password = "";
             string connectionString;
@@ -670,12 +701,12 @@ namespace Proyecto_serio_el_regreso
 
             if (this.OpenConnection() == true)
             {
-                mySqlDataAdapter = new MySqlDataAdapter("select * from dueno", connection);
+                mySqlDataAdapter = new MySqlDataAdapter(sentencia, connection);
                 DataSet DS = new DataSet();
                 mySqlDataAdapter.Fill(DS);
                 dataGridView1.DataSource = DS.Tables[0];
                 //close connection
-                this.CloseConnection();;
+                this.CloseConnection(); ;
 
                 encabezado = new Dictionary<string, KeyValuePair<string, string>>();
                 instancias = new Dictionary<string, List<string>>();
@@ -693,7 +724,23 @@ namespace Proyecto_serio_el_regreso
                 cmboxDatos.Items.AddRange(tipos_dato);
                 valores_faltantes = valoresFaltantes();
             }
+        }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            rellenarCombobox();
+            string tabla = comboBoxTablas.SelectedItem.ToString();
+            dataGridView1.DataSource = null;
+            encabezado = null;
+            cargarBase(tabla, "select * from " + tabla);
+        }
+
+        private void enviarButton_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = null;
+            encabezado = null;
+            string tabla = comboBoxTablas.SelectedItem.ToString();
+            cargarBase(tabla, sentenciaBox.Text);
         }
     }
 }
