@@ -36,10 +36,10 @@ namespace Proyecto_serio_el_regreso
         //direccion momentanea del archivo properties
         private OpenFileDialog properties;
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
-        List<string> dominios = new List<string>();
         private bool archivoTieneMysql = false;
         List<string> tipos = new List<string>();
         List<string> valoresFueraDeDominio = new List<string>();
+        Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
         private string server;
         private string database;
         private string uid;
@@ -162,7 +162,7 @@ namespace Proyecto_serio_el_regreso
                     string[] instancia = leerCsv.ReadLine().Split(',');
                     int indice = encabezado.Count - 1;
 
-                    List<KeyValuePair<string, KeyValuePair<string, string>>> iterador = encabezado.ToList();
+                    List<string> iterador = encabezado.Keys.ToList();
                     List<string> elementos;
 
                     cant_instancias++;
@@ -173,28 +173,28 @@ namespace Proyecto_serio_el_regreso
                         { 
                             for (; indice >= 0;  indice--)
                             {
-                                if (instancias.ContainsKey(iterador[indice].Key))
+                                if (instancias.ContainsKey(iterador[indice]))
                                 {
-                                    elementos = instancias[iterador[indice].Key];
+                                    elementos = instancias[iterador[indice]];
                                 }
                                 else
                                 {
                                     elementos = new List<string>();
-                                    instancias[iterador[indice].Key] = elementos;
+                                    instancias[iterador[indice]] = elementos;
                                 }
                                 elementos.Add(instancia[indice]);
                             }
                         }
                         catch (System.IndexOutOfRangeException) {
                         
-                            if (instancias.ContainsKey(iterador[indice].Key))
+                            if (instancias.ContainsKey(iterador[indice]))
                             {
-                                elementos = instancias[iterador[indice].Key];
+                                elementos = instancias[iterador[indice]];
                             }
                             else
                             {
                                 elementos = new List<string>();
-                                instancias[iterador[indice].Key] = elementos;
+                                instancias[iterador[indice]] = elementos;
                             }
                             elementos.Add("?");
 
@@ -288,12 +288,10 @@ namespace Proyecto_serio_el_regreso
                             nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Numerico", domNum));
-                            dominios.Add(domNum);
                         }
                         else if (linea.Contains("("))
                         {
                             string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
-                            dominios.Add(Regex.Replace(domNom, @"\s+", ""));
                             nombreColumna = linea.Substring(0, linea.IndexOf("nominal"));
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
@@ -310,7 +308,7 @@ namespace Proyecto_serio_el_regreso
                     string[] instancia = streamReader.ReadLine().Split(',');
                     int indice = encabezado.Count - 1;
 
-                    List<KeyValuePair<string, KeyValuePair<string, string>>> iterador = encabezado.ToList();
+                    List<string> iterador = encabezado.Keys.ToList();
                     List<string> elementos;
 
                     cant_instancias++;
@@ -321,14 +319,14 @@ namespace Proyecto_serio_el_regreso
                         {
                             for (; indice >= 0; indice--)
                             {
-                                if (instancias.ContainsKey(iterador[indice].Key))
+                                if (instancias.ContainsKey(iterador[indice]))
                                 {
-                                    elementos = instancias[iterador[indice].Key];
+                                    elementos = instancias[iterador[indice]];
                                 }
                                 else
                                 {
                                     elementos = new List<string>();
-                                    instancias[iterador[indice].Key] = elementos;
+                                    instancias[iterador[indice]] = elementos;
                                 }
                                 elementos.Add(instancia[indice]);
                             }
@@ -336,14 +334,14 @@ namespace Proyecto_serio_el_regreso
                         catch (System.IndexOutOfRangeException)
                         {
 
-                            if (instancias.ContainsKey(iterador[indice].Key))
+                            if (instancias.ContainsKey(iterador[indice]))
                             {
-                                elementos = instancias[iterador[indice].Key];
+                                elementos = instancias[iterador[indice]];
                             }
                             else
                             {
                                 elementos = new List<string>();
-                                instancias[iterador[indice].Key] = elementos;
+                                instancias[iterador[indice]] = elementos;
                             }
                             elementos.Add("?");
 
@@ -360,31 +358,29 @@ namespace Proyecto_serio_el_regreso
         void verificarDominios()
         {
             int indice = 0;
-            int renglon = 0;
-            int numCol = 0;
+            valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
 
             while (indice != cant_instancias)
             {
-                
-                //Regex regex = new Regex(dominios.ElementAt(numCol));
-                //renglon = dataGridView1.Rows.Add();
                 foreach (string columna in encabezado.Keys)
                 {
-                    numCol=dataGridView1.Columns[columna].Index;
-                    Regex regex = new Regex(dominios.ElementAt(numCol));
-                    ;
-                    dataGridView1.Rows[renglon].Cells[columna].Value = instancias[columna][indice];
+                    //En encabezado, con columna accedes a los datos de la columna, key es para el tipo de dato y value para la expresion regular
+                    Regex regex = new Regex(encabezado[columna].Value);
+                    
                     if (!regex.IsMatch(instancias[columna][indice]))
                     {
-                        dataGridView1.Rows[renglon].Cells[columna].Style.BackColor = Color.Yellow;
+                        dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.Yellow;
+
+                        if (!valoresFueraDeDominio2.ContainsKey(columna))
+                        {
+                            valoresFueraDeDominio2[columna] = new List<KeyValuePair<int, string>>();
+                        }
+                        valoresFueraDeDominio2[columna].Add(new KeyValuePair<int, string>(indice, instancias[columna][indice]));
+                        
                         valoresFueraDeDominio.Add(instancias[columna][indice].ToString());
-                     
-                        //valores_faltantes++;
                     }
                 }
-                //numCol++;
                 indice++;
-                renglon++;
             }
 
         }
