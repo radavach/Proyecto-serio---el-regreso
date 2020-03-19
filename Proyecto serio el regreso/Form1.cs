@@ -72,7 +72,10 @@ namespace Proyecto_serio_el_regreso
             lblCantAtributos.Text = ("Cantidad de atributos:\n" + cant_columnas);
             lblValoresFaltantes.Text = ("Cantidad de valores faltanes:\n" + cant_faltantes + "(" + Convert.ToDecimal((cant_faltantes * 100) / (cant_instancias * cant_columnas)).ToString() + "%" + ")");
 
-            verificarDominios();
+            if (archivoTieneMysql == false)
+            {
+                verificarDominios();
+            }
         }
 
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
