@@ -493,24 +493,6 @@ namespace Proyecto_serio_el_regreso
                 indice++;
                 renglon++;
             }
-
-            /* indice = 0;
-             renglon = 0;
-             while (indice != cant_instancias)
-             {
-                 //renglon = dataGridView1.Rows.Add();
-                 foreach (string columna in encabezado.Keys)
-                 {
-                     dataGridView1.Rows[renglon].Cells[columna].Value = instancias[columna][indice];
-                     if (!regex.IsMatch(instancias[columna][indice]))
-                     {
-                         dataGridView1.Rows[renglon].Cells[columna].Style.BackColor = Color.Yellow;
-                         //valores_faltantes++;
-                     }
-                 }
-                 indice++;
-                 renglon++;
-             } */
             
 
         }
