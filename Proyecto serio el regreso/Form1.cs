@@ -22,7 +22,7 @@ namespace Proyecto_serio_el_regreso
             cant_instancias = 0;
             cant_columnas = 0;
             datoTexto = "";
-            rellenarCombobox();
+            //rellenarCombobox();
         }
 
         private int cant_instancias;
@@ -37,6 +37,7 @@ namespace Proyecto_serio_el_regreso
         private OpenFileDialog properties;
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
         List<string> dominios = new List<string>();
+        private bool archivoTieneMysql = false;
         List<string> tipos = new List<string>();
         private string server;
         private string database;
@@ -94,11 +95,13 @@ namespace Proyecto_serio_el_regreso
                 {
                     cargarProperties(archivo.FileName);
                 }
-                cargarGrid();
                 this.archivo = archivo;
                 this.properties = archivo;
-
-                recalcularValores();
+                if (archivoTieneMysql == false)
+                {
+                    cargarGrid();
+                    recalcularValores();
+                }
             }
             else {
                 MessageBox.Show("El archivo no se abrio");
@@ -207,64 +210,96 @@ namespace Proyecto_serio_el_regreso
         {
             MessageBox.Show("Se cargara el archivo con la direccion " + direccionArchivo);
             //Dictionary<string, List<string>> instancias = new Dictionary<string, List<string>>();
-            
+
             StreamReader streamReader = new StreamReader(direccionArchivo);
 
             string nombreColumna;
             string linea = streamReader.ReadLine();
             bool existe = linea.Contains("@data");
-            //while((linea = streamReader.ReadLine()) != null)
-            while (existe != true)
+            bool existeMysql = linea.Contains("@mysql");
+            //string tempServer = "@server=";
+            linea = streamReader.ReadLine();
+            while (!streamReader.EndOfStream)
             {
                 linea = streamReader.ReadLine();
-                existe = linea.Contains("@data");
-                //foreach (string palabra in linea.Split('%'))
-                //{
-                if (linea.Contains("@attribute"))
+                existeMysql = linea.Contains("@mysql");
+
+                if (linea.Contains("@mysql"))
                 {
-                             
-                 
-                    //Para uso futuro
-                    if (linea.Contains("numeric"))
+                    //linea = streamReader.ReadLine();
+                    archivoTieneMysql = true;
+                }
+
+                if (archivoTieneMysql == true)
+                {
+                    if (linea.Contains("@server") == true)
                     {
-                        tipos.Add("numeric");
-                    }
-                    else if (linea.Contains("nominal"))
-                    {
-                        tipos.Add("nominal");
-                    }
-                    else if (linea.Contains("binary symmetric"))
-                    {
-                        tipos.Add("binary symmetric");
-                    }
-                    else if (linea.Contains("binary asymmetric"))
-                    {
-                        tipos.Add("binary asymmetric");
+                        server = linea.Substring(linea.IndexOf('=')+1);
+                        
                     }
 
-                    if (linea.Contains("["))
+                    if (linea.Contains("@database") == true)
                     {
-                        string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
-                        nombreColumna = linea.Substring(0,linea.IndexOf("numeric"));
-                        nombreColumna=nombreColumna.Replace("@attribute","");
-                        encabezado.Add(nombreColumna,new KeyValuePair<string, string>("Numerico", domNum));
-                        //dominios.Add(domNum);
+                        database = linea.Substring(linea.IndexOf('=') + 1);
+                        
                     }
-                    else if (linea.Contains("("))
+
+                    if (linea.Contains("@uid") == true)
                     {
-                        string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
-                        //dominios.Add(Regex.Replace(domNom, @"\s+", ""));
-                        nombreColumna = linea.Substring(0,linea.IndexOf("nominal"));
-                        nombreColumna=nombreColumna.Replace("@attribute","");
-                        encabezado.Add(nombreColumna,new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
+                        uid = linea.Substring(linea.IndexOf('=') + 1);
+                       
                     }
+
+                    if (linea.Contains("@password") == true)
+                    {
+                        password = linea.Substring(linea.IndexOf('=') + 1);
+                        
+                    }
+                    //rellenarCombobox();
                 }
-                //}
             }
-            linea=streamReader.ReadLine();
-            streamReader = new StreamReader(File.OpenRead(linea));
             
-             while (!streamReader.EndOfStream)
+            if (archivoTieneMysql==true)
+            {
+                rellenarCombobox();
+            }
+            else
+            {
+                streamReader.DiscardBufferedData();
+                streamReader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+                //while((linea = streamReader.ReadLine()) != null)
+                while (existe != true)
+                {
+                    linea = streamReader.ReadLine();
+                    existe = linea.Contains("@data");
+
+                    if (linea.Contains("@attribute"))
+                    {
+
+                        if (linea.Contains("["))
+                        {
+                            string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
+                            nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
+                            nombreColumna = nombreColumna.Replace("@attribute", "");
+                            encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Numerico", domNum));
+                            //dominios.Add(domNum);
+                        }
+                        else if (linea.Contains("("))
+                        {
+                            string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
+                            //dominios.Add(Regex.Replace(domNom, @"\s+", ""));
+                            nombreColumna = linea.Substring(0, linea.IndexOf("nominal"));
+                            nombreColumna = nombreColumna.Replace("@attribute", "");
+                            encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
+                        }
+                    }
+                    
+                }
+
+                linea = streamReader.ReadLine();
+                streamReader = new StreamReader(File.OpenRead(linea));
+
+                while (!streamReader.EndOfStream)
                 {
                     string[] instancia = streamReader.ReadLine().Split(',');
                     int indice = encabezado.Count - 1;
@@ -274,11 +309,11 @@ namespace Proyecto_serio_el_regreso
 
                     cant_instancias++;
 
-                    while(indice >= 0)
+                    while (indice >= 0)
                     {
                         try
-                        { 
-                            for (; indice >= 0;  indice--)
+                        {
+                            for (; indice >= 0; indice--)
                             {
                                 if (instancias.ContainsKey(iterador[indice].Key))
                                 {
@@ -292,8 +327,9 @@ namespace Proyecto_serio_el_regreso
                                 elementos.Add(instancia[indice]);
                             }
                         }
-                        catch (System.IndexOutOfRangeException) {
-                        
+                        catch (System.IndexOutOfRangeException)
+                        {
+
                             if (instancias.ContainsKey(iterador[indice].Key))
                             {
                                 elementos = instancias[iterador[indice].Key];
@@ -310,12 +346,13 @@ namespace Proyecto_serio_el_regreso
                     }
                     valores_faltantes = valoresFaltantes();
                 }
-
-                //valores_faltantes = valoresFaltantes();
+            }
+            
             streamReader.Close();
         }
 
-        
+
+
 
         //Opcion para guardar las instancias como csv
         private void guardarCsv(string direccionArchivo)
@@ -662,10 +699,10 @@ namespace Proyecto_serio_el_regreso
             sentenciaBox.Show();
             enviarButton.Show();
             label3.Show();
-            server = "localhost";
-            database = "hotel";
-            uid = "root";
-            password = "";
+            //server = "localhost";
+            //database = "hotel";
+            //uid = "root";
+            //password = "";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
@@ -690,10 +727,10 @@ namespace Proyecto_serio_el_regreso
 
         private void cargarBase(string tabla, string sentencia)
         {
-            server = "localhost";
-            database = "hotel";
-            uid = "root";
-            password = "";
+            //server = "localhost";
+            //database = "hotel";
+            //uid = "root";
+            //password = "";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
@@ -721,6 +758,7 @@ namespace Proyecto_serio_el_regreso
                     instancias[columna] = dataGridView1.Rows.Cast<DataGridViewRow>().Select(a => a.Cells[i].Value.ToString()).ToList();
                 }
 
+                recalcularValores();
                 cmboxDatos.Items.AddRange(tipos_dato);
                 valores_faltantes = valoresFaltantes();
             }
