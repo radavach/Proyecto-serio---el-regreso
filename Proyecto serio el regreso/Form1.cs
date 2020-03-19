@@ -39,6 +39,7 @@ namespace Proyecto_serio_el_regreso
         List<string> dominios = new List<string>();
         private bool archivoTieneMysql = false;
         List<string> tipos = new List<string>();
+        List<string> valoresFueraDeDominio = new List<string>();
         private string server;
         private string database;
         private string uid;
@@ -70,6 +71,8 @@ namespace Proyecto_serio_el_regreso
             lblCantInstancias.Text = ("Cantidad de instancias:\n" + cant_instancias);
             lblCantAtributos.Text = ("Cantidad de atributos:\n" + cant_columnas);
             lblValoresFaltantes.Text = ("Cantidad de valores faltanes:\n" + cant_faltantes + "(" + Convert.ToDecimal((cant_faltantes * 100) / (cant_instancias * cant_columnas)).ToString() + "%" + ")");
+
+            verificarDominios();
         }
 
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
@@ -282,12 +285,12 @@ namespace Proyecto_serio_el_regreso
                             nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Numerico", domNum));
-                            //dominios.Add(domNum);
+                            dominios.Add(domNum);
                         }
                         else if (linea.Contains("("))
                         {
                             string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
-                            //dominios.Add(Regex.Replace(domNom, @"\s+", ""));
+                            dominios.Add(Regex.Replace(domNom, @"\s+", ""));
                             nombreColumna = linea.Substring(0, linea.IndexOf("nominal"));
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
@@ -351,6 +354,37 @@ namespace Proyecto_serio_el_regreso
             streamReader.Close();
         }
 
+        void verificarDominios()
+        {
+            int indice = 0;
+            int renglon = 0;
+            int numCol = 0;
+
+            while (indice != cant_instancias)
+            {
+                
+                //Regex regex = new Regex(dominios.ElementAt(numCol));
+                //renglon = dataGridView1.Rows.Add();
+                foreach (string columna in encabezado.Keys)
+                {
+                    numCol=dataGridView1.Columns[columna].Index;
+                    Regex regex = new Regex(dominios.ElementAt(numCol));
+                    ;
+                    dataGridView1.Rows[renglon].Cells[columna].Value = instancias[columna][indice];
+                    if (!regex.IsMatch(instancias[columna][indice]))
+                    {
+                        dataGridView1.Rows[renglon].Cells[columna].Style.BackColor = Color.Yellow;
+                        valoresFueraDeDominio.Add(instancias[columna][indice].ToString());
+                     
+                        //valores_faltantes++;
+                    }
+                }
+                //numCol++;
+                indice++;
+                renglon++;
+            }
+
+        }
 
 
 
@@ -459,7 +493,10 @@ namespace Proyecto_serio_el_regreso
                 indice++;
                 renglon++;
             }
+            
+
         }
+
 
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
