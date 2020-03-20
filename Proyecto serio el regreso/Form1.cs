@@ -223,18 +223,29 @@ namespace Proyecto_serio_el_regreso
 
             string nombreColumna;
             string linea = streamReader.ReadLine();
+            string descripcion="";
+            string tempDesc = "";
             bool existe = linea.Contains("@data");
             bool existeMysql = linea.Contains("@mysql");
             //string tempServer = "@server=";
-            linea = streamReader.ReadLine();
+            //linea = streamReader.ReadLine();
+
+            //Primero lee el archivo para buscar el tag '@mysql'
             while (!streamReader.EndOfStream)
             {
+                if (linea.Contains("%%"))
+                {
+                    tempDesc = linea.Replace("%% ", "");
+                    descripcion = descripcion + tempDesc;
+                }
+
                 linea = streamReader.ReadLine();
                 existeMysql = linea.Contains("@mysql");
 
+
                 if (linea.Contains("@mysql"))
                 {
-                    //linea = streamReader.ReadLine();
+                    //se activa la bandera cuando es encontrado el tag
                     archivoTieneMysql = true;
                 }
 
@@ -263,30 +274,49 @@ namespace Proyecto_serio_el_regreso
                         password = linea.Substring(linea.IndexOf('=') + 1);
                         
                     }
-                    //rellenarCombobox();
                 }
+                //labelDescripcion.Text = descripcion;
             }
             
             if (archivoTieneMysql==true)
             {
+                labelDescripcion.Text = descripcion;
                 rellenarCombobox();
             }
+
+            //si no se encontró el tag '@mysql'
             else
             {
+                //se vuelve a leer el archivo desde el inicio
                 streamReader.DiscardBufferedData();
                 streamReader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
-                //while((linea = streamReader.ReadLine()) != null)
+                tempDesc = "";
+                descripcion = "";
+                //se obtiene el encabezado
                 while (existe != true)
                 {
+                    
+                    if (linea.Contains("%%"))
+                    {
+                        tempDesc = linea.Replace("%% ", "");
+                        descripcion = descripcion + tempDesc;
+                        //descripcion = tempDesc + Environment.NewLine;
+
+                    }
+                    //descripcion = descripcion + tempDesc;
+
                     linea = streamReader.ReadLine();
                     existe = linea.Contains("@data");
+                   
 
                     if (linea.Contains("@attribute"))
                     {
 
                         if (linea.Contains("["))
                         {
+                            //se obtiene la expresión regular
                             string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
+                            //se limpia la cadena
                             nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Numerico", domNum));
@@ -301,7 +331,9 @@ namespace Proyecto_serio_el_regreso
                     }
                     
                 }
+                labelDescripcion.Text = descripcion;
 
+                //se lee la ruta del .csv dentro del .properties
                 linea = streamReader.ReadLine();
                 streamReader = new StreamReader(File.OpenRead(linea));
 
@@ -352,8 +384,10 @@ namespace Proyecto_serio_el_regreso
                     }
                     valores_faltantes = valoresFaltantes();
                 }
+
             }
-            
+            //labelDescripcion.Text = descripcion;
+
             streamReader.Close();
             if(existeMysql)
             {
