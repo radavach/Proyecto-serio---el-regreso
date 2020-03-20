@@ -70,13 +70,7 @@ namespace Proyecto_serio_el_regreso
 
                 if (tipoDato == "Nominal")
                 {
-                    MessageBox.Show("Tabla de frecuencias aquí");
-                    List<KeyValuePair<string, int>> frecuencias = new List<KeyValuePair<string, int>>
-                    {
-                        new KeyValuePair<string, int>("Dinosaurios", 12),
-                        new KeyValuePair<string, int>("Cucarachas", 32),
-                        new KeyValuePair<string, int>("Venados", 20)
-                    };
+                    List<KeyValuePair<string, int>> frecuencias = frecuenciasNominales(columna);
                     pruebaHistograma(frecuencias);
                     tabControl1.SelectedIndex = 1;
                 }
@@ -262,12 +256,44 @@ namespace Proyecto_serio_el_regreso
                 chartHistograma.Series["s1"].Points.AddXY(valor.Key, valor.Value);
                 lblFrecuencias.Text += valor.Key + ": " + valor.Value.ToString() + "\n";
             }
-            chartHistograma.SaveImage("C:\\Users\\Dany\\Desktop\\nombreGenerico.png", ChartImageFormat.Png);
+            //chartHistograma.SaveImage("C:\\Users\\Dany\\Desktop\\nombreGenerico.png", ChartImageFormat.Png);
         }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
             form1.Show();
+        }
+
+        private List<KeyValuePair<string, int>> frecuenciasNominales(string columna)
+        {
+            List<KeyValuePair<string, int>> frecuencias = new List<KeyValuePair<string, int>>();
+            List<string> valores = new List<string>();
+            List<int> repeticiones = new List<int>();
+            int count = 0;
+            for(int i = 0; i < instancias[columna].Count; i++)
+            {
+                if (!valores.Contains(instancias[columna].ElementAt(i)))
+                {
+                    valores.Add(instancias[columna].ElementAt(i));
+                }
+            }
+            for(int i = 0; i < valores.Count; i++)
+            {
+                for(int j = 0; j < instancias[columna].Count; j++)
+                {
+                    if(valores.ElementAt(i) == instancias[columna].ElementAt(j))
+                    {
+                        count++;
+                    }
+                }
+                repeticiones.Add(count);
+                count = 0;
+            }
+            for(int i = 0; i < valores.Count; i++)
+            {
+                frecuencias.Add(new KeyValuePair<string, int>(valores.ElementAt(i), repeticiones.ElementAt(i)));
+            }
+            return frecuencias;
         }
     }
 }
