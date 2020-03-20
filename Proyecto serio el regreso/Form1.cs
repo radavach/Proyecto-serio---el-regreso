@@ -23,6 +23,7 @@ namespace Proyecto_serio_el_regreso
             cant_columnas = 0;
             datoTexto = "";
             //rellenarCombobox();
+            tablaSeleccionada = false;
         }
 
         private int cant_instancias;
@@ -46,6 +47,7 @@ namespace Proyecto_serio_el_regreso
         private string password;
         private MySqlConnection connection;
         private MySqlDataAdapter mySqlDataAdapter;
+        private bool tablaSeleccionada;
 
         private Dictionary<string, int> valoresFaltantes()
         {
@@ -353,6 +355,10 @@ namespace Proyecto_serio_el_regreso
             }
             
             streamReader.Close();
+            if(existeMysql)
+            {
+                rellenarCombobox();
+            }
         }
 
         void verificarDominios()
@@ -754,6 +760,7 @@ namespace Proyecto_serio_el_regreso
                 {
                     comboBoxTablas.Items.Add(row[0]);
                 }
+                MessageBox.Show("Se ha cargado correctamente la base de datos");
             }
             catch (Exception ex)
             {
@@ -777,45 +784,66 @@ namespace Proyecto_serio_el_regreso
             {
                 mySqlDataAdapter = new MySqlDataAdapter(sentencia, connection);
                 DataSet DS = new DataSet();
-                mySqlDataAdapter.Fill(DS);
-                dataGridView1.DataSource = DS.Tables[0];
-                //close connection
-                this.CloseConnection(); ;
-
-                encabezado = new Dictionary<string, KeyValuePair<string, string>>();
-                instancias = new Dictionary<string, List<string>>();
-
-                for (int i = 0; i < dataGridView1.ColumnCount; i++)
+                try
                 {
-                    string columna = dataGridView1.Columns[i].Name;
-                    encabezado.Add(columna, new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value));
-                    cmBoxColumnas.Items.Add(columna);
+                    mySqlDataAdapter.Fill(DS);
+                    dataGridView1.DataSource = DS.Tables[0];
+                    //close connection
+                    this.CloseConnection(); ;
 
-                    //instancias[columna] = DS.Tables[0].AsEnumerable().Select(a => a.Field<string>(columna).ToString()).ToList();
-                    instancias[columna] = dataGridView1.Rows.Cast<DataGridViewRow>().Select(a => a.Cells[i].Value.ToString()).ToList();
+                    encabezado = new Dictionary<string, KeyValuePair<string, string>>();
+                    instancias = new Dictionary<string, List<string>>();
+
+                    for (int i = 0; i < dataGridView1.ColumnCount; i++)
+                    {
+                        string columna = dataGridView1.Columns[i].Name;
+                        encabezado.Add(columna, new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value));
+                        cmBoxColumnas.Items.Add(columna);
+
+                        //instancias[columna] = DS.Tables[0].AsEnumerable().Select(a => a.Field<string>(columna).ToString()).ToList();
+                        instancias[columna] = dataGridView1.Rows.Cast<DataGridViewRow>().Select(a => a.Cells[i].Value.ToString()).ToList();
+                    }
+
+                    recalcularValores();
+                    cmboxDatos.Items.AddRange(tipos_dato);
+                    valores_faltantes = valoresFaltantes();
                 }
-
-                recalcularValores();
-                cmboxDatos.Items.AddRange(tipos_dato);
-                valores_faltantes = valoresFaltantes();
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            rellenarCombobox();
-            string tabla = comboBoxTablas.SelectedItem.ToString();
-            dataGridView1.DataSource = null;
-            encabezado = null;
-            cargarBase(tabla, "select * from " + tabla);
+            if (comboBoxTablas.SelectedIndex != -1)
+            {
+                string tabla = comboBoxTablas.SelectedItem.ToString();
+                dataGridView1.DataSource = null;
+                encabezado = null;
+                cargarBase(tabla, "select * from " + tabla);
+            }
+            else
+            {
+                MessageBox.Show("No se ha seleccioando ninguna tabla");
+            }
         }
 
         private void enviarButton_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = null;
-            encabezado = null;
-            string tabla = comboBoxTablas.SelectedItem.ToString();
-            cargarBase(tabla, sentenciaBox.Text);
+            if(comboBoxTablas.SelectedIndex != -1)
+            {
+                dataGridView1.DataSource = null;
+                encabezado = null;
+                string tabla = comboBoxTablas.SelectedItem.ToString();
+                cargarBase(tabla, sentenciaBox.Text);
+            }
+            else
+            {
+                MessageBox.Show("No se ha seleccioando ninguna tabla");
+            }
         }
     }
 }
