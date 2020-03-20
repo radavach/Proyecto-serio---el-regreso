@@ -28,47 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.lblTexto = new System.Windows.Forms.Label();
+            this.cmBoxDato1 = new System.Windows.Forms.ComboBox();
+            this.cmBoxDato2 = new System.Windows.Forms.ComboBox();
+            this.btnAnalisis = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.lblResultado = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // lblTexto
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
+            this.lblTexto.AutoSize = true;
+            this.lblTexto.Location = new System.Drawing.Point(13, 13);
+            this.lblTexto.Name = "lblTexto";
+            this.lblTexto.Size = new System.Drawing.Size(295, 13);
+            this.lblTexto.TabIndex = 0;
+            this.lblTexto.Text = "Selecciona los atributos a comparar (Nominales o Númericos)";
             // 
-            // comboBox1
+            // cmBoxDato1
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(13, 44);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 1;
+            this.cmBoxDato1.FormattingEnabled = true;
+            this.cmBoxDato1.Location = new System.Drawing.Point(13, 44);
+            this.cmBoxDato1.Name = "cmBoxDato1";
+            this.cmBoxDato1.Size = new System.Drawing.Size(121, 21);
+            this.cmBoxDato1.TabIndex = 1;
             // 
-            // comboBox2
+            // cmBoxDato2
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(196, 43);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 21);
-            this.comboBox2.TabIndex = 2;
+            this.cmBoxDato2.FormattingEnabled = true;
+            this.cmBoxDato2.Location = new System.Drawing.Point(187, 43);
+            this.cmBoxDato2.Name = "cmBoxDato2";
+            this.cmBoxDato2.Size = new System.Drawing.Size(121, 21);
+            this.cmBoxDato2.TabIndex = 2;
             // 
-            // button1
+            // btnAnalisis
             // 
-            this.button1.Location = new System.Drawing.Point(346, 43);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnAnalisis.Location = new System.Drawing.Point(346, 43);
+            this.btnAnalisis.Name = "btnAnalisis";
+            this.btnAnalisis.Size = new System.Drawing.Size(75, 23);
+            this.btnAnalisis.TabIndex = 3;
+            this.btnAnalisis.Text = "Analizar";
+            this.btnAnalisis.UseVisualStyleBackColor = true;
+            this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
             // 
             // dataGridView1
             // 
@@ -81,18 +83,28 @@
             this.dataGridView1.Size = new System.Drawing.Size(344, 425);
             this.dataGridView1.TabIndex = 4;
             // 
+            // lblResultado
+            // 
+            this.lblResultado.AutoSize = true;
+            this.lblResultado.Location = new System.Drawing.Point(13, 92);
+            this.lblResultado.Name = "lblResultado";
+            this.lblResultado.Size = new System.Drawing.Size(0, 13);
+            this.lblResultado.TabIndex = 5;
+            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblResultado);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnAnalisis);
+            this.Controls.Add(this.cmBoxDato2);
+            this.Controls.Add(this.cmBoxDato1);
+            this.Controls.Add(this.lblTexto);
             this.Name = "Form3";
             this.Text = "Form3";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -101,10 +113,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lblTexto;
+        private System.Windows.Forms.ComboBox cmBoxDato1;
+        private System.Windows.Forms.ComboBox cmBoxDato2;
+        private System.Windows.Forms.Button btnAnalisis;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Label lblResultado;
     }
 }

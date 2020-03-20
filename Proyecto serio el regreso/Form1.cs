@@ -669,7 +669,8 @@ namespace Proyecto_serio_el_regreso
 
         private void bivariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            Form3 form3 = new Form3(this, encabezado, instancias);
+            form3.Show();
         }
 
         private void cmBoxColumnas_SelectedIndexChanged(object sender, EventArgs e)

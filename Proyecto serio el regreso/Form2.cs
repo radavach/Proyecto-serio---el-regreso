@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,7 +90,7 @@ namespace Proyecto_serio_el_regreso
                     //}
                     //valoresOrdenados.Sort();
 
-                    valoresOrdenados.AddRange(instancias[columna].Select(double.Parse));
+                    valoresOrdenados.AddRange(instancias[columna].Select(x => { double temp;  return double.TryParse(x, out temp) ? temp : 0; }));
                     sumatoria = valoresOrdenados.Sum();
 
                     valoresOrdenados.Sort();
@@ -244,6 +245,11 @@ namespace Proyecto_serio_el_regreso
 
             ay.Maximum = yMax + (yMax/10);
             ay.Minimum = yMin - (yMin/10);
+
+            //CODIGO PARA GUARDAR COMO IMAGEN LOS CHART :3 si quieren lo habilitamos, pero me gustaria terminar los detalles principales primero
+            //string wanted_path = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory())) + "\\nombreGenerico.png";
+            //Console.WriteLine(wanted_path);
+            //chartBoxplot.SaveImage(wanted_path, ChartImageFormat.Png);
         }
 
         private void pruebaHistograma(List<KeyValuePair<string, int>>frecuencias)
@@ -256,6 +262,7 @@ namespace Proyecto_serio_el_regreso
                 chartHistograma.Series["s1"].Points.AddXY(valor.Key, valor.Value);
                 lblFrecuencias.Text += valor.Key + ": " + valor.Value.ToString() + "\n";
             }
+            chartHistograma.SaveImage("C:\\Users\\Dany\\Desktop\\nombreGenerico.png", ChartImageFormat.Png);
         }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
