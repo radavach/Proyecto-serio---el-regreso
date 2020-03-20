@@ -63,6 +63,7 @@
             this.sentenciaBox = new System.Windows.Forms.TextBox();
             this.enviarButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.labelDescripcion = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -379,11 +380,19 @@
             this.label3.Text = "Sentencias SQL:";
             this.label3.Visible = false;
             // 
+            // labelDescripcion
+            // 
+            this.labelDescripcion.Location = new System.Drawing.Point(862, 297);
+            this.labelDescripcion.Name = "labelDescripcion";
+            this.labelDescripcion.Size = new System.Drawing.Size(145, 142);
+            this.labelDescripcion.TabIndex = 31;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 492);
+            this.Controls.Add(this.labelDescripcion);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.enviarButton);
             this.Controls.Add(this.sentenciaBox);
@@ -455,6 +464,7 @@
         private System.Windows.Forms.TextBox sentenciaBox;
         private System.Windows.Forms.Button enviarButton;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelDescripcion;
     }
 }
 
