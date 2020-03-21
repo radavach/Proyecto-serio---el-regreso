@@ -45,6 +45,7 @@ namespace Proyecto_serio_el_regreso
         private string database;
         private string uid;
         private string password;
+        private bool esProperties=false;
         private MySqlConnection connection;
         private MySqlDataAdapter mySqlDataAdapter;
         private bool tablaSeleccionada;
@@ -126,9 +127,10 @@ namespace Proyecto_serio_el_regreso
                 {
                     guardarCsv(archivo.FileName);
                 }
-                else if(extension.Equals(".data"))
+                else if(extension.Equals(".properties"))
                 {
                     //pendiente
+                    guardarProperties(archivo.FileName);
                 }
             }
             catch(System.NullReferenceException)
@@ -138,7 +140,35 @@ namespace Proyecto_serio_el_regreso
             
 
         }
-        
+
+        private void guardarProperties(string direccionArchivo)
+        {
+            //StreamWriter escribir = new StreamWriter(direccionArchivo);
+
+            //por el momento guarda el contenido de la tabla en el csv ubicado en properties
+            StreamReader streamReader = new StreamReader(direccionArchivo);
+            streamReader.DiscardBufferedData();
+            streamReader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+            string linea = streamReader.ReadLine();
+            bool existeRuta = linea.Contains("C:");
+            string rutaCSV = "";
+            while (existeRuta!=true)
+            {
+                linea = streamReader.ReadLine();
+                existeRuta = linea.Contains("C:");
+                if (linea.Contains("C:")==true)
+                {
+                    rutaCSV = linea;
+
+                }
+
+            }
+            streamReader.Close();
+            MessageBox.Show(rutaCSV,"La tabla se guardará en");
+            guardarCsv(rutaCSV);
+        }
+
+
         //Guardar propiedades pendiente
         private void guardarPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -393,6 +423,8 @@ namespace Proyecto_serio_el_regreso
             {
                 rellenarCombobox();
             }
+
+            esProperties = true;
         }
 
         void verificarDominios()
@@ -431,22 +463,26 @@ namespace Proyecto_serio_el_regreso
         private void guardarCsv(string direccionArchivo)
         {
             //StreamWriter escribir = new StreamWriter(direccionArchivo);
+            System.IO.File.WriteAllText(direccionArchivo, string.Empty);
             StreamWriter escribir = File.AppendText(direccionArchivo);
 
             int contador = 1;
-            foreach(string columna in encabezado.Keys)
+            if (esProperties == false)
             {
-                escribir.Write(columna);
+                foreach (string columna in encabezado.Keys)
+                {
+                    escribir.Write(columna);
 
-                if(encabezado.Keys.Count() > contador)
-                {
-                    escribir.Write(',');
+                    if (encabezado.Keys.Count() > contador)
+                    {
+                        escribir.Write(',');
+                    }
+                    else
+                    {
+                        escribir.WriteLine("");
+                    }
+                    contador += 1;
                 }
-                else
-                {
-                    escribir.WriteLine("");
-                }
-                contador += 1;
             }
 
             for(int fila = 0; fila < cant_instancias; fila+=1)
