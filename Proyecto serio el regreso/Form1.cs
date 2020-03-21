@@ -24,23 +24,27 @@ namespace Proyecto_serio_el_regreso
             datoTexto = "";
             //rellenarCombobox();
             tablaSeleccionada = false;
+            properties = new OpenFileDialog { FileName = "" };
+            archivo = new OpenFileDialog { FileName = "" };
         }
 
         private int cant_instancias;
         private int cant_columnas;
         private string datoTexto;
         private string []tipos_dato;
+
         private Dictionary<string, int> valores_faltantes;
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
+
         private OpenFileDialog archivo;
-        //direccion momentanea del archivo properties
         private OpenFileDialog properties;
-        private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", "/b(?<word>)/b");
+
+        private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
         private bool archivoTieneMysql = false;
-        List<string> tipos = new List<string>();
-        List<string> valoresFueraDeDominio = new List<string>();
+
         Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
+
         private string server;
         private string database;
         private string uid;
@@ -97,14 +101,14 @@ namespace Proyecto_serio_el_regreso
 
                 if (extension.Equals(".csv"))
                 {
+                    this.archivo = archivo;
                     cargarCsv(archivo.FileName);
                 }
                 else if(extension.Equals(".properties"))
                 {
+                    this.properties = archivo;
                     cargarProperties(archivo.FileName);
                 }
-                this.archivo = archivo;
-                this.properties = archivo;
                 if (archivoTieneMysql == false)
                 {
                     cargarGrid();
@@ -221,6 +225,7 @@ namespace Proyecto_serio_el_regreso
 
             StreamReader streamReader = new StreamReader(direccionArchivo);
 
+            this.archivo.FileName = null;
             string nombreColumna;
             string linea = streamReader.ReadLine();
             string descripcion="";
@@ -335,6 +340,7 @@ namespace Proyecto_serio_el_regreso
 
                 //se lee la ruta del .csv dentro del .properties
                 linea = streamReader.ReadLine();
+                this.archivo.FileName = linea;
                 streamReader = new StreamReader(File.OpenRead(linea));
 
                 while (!streamReader.EndOfStream)
@@ -407,7 +413,7 @@ namespace Proyecto_serio_el_regreso
                     //En encabezado, con columna accedes a los datos de la columna, key es para el tipo de dato y value para la expresion regular
                     Regex regex = new Regex(encabezado[columna].Value);
                     
-                    if (!regex.IsMatch(instancias[columna][indice]))
+                    if (!regex.IsMatch(instancias[columna][indice].Replace(" ", "")))
                     {
                         dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.Yellow;
 
@@ -416,8 +422,10 @@ namespace Proyecto_serio_el_regreso
                             valoresFueraDeDominio2[columna] = new List<KeyValuePair<int, string>>();
                         }
                         valoresFueraDeDominio2[columna].Add(new KeyValuePair<int, string>(indice, instancias[columna][indice]));
-                        
-                        valoresFueraDeDominio.Add(instancias[columna][indice].ToString());
+                    }
+                    else
+                    {
+                        dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.WhiteSmoke;
                     }
                 }
                 indice++;
@@ -473,30 +481,37 @@ namespace Proyecto_serio_el_regreso
 
         private void actualizarCsv(string accion)
         {
-            //Genera la variante del nombre para guardar el archivo
-            DateTime time = System.DateTime.Now;
-            string direccionArchivo = archivo.FileName;
+            if(properties.FileName != null)
+            {
+                //Genera la variante del nombre para guardar el archivo
+                DateTime time = System.DateTime.Now;
+                string direccionArchivo = archivo.FileName;
 
-            string name = Path.GetFileNameWithoutExtension(direccionArchivo);
-            string nuevoNombre = time.ToString("yyyyMMdd_HHmmss");
+                string name = Path.GetFileNameWithoutExtension(direccionArchivo);
+                string nuevoNombre = time.ToString("yyyyMMdd_HHmmss");
 
-            //Obtiene la direccion de la carpeta para guardar el archivo
-            string carpeta = Path.GetDirectoryName(direccionArchivo);
+                //Obtiene la direccion de la carpeta para guardar el archivo
+                string carpeta = Path.GetDirectoryName(direccionArchivo);
 
-            //Se crea y abre el nuevo archivo
-            string direccion = carpeta + "\\" + nuevoNombre;
+                //Se crea y abre el nuevo archivo
+                string direccion = carpeta + "\\" + nuevoNombre;
 
-            //actualiza el log con la accion que se realizo y le pasa el nombre del archivo.
-            actualizarLog(time.ToString("yyyyMMdd_HHmmss"), accion);
+                //actualiza el log con la accion que se realizo y le pasa el nombre del archivo.
+                actualizarLog(time.ToString("yyyyMMdd_HHmmss"), accion);
 
-            guardarCsv(direccion + Path.GetExtension(direccionArchivo));
+                guardarCsv(direccion + Path.GetExtension(direccionArchivo));
+            }
+
         }
 
         private void actualizarLog(string direccion, string accion)
         {
-            StreamWriter escribir = File.AppendText(Path.GetDirectoryName(properties.FileName) + "\\" + Path.GetFileNameWithoutExtension(properties.FileName) + ".log");
-            escribir.WriteLine(direccion + " => " + accion);
-            escribir.Close();
+            if(properties.FileName != "")
+            {
+                StreamWriter escribir = File.AppendText(Path.GetDirectoryName(properties.FileName) + "\\" + Path.GetFileNameWithoutExtension(properties.FileName) + ".log");
+                escribir.WriteLine(direccion + " => " + accion);
+                escribir.Close();
+            }
         }
 
         private void cargarGrid()
@@ -611,6 +626,7 @@ namespace Proyecto_serio_el_regreso
             valores_faltantes.Remove(columna);
             valores_faltantes[nombre] = faltantesAux;
 
+            verificarDominios();
             actualizarCsv("editar columna - " + string.Join("|", valoresColumnaAnteriores) + " => " + string.Join("|", valoresColumnaActuales));
         }
 
