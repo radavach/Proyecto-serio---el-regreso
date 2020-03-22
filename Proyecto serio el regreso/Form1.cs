@@ -18,7 +18,7 @@ namespace Proyecto_serio_el_regreso
         public Form1()
         {
             InitializeComponent();
-            tipos_dato = new string[]{"Numerico", "Nominal", "Binario Asimetrico", "Binario Simetrico", "Texto"};
+            tipos_dato = new string[] { "Numerico", "Nominal", "Binario Asimetrico", "Binario Simetrico", "Texto" };
             cant_instancias = 0;
             cant_columnas = 0;
             datoTexto = "";
@@ -30,7 +30,7 @@ namespace Proyecto_serio_el_regreso
         private int cant_instancias;
         private int cant_columnas;
         private string datoTexto;
-        private string []tipos_dato;
+        private string[] tipos_dato;
 
         private Dictionary<string, int> valores_faltantes;
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
@@ -614,7 +614,7 @@ namespace Proyecto_serio_el_regreso
 
         private void actualizarCsv(string accion)
         {
-            if(properties.FileName != null)
+            if(properties.FileName != null && !archivoTieneMysql)
             {
                 //Genera la variante del nombre para guardar el archivo
                 DateTime time = System.DateTime.Now;
@@ -726,81 +726,107 @@ namespace Proyecto_serio_el_regreso
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
-            List<string> valoresColumnaActuales = new List<string>();
-            List<string> valoresColumnaAnteriores = new List<string>();
+            try
+            {
+                List<string> valoresColumnaActuales = new List<string>();
+                List<string> valoresColumnaAnteriores = new List<string>();
 
-            string nombre = txbNombre.Text;
-            string tipoDato = cmboxDatos.Text;
-            string columna = cmBoxColumnas.Text;
+                string nombre = txbNombre.Text;
+                string tipoDato = cmboxDatos.Text;
+                string columna = cmBoxColumnas.Text;
 
-            //Aqui vamos a adaptar la expresion regular que recibamos para guardarla como expresion regular para el tipo de dato
-            string expresion = generarRegex();
-            txbRegex.Text = expresion;
+                //Aqui vamos a adaptar la expresion regular que recibamos para guardarla como expresion regular para el tipo de dato
+                string expresion = generarRegex();
+                txbRegex.Text = expresion;
+                try
+                {
 
-            //cargando los valores en una lista para mostrarlos en el mensaje del log
-            valoresColumnaAnteriores.Add(columna);
-            valoresColumnaAnteriores.Add(encabezado[columna].Key);
-            valoresColumnaAnteriores.Add(encabezado[columna].Value);
+                    //cargando los valores en una lista para mostrarlos en el mensaje del log
+                    valoresColumnaAnteriores.Add(columna);
+                    valoresColumnaAnteriores.Add(encabezado[columna].Key);
+                    valoresColumnaAnteriores.Add(encabezado[columna].Value);
 
-            valoresColumnaActuales.Add(nombre);
-            valoresColumnaActuales.Add(tipoDato);
-            //valoresColumnaActuales.Add(txbRegex.Text);
-            valoresColumnaActuales.Add(expresion);
+                    valoresColumnaActuales.Add(nombre);
+                    valoresColumnaActuales.Add(tipoDato);
+                    //valoresColumnaActuales.Add(txbRegex.Text);
+                    valoresColumnaActuales.Add(expresion);
 
-            dataGridView1.Columns[cmBoxColumnas.SelectedIndex].HeaderText = nombre;
-            dataGridView1.Columns[cmBoxColumnas.SelectedIndex].Name = nombre;
+                    dataGridView1.Columns[cmBoxColumnas.SelectedIndex].HeaderText = nombre;
+                    dataGridView1.Columns[cmBoxColumnas.SelectedIndex].Name = nombre;
 
-            cmBoxColumnas.Items[cmBoxColumnas.SelectedIndex] = nombre;
+                    cmBoxColumnas.Items[cmBoxColumnas.SelectedIndex] = nombre;
 
-            encabezado.Remove(columna);
-            //encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, txbRegex.Text);
-            encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, expresion);
+                    encabezado.Remove(columna);
+                    //encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, txbRegex.Text);
+                    encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, expresion);
 
 
-            List<string> instanciaAux = instancias[columna];
-            instancias.Remove(columna);
-            instancias[nombre] = instanciaAux;
+                    List<string> instanciaAux = instancias[columna];
+                    instancias.Remove(columna);
+                    instancias[nombre] = instanciaAux;
 
-            int faltantesAux = valores_faltantes[columna];
-            valores_faltantes.Remove(columna);
-            valores_faltantes[nombre] = faltantesAux;
+                    int faltantesAux = valores_faltantes[columna];
+                    valores_faltantes.Remove(columna);
+                    valores_faltantes[nombre] = faltantesAux;
 
-            verificarDominios();
-            actualizarCsv("editar columna - " + string.Join("|", valoresColumnaAnteriores) + " => " + string.Join("|", valoresColumnaActuales));
+                    verificarDominios();
+                    actualizarCsv("editar columna - " + string.Join("|", valoresColumnaAnteriores) + " => " + string.Join("|", valoresColumnaActuales));
+                }
+                catch(System.Collections.Generic.KeyNotFoundException)
+                { MessageBox.Show("No se ha seleccionado ninguna columna"); }
+            }
+            catch(System.NullReferenceException)
+            {
+                MessageBox.Show("Aun no se ha abierto el archivo");
+            }
         }
 
         private void btnInfo_Click(object sender, EventArgs e)//Obteniendo informacion de las instancias
         {
-            Dictionary<string,int> valores = valoresFaltantes();
-            string info = "";
-            foreach (string columna in encabezado.Keys)
+           try
             {
-                info = info + "\nNombre del atributo: " + columna;
-                info += "\nTipo de dato: " + encabezado[columna].Key;
-                info += "\nValores faltantes: " + valores[columna] + "(" + Convert.ToDecimal(valores[columna] * 100 / cant_instancias).ToString() + "%" + ")";
-                info += "\n\n";
+                Dictionary<string, int> valores = valoresFaltantes();
+                string info = "";
+                foreach (string columna in encabezado.Keys)
+                {
+                    info = info + "\nNombre del atributo: " + columna;
+                    info += "\nTipo de dato: " + encabezado[columna].Key;
+                    info += "\nValores faltantes: " + valores[columna] + "(" + Convert.ToDecimal(valores[columna] * 100 / cant_instancias).ToString() + "%" + ")";
+                    info += "\n\n";
+                }
+                MessageBox.Show(info);
             }
-            MessageBox.Show(info);
+            catch(System.NullReferenceException)
+            {
+                MessageBox.Show("No se ha cargado el archivo");
+            }
         }
 
         private void btnEliminarSeleccionado_Click(object sender, EventArgs e)//Eliminando una instancia
         {
-            string mensaje = "Se van a eliminar las instancias seleccionadas ";
-
-            foreach (DataGridViewRow fila in dataGridView1.SelectedRows)
+            try
             {
-                List<string> atributosInstancia = new List<string>();
+                string mensaje = "Se van a eliminar las instancias seleccionadas ";
 
-                mensaje += fila.Index.ToString() + " ";
-                foreach(string columna in encabezado.Keys)
+                foreach (DataGridViewRow fila in dataGridView1.SelectedRows)
                 {
-                    atributosInstancia.Add(instancias[columna].ElementAt(fila.Index));
-                    instancias[columna].RemoveAt(fila.Index);
-                }
-                dataGridView1.Rows.RemoveAt(fila.Index);
+                    List<string> atributosInstancia = new List<string>();
 
-                recalcularValores();
-                actualizarCsv("eliminar instancia - " + string.Join(",", atributosInstancia));
+                    mensaje += fila.Index.ToString() + " ";
+                    foreach (string columna in encabezado.Keys)
+                    {
+                        atributosInstancia.Add(instancias[columna].ElementAt(fila.Index));
+                        instancias[columna].RemoveAt(fila.Index);
+                    }
+                    dataGridView1.Rows.RemoveAt(fila.Index);
+
+                    recalcularValores();
+                    actualizarCsv("eliminar instancia - " + string.Join(",", atributosInstancia));
+                }
+            }
+            catch(System.NullReferenceException)
+            {
+                MessageBox.Show("No se ha cargado el archivo");
             }
         }
 
@@ -835,37 +861,52 @@ namespace Proyecto_serio_el_regreso
 
         private void btnAgregarInstancia_Click(object sender, EventArgs e)//Crear una nueva instancia de datos
         {
-            dataGridView1.Rows.Add();
-            foreach(string columna in encabezado.Keys)
+            try
             {
-                instancias[columna].Add("");
+                dataGridView1.Rows.Add();
+                foreach (string columna in encabezado.Keys)
+                {
+                    instancias[columna].Add("");
+                }
+                recalcularValores();
             }
-            recalcularValores();
+            catch(System.InvalidOperationException)
+            {
+                MessageBox.Show("No se ha cargado el archivo");
+            }
+           
         }
 
         //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
             //pendiente revalidar el contenido de la nueva columna con la expresion regular
-            string columna = "columnaN";
-            encabezado[columna] = new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value);
-            instancias[columna] = Enumerable.Repeat("?", cant_instancias).Select(x => x.ToString()).ToList();
-            valores_faltantes[columna] = valoresFaltantes().Count();
+           try
+            {
+                string columna = "columnaN";
+                encabezado[columna] = new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value);
+                instancias[columna] = Enumerable.Repeat("?", cant_instancias).Select(x => x.ToString()).ToList();
+                valores_faltantes[columna] = valoresFaltantes().Count();
 
-            cargarGrid();
-            recalcularValores();
+                cargarGrid();
+                recalcularValores();
+            }
+            catch(System.NullReferenceException)
+            {
+                MessageBox.Show("No se ha cargado el archivo");
+            }
         }
 
         private void univariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form2 form2 = new Form2(this, encabezado, instancias, valores_faltantes, cant_instancias, cant_columnas, tipos_dato);
-            form2.Show();
+                Form2 form2 = new Form2(this, encabezado, instancias, valores_faltantes, cant_instancias, cant_columnas, tipos_dato);
+                form2.Show();
         }
 
         private void bivariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form3 form3 = new Form3(this, encabezado, instancias);
-            form3.Show();
+                Form3 form3 = new Form3(this, encabezado, instancias);
+                form3.Show();
         }
 
         private void cmBoxColumnas_SelectedIndexChanged(object sender, EventArgs e)
@@ -964,6 +1005,7 @@ namespace Proyecto_serio_el_regreso
             //database = "hotel";
             //uid = "root";
             //password = "";
+            cmBoxColumnas.Items.Clear();
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
@@ -994,7 +1036,7 @@ namespace Proyecto_serio_el_regreso
                     }
 
                     recalcularValores();
-                    cmboxDatos.Items.AddRange(tipos_dato);
+                    //cmboxDatos.Items.AddRange(tipos_dato);
                     valores_faltantes = valoresFaltantes();
                 }
                 catch(Exception ex)

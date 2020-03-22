@@ -28,9 +28,12 @@ namespace Proyecto_serio_el_regreso
             this.encabezado = encabezado;
             this.instancias = instancias;
             this.form1 = form1;
-
-            cmBoxDato1.Items.AddRange(encabezado.Keys.ToArray());
-            cmBoxDato2.Items.AddRange(encabezado.Keys.ToArray());
+            try
+            {
+                cmBoxDato1.Items.AddRange(encabezado.Keys.ToArray());
+                cmBoxDato2.Items.AddRange(encabezado.Keys.ToArray());
+            }
+            catch (System.NullReferenceException) { }
         }
 
         private double tschuprow(List<string> a, List<string> b, List<string> posiblesValoresA, List<string> posiblesValoresB)
@@ -179,64 +182,69 @@ namespace Proyecto_serio_el_regreso
         private void btnAnalisis_Click(object sender, EventArgs e)
 
         {
-            string elemento1 = cmBoxDato1.Text;
-            string elemento2 = cmBoxDato2.Text;
-
-            lblResultado.Text += "";
-
-            if (encabezado[elemento1].Key == encabezado[elemento2].Key)
+            try
             {
-                if (encabezado[elemento1].Key == "Numerico")
-                {
-                    lblResultado.Text = "El coeficiente de pearson es: " + pearson(instancias[elemento1], instancias[elemento2]);
-                }
-                else if (encabezado[elemento1].Key == "Nominal")
-                {
-                    List<string> posiblesValoresA = new List<string>();
-                    List<string> posiblesValoresB = new List<string>();
+                string elemento1 = cmBoxDato1.Text;
+                string elemento2 = cmBoxDato2.Text;
 
-                    string dominiosA = encabezado[elemento1].Value;
-                    string dominiosB = encabezado[elemento2].Value;
+                lblResultado.Text += "";
 
-                    string[] elementos = dominiosA.TrimStart('\\', 'b', '(').TrimEnd(')', '\\', 'b').Split('|');
-                    foreach (string i in elementos)
+                if (encabezado[elemento1].Key == encabezado[elemento2].Key)
+                {
+                    if (encabezado[elemento1].Key == "Numerico")
                     {
-                        posiblesValoresA.Add(Regex.Replace(i, @"\s", ""));
+                        lblResultado.Text = "El coeficiente de pearson es: " + pearson(instancias[elemento1], instancias[elemento2]);
+                    }
+                    else if (encabezado[elemento1].Key == "Nominal")
+                    {
+                        List<string> posiblesValoresA = new List<string>();
+                        List<string> posiblesValoresB = new List<string>();
+
+                        string dominiosA = encabezado[elemento1].Value;
+                        string dominiosB = encabezado[elemento2].Value;
+
+                        string[] elementos = dominiosA.TrimStart('\\', 'b', '(').TrimEnd(')', '\\', 'b').Split('|');
+                        foreach (string i in elementos)
+                        {
+                            posiblesValoresA.Add(Regex.Replace(i, @"\s", ""));
+                        }
+
+                        elementos = dominiosB.TrimStart('\\', 'b', '(').TrimEnd(')', '\\', 'b').Split('|');
+                        foreach (string i in elementos)
+                        {
+                            posiblesValoresB.Add(Regex.Replace(i, @"\s", ""));
+                        }
+
+                        lblResultado.Text = "Los datos son Nominales, el coeficiente es: " + tschuprow(instancias[elemento1], instancias[elemento2], posiblesValoresA, posiblesValoresB);
+                    }
+                    else
+                    {
+                        lblResultado.Text = "No se pueden comparar estos elementos";
                     }
 
-                    elementos = dominiosB.TrimStart('\\', 'b', '(').TrimEnd(')', '\\', 'b').Split('|');
-                    foreach (string i in elementos)
+                    while (dataGridView1.Columns.Count > 0)
                     {
-                        posiblesValoresB.Add(Regex.Replace(i, @"\s", ""));
+                        dataGridView1.Columns.RemoveAt(0);
                     }
+                    dataGridView1.Rows.Clear();
 
-                    lblResultado.Text = "Los datos son Nominales, el coeficiente es: " + tschuprow(instancias[elemento1], instancias[elemento2], posiblesValoresA, posiblesValoresB);
+                    dataGridView1.Columns.Add(elemento1, elemento1);
+                    dataGridView1.Columns.Add(elemento2, elemento2);
+
+                    for (int i = 0; i < instancias[elemento1].Count; i++)
+                    {
+                        int fila = dataGridView1.Rows.Add();
+                        dataGridView1.Rows[fila].Cells[elemento1].Value = instancias[elemento1][i];
+                        dataGridView1.Rows[fila].Cells[elemento2].Value = instancias[elemento2][i];
+                    }
                 }
                 else
                 {
                     lblResultado.Text = "No se pueden comparar estos elementos";
                 }
-
-                while (dataGridView1.Columns.Count > 0)
-                {
-                    dataGridView1.Columns.RemoveAt(0);
-                }
-                dataGridView1.Rows.Clear();
-
-                dataGridView1.Columns.Add(elemento1, elemento1);
-                dataGridView1.Columns.Add(elemento2, elemento2);
-
-                for (int i = 0; i < instancias[elemento1].Count; i++)
-                {
-                    int fila = dataGridView1.Rows.Add();
-                    dataGridView1.Rows[fila].Cells[elemento1].Value = instancias[elemento1][i];
-                    dataGridView1.Rows[fila].Cells[elemento2].Value = instancias[elemento2][i];
-                }
             }
-            else
-            {
-                lblResultado.Text = "No se pueden comparar estos elementos";
-            }
+            catch(System.NullReferenceException)
+            { MessageBox.Show("No se ha cargado el archivo"); }
         }
 
     }

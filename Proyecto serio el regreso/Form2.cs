@@ -38,8 +38,12 @@ namespace Proyecto_serio_el_regreso
             this.cant_instancias = cant_instancias;
             this.cant_columnas = cant_columnas;
             this.tipos_dato = tipos_dato;
+            try
+            {
+                cmBoxColumnas.Items.AddRange(encabezado.Keys.ToArray());
+            }
+            catch(System.NullReferenceException){}
 
-            cmBoxColumnas.Items.AddRange(encabezado.Keys.ToArray());
         }
 
 
@@ -76,50 +80,55 @@ namespace Proyecto_serio_el_regreso
                 }
                 else if(tipoDato == "Numerico")
                 {
-                    //Media
-                    //for (int i = 0; i < cant_instancias; i++)
-                    //{
-                    //    valoresOrdenados.Add(Convert.ToDouble(dataGridView1.Rows[i].Cells[nuValor].Value));
-                    //    sumatoria = sumatoria + Convert.ToDouble(dataGridView1.Rows[i].Cells[nuValor].Value);
-                    //}
-                    //valoresOrdenados.Sort();
-
-                    valoresOrdenados.AddRange(instancias[columna].Select(x => { double temp;  return double.TryParse(x, out temp) ? temp : 0; }));
-                    sumatoria = valoresOrdenados.Sum();
-
-                    valoresOrdenados.Sort();
-                    
-                    //Moda
-                    var moda = valoresOrdenados.GroupBy(n => n).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
-                    //Mediana
-                    if ((cant_instancias % 2) == 0)
+                    if (instancias[columna].Count > 3)
                     {
-                        mediana = ((valoresOrdenados.ElementAt(indiceMedio) +
-                            valoresOrdenados.ElementAt((indiceMedio - 1))) / 2);
+                        //Media
+                        //for (int i = 0; i < cant_instancias; i++)
+                        //{
+                        //    valoresOrdenados.Add(Convert.ToDouble(dataGridView1.Rows[i].Cells[nuValor].Value));
+                        //    sumatoria = sumatoria + Convert.ToDouble(dataGridView1.Rows[i].Cells[nuValor].Value);
+                        //}
+                        //valoresOrdenados.Sort();
+
+                        valoresOrdenados.AddRange(instancias[columna].Select(x => { double temp; return double.TryParse(x, out temp) ? temp : 0; }));
+                        sumatoria = valoresOrdenados.Sum();
+
+                        valoresOrdenados.Sort();
+
+                        //Moda
+                        var moda = valoresOrdenados.GroupBy(n => n).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
+                        //Mediana
+                        if ((cant_instancias % 2) == 0)
+                        {
+                            mediana = ((valoresOrdenados.ElementAt(indiceMedio) +
+                                valoresOrdenados.ElementAt((indiceMedio - 1))) / 2);
+                        }
+                        else
+                        {
+                            mediana = valoresOrdenados.ElementAt(indiceMedio);
+                        }
+
+                        //Desviacion estandar
+                        double avg = valoresOrdenados.Average();
+                        double desvStd = Math.Sqrt(valoresOrdenados.Average(v => Math.Pow(v - avg, 2)));
+
+                        media = sumatoria / cant_instancias;
+                        //MessageBox.Show(media.ToString(), "Media");
+                        //MessageBox.Show(mediana.ToString(), "Mediana");
+                        //MessageBox.Show(moda.ToString(), "Moda");
+                        //MessageBox.Show(desvStd.ToString(), "Desviacion Estandar");
+
+                        lblResultado.Text += Environment.NewLine + Environment.NewLine +
+                            "Media:" + Environment.NewLine + media.ToString() + Environment.NewLine + Environment.NewLine +
+                            "Mediana:" + Environment.NewLine + mediana.ToString() + Environment.NewLine + Environment.NewLine +
+                            "Moda:" + Environment.NewLine + moda.ToString() + Environment.NewLine + Environment.NewLine +
+                            "Desviacion Estandar:" + Environment.NewLine + desvStd.ToString();
+
+                        pruebaBoxplot(valoresOrdenados, columna, media, mediana);
+                        tabControl1.SelectedIndex = 0;
                     }
                     else
-                    {
-                        mediana = valoresOrdenados.ElementAt(indiceMedio);
-                    }
-
-                    //Desviacion estandar
-                    double avg = valoresOrdenados.Average();
-                    double desvStd = Math.Sqrt(valoresOrdenados.Average(v => Math.Pow(v - avg, 2)));
-
-                    media = sumatoria / cant_instancias;
-                    //MessageBox.Show(media.ToString(), "Media");
-                    //MessageBox.Show(mediana.ToString(), "Mediana");
-                    //MessageBox.Show(moda.ToString(), "Moda");
-                    //MessageBox.Show(desvStd.ToString(), "Desviacion Estandar");
-
-                    lblResultado.Text += Environment.NewLine + Environment.NewLine +
-                        "Media:" + Environment.NewLine + media.ToString() + Environment.NewLine + Environment.NewLine +
-                        "Mediana:" + Environment.NewLine + mediana.ToString() + Environment.NewLine + Environment.NewLine +
-                        "Moda:" + Environment.NewLine + moda.ToString() + Environment.NewLine + Environment.NewLine +
-                        "Desviacion Estandar:" + Environment.NewLine + desvStd.ToString();
-
-                    pruebaBoxplot(valoresOrdenados, columna, media, mediana);
-                    tabControl1.SelectedIndex = 0;
+                        MessageBox.Show("No se tienen valores suficientes");
                 }
                 else if(tipoDato == "Texto")
                 {
