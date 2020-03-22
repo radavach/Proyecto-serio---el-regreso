@@ -16,18 +16,17 @@ namespace Proyecto_serio_el_regreso
     {
         private Form1 form1;
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
+        private Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio;
         private Dictionary<string, List<string>> instancias;
         private Dictionary<string, int> valores_faltantes;
         private int cant_instancias;
-        private int cant_columnas;
-        private string[] tipos_dato;
 
         public Form2()
         {
             InitializeComponent();
         }
 
-        public Form2(Form1 form1, Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias, Dictionary<string, int> valores_faltantes, int cant_instancias, int cant_columnas, string[] tipos_dato)
+        public Form2(Form1 form1, Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias, Dictionary<string, int> valores_faltantes, Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio, int cant_instancias)
         {
             InitializeComponent();
             form1.Hide();
@@ -35,9 +34,8 @@ namespace Proyecto_serio_el_regreso
             this.encabezado = encabezado;
             this.instancias = instancias;
             this.valores_faltantes = valores_faltantes;
+            this.valoresFueraDeDominio = valoresFueraDeDominio;
             this.cant_instancias = cant_instancias;
-            this.cant_columnas = cant_columnas;
-            this.tipos_dato = tipos_dato;
             try
             {
                 cmBoxColumnas.Items.AddRange(encabezado.Keys.ToArray());

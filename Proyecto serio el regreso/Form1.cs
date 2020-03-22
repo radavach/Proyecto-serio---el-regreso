@@ -43,6 +43,7 @@ namespace Proyecto_serio_el_regreso
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
 
         Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
+        HashSet<int> instanciasFuerasDeDominio = new HashSet<int>();
 
         private string server;
         private string database;
@@ -534,6 +535,7 @@ namespace Proyecto_serio_el_regreso
         {
             int indice = 0;
             valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
+            instanciasFuerasDeDominio = new HashSet<int>();
 
             while (indice != cant_instancias)
             {
@@ -546,6 +548,8 @@ namespace Proyecto_serio_el_regreso
                     {
                         dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.Yellow;
 
+                        instanciasFuerasDeDominio.Add(indice);
+                        
                         if (!valoresFueraDeDominio2.ContainsKey(columna))
                         {
                             valoresFueraDeDominio2[columna] = new List<KeyValuePair<int, string>>();
@@ -899,14 +903,42 @@ namespace Proyecto_serio_el_regreso
 
         private void univariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-                Form2 form2 = new Form2(this, encabezado, instancias, valores_faltantes, cant_instancias, cant_columnas, tipos_dato);
-                form2.Show();
+            //declaro estos nuevos valores ya que se editan las instancias por los valores faltantes
+            Dictionary<string, List<string>> instanciasParametro = new Dictionary<string, List<string>>();
+            int cant_instanciasParametro = 0;
+
+            foreach (string columna in instancias.Keys)
+            {
+                instanciasParametro[columna] = new List<string>(instancias[columna]);
+
+                foreach (int indice in instanciasFuerasDeDominio.Reverse())
+                {
+                    instanciasParametro[columna].RemoveAt(indice);
+                }
+                cant_instanciasParametro = instanciasParametro[columna].Count();
+            }
+            
+            Form2 form2 = new Form2(this, encabezado, instanciasParametro, valores_faltantes, valoresFueraDeDominio2, cant_instanciasParametro);
+            form2.Show();
         }
 
         private void bivariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-                Form3 form3 = new Form3(this, encabezado, instancias);
-                form3.Show();
+            //declaro estos nuevo valore ya que se editan las instancias por los valores faltantes
+            Dictionary<string, List<string>> instanciasParametro = new Dictionary<string, List<string>>();
+
+            foreach (string columna in instancias.Keys)
+            {
+                instanciasParametro[columna] = new List<string>(instancias[columna]);
+
+                foreach (int indice in instanciasFuerasDeDominio.Reverse())
+                {
+                    instanciasParametro[columna].RemoveAt(indice);
+                }
+            }
+
+            Form3 form3 = new Form3(this, encabezado, instanciasParametro);
+            form3.Show();
         }
 
         private void cmBoxColumnas_SelectedIndexChanged(object sender, EventArgs e)
