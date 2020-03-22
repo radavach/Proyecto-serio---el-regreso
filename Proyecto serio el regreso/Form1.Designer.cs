@@ -65,7 +65,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.labelDescripcion = new System.Windows.Forms.Label();
             this.checkRegex = new System.Windows.Forms.CheckBox();
-            this.checkDiscreto = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -400,25 +399,11 @@
             this.checkRegex.Text = "Expresion regular literal";
             this.checkRegex.UseVisualStyleBackColor = true;
             // 
-            // checkDiscreto
-            // 
-            this.checkDiscreto.AutoSize = true;
-            this.checkDiscreto.Checked = true;
-            this.checkDiscreto.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkDiscreto.Location = new System.Drawing.Point(865, 267);
-            this.checkDiscreto.Name = "checkDiscreto";
-            this.checkDiscreto.Size = new System.Drawing.Size(159, 17);
-            this.checkDiscreto.TabIndex = 33;
-            this.checkDiscreto.Text = "El dato numerico es discreto";
-            this.checkDiscreto.UseVisualStyleBackColor = true;
-            this.checkDiscreto.Visible = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 492);
-            this.Controls.Add(this.checkDiscreto);
             this.Controls.Add(this.checkRegex);
             this.Controls.Add(this.labelDescripcion);
             this.Controls.Add(this.label3);
@@ -494,7 +479,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label labelDescripcion;
         private System.Windows.Forms.CheckBox checkRegex;
-        private System.Windows.Forms.CheckBox checkDiscreto;
     }
 }
 

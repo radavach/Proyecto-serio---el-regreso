@@ -86,97 +86,100 @@ namespace Proyecto_serio_el_regreso
         private string generarRegex()
         {
             string expresion = @"^[\w\W]*$";
-
-            //Para numericos
-            //Se espera una expresion tipo 1,23
-            //Se deberia generar ^([0-9]|[0-2][0-9]|[,3])|[2,])$
-
-            if(checkRegex.Checked)
+            
+            if(!checkRegex.Checked)
             {
-                expresion = txbRegex.Text;
-            }
-            else
-            {
-                if(cmboxDatos.Text == "Numerico")
+                //Para numericos
+                //Se espera una expresion tipo 1,23
+                //Se deberia generar ^([0-9]|[0-2][0-9]|[,3])|[2,])$
+                if (cmboxDatos.Text == "Numerico")
                 {
-                    expresion = "^";
+                    if (string.IsNullOrEmpty(txbRegex.Text)) { expresion = @"^(\-)?(0|[1-9][0-9]*)(\.[0-9]*[1-9])?$"; }
+                    else { expresion = txbRegex.Text; }
 
-                    //pendiente, establecer un rango para los numeros de dos digitos
+                    //    //pendiente, establecer un rango para los numeros de dos digitos
+                    //        expresion += "^";
+                    //    //Comprueba que el rango de valores sea solo numeros
+                    //    if(txbRegex.Text.Split(',').Count() == 2 && Regex.IsMatch(txbRegex.Text.Split(',')[0], "^[0-9]+$") && Regex.IsMatch(txbRegex.Text.Split(',')[1], "^[0-9]+$"))
+                    //    {
+                    //        expresion += "(";
+                    //        //se obtienen los rangos
+                    //        string rangoMin, rangoMax;
+                    //        rangoMin = txbRegex.Text.Split(',')[0];
+                    //        rangoMax = txbRegex.Text.Split(',')[1];
 
-                    //Comprueba que el rango de valores sea solo numeros
-                    if(txbRegex.Text.Split(',').Count() == 2 && Regex.IsMatch(txbRegex.Text.Split(',')[0], "^[0-9]+$") && Regex.IsMatch(txbRegex.Text.Split(',')[1], "^[0-9]+$"))
-                    {
-                        expresion += "(";
-                        //se obtienen los rangos
-                        string rangoMin, rangoMax;
-                        rangoMin = txbRegex.Text.Split(',')[0];
-                        rangoMax = txbRegex.Text.Split(',')[1];
+                    //        //se busca el menor para comprobar errores Ej. se recibe 99,1
+                    //        int min = Int16.Parse(rangoMin), max = Int16.Parse(rangoMax);
+                    //        if(min > max){ int temp = max; max = min; min = temp; }
 
-                        //se busca el menor para comprobar errores Ej. se recibe 99,1
-                        int min = Int16.Parse(rangoMin), max = Int16.Parse(rangoMax);
-                        if(min > max){ int temp = max; max = min; min = temp; }
+                    //        rangoMax = max.ToString();
+                    //        rangoMin = max.ToString();
 
-                        rangoMax = max.ToString();
-                        rangoMin = max.ToString();
+                    //        //solo hace falta completar la decena cuando el rango maximo tiene 2 digitos o más
+                    //        if(rangoMax.Count() >= 2)
+                    //        {
+                    //            //ayuda a generar el rango para la expresion regular
+                    //            string[] numeros = new string[10]{ "0","1","2","3","4","5","6","7","8","9" };
 
-                        //solo hace falta completar la decena cuando el rango maximo tiene 2 digitos o más
-                        if(rangoMax.Count() >= 2)
-                        {
-                            //ayuda a generar el rango para la expresion regular
-                            string[] numeros = new string[10]{ "0","1","2","3","4","5","6","7","8","9" };
+                    //            int indiceMin = Array.IndexOf(numeros, rangoMin.Last());
+                    //            for (int indice = indiceMin; indice < numeros.Count(); indice++)
+                    //            {
+                    //                if((rangoMin.Remove(rangoMin.Length - 1) + numeros[indice]) == rangoMax)
+                    //                {
+                    //                    break;
+                    //                }
+                    //                expresion += rangoMin.Remove(rangoMin.Length - 1) + numeros[indice] + "|";
+                    //            }
 
-                            int indiceMin = Array.IndexOf(numeros, rangoMin.Last());
-                            for (int indice = indiceMin; indice < numeros.Count(); indice++)
-                            {
-                                if((rangoMin.Remove(rangoMin.Length - 1) + numeros[indice]) == rangoMax)
-                                {
-                                    break;
-                                }
-                                expresion += rangoMin.Remove(rangoMin.Length - 1) + numeros[indice] + "|";
-                            }
-
-                            int indiceMax = Array.IndexOf(numeros, rangoMax.Last());
-                            for (int indice = indiceMax; indice < numeros.Count(); indice++)
-                            {
-                                expresion += rangoMin.Remove(rangoMax.Length - 1) + numeros[indice] + "|";
-                            }
-                        }
-
-
-                        expresion += "[" + "-" + "]";
-                    }
-                    else
-                    {
-                        expresion += "[0-9]+";
-                    }
-                    
-                    //,100|2,|1,97
+                    //            int indiceMax = Array.IndexOf(numeros, rangoMax.Last());
+                    //            for (int indice = indiceMax; indice < numeros.Count(); indice++)
+                    //            {
+                    //                expresion += rangoMin.Remove(rangoMax.Length - 1) + numeros[indice] + "|";
+                    //            }
+                    //        }
 
 
-                    //Si no es discreto debe agregarse la posibilidad del punto decimal y decimales
-                    if(!checkDiscreto.Checked)
-                    {
-                        expresion += @"(.[0-9]+)?";
-                    }
+                    //        expresion += "[" + "-" + "]";
+                    //    }
+                    //    else
+                    //    {
+                    //        expresion += "[0-9]+";
+                    //    }
 
-                    expresion += "$";
+                    //    //,100|2,|1,97
+
+
+                    //    //Si no es discreto debe agregarse la posibilidad del punto decimal y decimales
+                    //    if(!checkDiscreto.Checked)
+                    //    {
+                    //        expresion += @"(.[0-9]+)?";
+                    //    }
+
+                    //expresion += "$";
                 }
                 else if (cmboxDatos.Text == "Nominal")
                 {
                     expresion = "^(";
                     foreach (string valores in txbRegex.Text.Split(','))
                     {
-                        expresion += valores + "|";
+                        if(valores.Length > 0)
+                        {
+                            expresion += valores + "|";
+                        }
                     }
-                    expresion.Remove(expresion.Length - 1);
+                    if (expresion.Length > 3) { expresion.Remove(expresion.Length - 1); }
+                    else { expresion += @"[\w\W]*"; }
                     expresion += ")$";
                 }
                 else if (cmboxDatos.Text == "Texto")
                 {
-                    expresion = cmboxDatos.Text;
+                    if (!string.IsNullOrEmpty(txbRegex.Text)) { expresion = cmboxDatos.Text; }
                 }
             }
-
+            else
+            {
+                if (!string.IsNullOrEmpty(txbRegex.Text)){ expresion = txbRegex.Text;}
+            }
             return expresion;
         }
 
@@ -997,22 +1000,24 @@ namespace Proyecto_serio_el_regreso
 
         private void cmboxDatos_SelectedIndexChanged(object sender, EventArgs e)
         {
-            checkDiscreto.Visible = false;
+            checkRegex.Checked = true;
+            checkRegex.Enabled = false;
 
             labelDescripcion.Text = "En cado de que el checkbox este selecionado, se tomara literalmente " +
                 "la expresion regular proporcionada" + Environment.NewLine + Environment.NewLine;
 
             if(cmboxDatos.Text == "Numerico")
-            {
-                checkDiscreto.Visible = true;
-                labelDescripcion.Text = "Para generar la expresion del tipo de dato numerico debes " +
-                    "poner el rango de numeros posibles separados por una coma. Ej. 2,3";
+            {    
+                checkRegex.Enabled = true;
+                labelDescripcion.Text = "Para generar la expresion del tipo de dato numerico debes introducir la " +
+                    "expresion regular completa. En caso de quedar vacio se aceptaran todos los numeros reales";
             }
             else if(cmboxDatos.Text == "Nominal")
             {
+                checkRegex.Enabled = true;
                 labelDescripcion.Text = "Para generar la expresion del tipo de dato nominal " +
                     "los valores deben estar separados por una coma cada uno y sin espacios, " +
-                    "hay diferencia entre mayusculas y minusculas. Ej. tacos|tortas|quesadillas|sopes";
+                    "hay diferencia entre mayusculas y minusculas. Ej. tacos|Tacos|tortas|sopes";
             }
             else
             {
