@@ -23,7 +23,6 @@ namespace Proyecto_serio_el_regreso
             cant_columnas = 0;
             datoTexto = "";
             //rellenarCombobox();
-            tablaSeleccionada = false;
             properties = new OpenFileDialog { FileName = "" };
             archivo = new OpenFileDialog { FileName = "" };
         }
@@ -39,9 +38,9 @@ namespace Proyecto_serio_el_regreso
 
         private OpenFileDialog archivo;
         private OpenFileDialog properties;
+        private string infoArchivo;
 
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
-        private bool archivoTieneMysql = false;
 
         Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
 
@@ -50,11 +49,11 @@ namespace Proyecto_serio_el_regreso
         private string uid;
         private string password;
         private bool esProperties=false;
+        private bool archivoTieneMysql = false;
         private MySqlConnection connection;
         private MySqlDataAdapter mySqlDataAdapter;
-        private bool tablaSeleccionada;
 
-        private Dictionary<string, int> valoresFaltantes()
+        private Dictionary<string,int> valoresFaltantes()
         {
             Dictionary<string, int> lista = new Dictionary<string, int>();
 
@@ -83,6 +82,106 @@ namespace Proyecto_serio_el_regreso
             {
                 verificarDominios();
             }
+        }
+
+        private string generarRegex()
+        {
+            string expresion = @"^[\w\W]*$";
+            
+            if(!checkRegex.Checked)
+            {
+                //Para numericos
+                //Se espera una expresion tipo 1,23
+                //Se deberia generar ^([0-9]|[0-2][0-9]|[,3])|[2,])$
+                if (cmboxDatos.Text == "Numerico")
+                {
+                    if (string.IsNullOrEmpty(txbRegex.Text)) { expresion = @"^(\-)?(0|[1-9][0-9]*)(\.[0-9]*[1-9])?$"; }
+                    else { expresion = txbRegex.Text; }
+
+                    //    //pendiente, establecer un rango para los numeros de dos digitos
+                    //        expresion += "^";
+                    //    //Comprueba que el rango de valores sea solo numeros
+                    //    if(txbRegex.Text.Split(',').Count() == 2 && Regex.IsMatch(txbRegex.Text.Split(',')[0], "^[0-9]+$") && Regex.IsMatch(txbRegex.Text.Split(',')[1], "^[0-9]+$"))
+                    //    {
+                    //        expresion += "(";
+                    //        //se obtienen los rangos
+                    //        string rangoMin, rangoMax;
+                    //        rangoMin = txbRegex.Text.Split(',')[0];
+                    //        rangoMax = txbRegex.Text.Split(',')[1];
+
+                    //        //se busca el menor para comprobar errores Ej. se recibe 99,1
+                    //        int min = Int16.Parse(rangoMin), max = Int16.Parse(rangoMax);
+                    //        if(min > max){ int temp = max; max = min; min = temp; }
+
+                    //        rangoMax = max.ToString();
+                    //        rangoMin = max.ToString();
+
+                    //        //solo hace falta completar la decena cuando el rango maximo tiene 2 digitos o más
+                    //        if(rangoMax.Count() >= 2)
+                    //        {
+                    //            //ayuda a generar el rango para la expresion regular
+                    //            string[] numeros = new string[10]{ "0","1","2","3","4","5","6","7","8","9" };
+
+                    //            int indiceMin = Array.IndexOf(numeros, rangoMin.Last());
+                    //            for (int indice = indiceMin; indice < numeros.Count(); indice++)
+                    //            {
+                    //                if((rangoMin.Remove(rangoMin.Length - 1) + numeros[indice]) == rangoMax)
+                    //                {
+                    //                    break;
+                    //                }
+                    //                expresion += rangoMin.Remove(rangoMin.Length - 1) + numeros[indice] + "|";
+                    //            }
+
+                    //            int indiceMax = Array.IndexOf(numeros, rangoMax.Last());
+                    //            for (int indice = indiceMax; indice < numeros.Count(); indice++)
+                    //            {
+                    //                expresion += rangoMin.Remove(rangoMax.Length - 1) + numeros[indice] + "|";
+                    //            }
+                    //        }
+
+
+                    //        expresion += "[" + "-" + "]";
+                    //    }
+                    //    else
+                    //    {
+                    //        expresion += "[0-9]+";
+                    //    }
+
+                    //    //,100|2,|1,97
+
+
+                    //    //Si no es discreto debe agregarse la posibilidad del punto decimal y decimales
+                    //    if(!checkDiscreto.Checked)
+                    //    {
+                    //        expresion += @"(.[0-9]+)?";
+                    //    }
+
+                    //expresion += "$";
+                }
+                else if (cmboxDatos.Text == "Nominal")
+                {
+                    expresion = "^(";
+                    foreach (string valores in txbRegex.Text.Split(','))
+                    {
+                        if(valores.Length > 0)
+                        {
+                            expresion += valores + "|";
+                        }
+                    }
+                    if (expresion.Length > 3) { expresion.Remove(expresion.Length - 1); }
+                    else { expresion += @"[\w\W]*"; }
+                    expresion += ")$";
+                }
+                else if (cmboxDatos.Text == "Texto")
+                {
+                    if (!string.IsNullOrEmpty(txbRegex.Text)) { expresion = cmboxDatos.Text; }
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(txbRegex.Text)){ expresion = txbRegex.Text;}
+            }
+            return expresion;
         }
 
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
@@ -310,12 +409,11 @@ namespace Proyecto_serio_el_regreso
                         
                     }
                 }
-                //labelDescripcion.Text = descripcion;
             }
             
             if (archivoTieneMysql==true)
             {
-                labelDescripcion.Text = descripcion;
+                infoArchivo = descripcion;
                 rellenarCombobox();
             }
 
@@ -366,7 +464,7 @@ namespace Proyecto_serio_el_regreso
                     }
                     
                 }
-                labelDescripcion.Text = descripcion;
+                infoArchivo = descripcion;
 
                 //se lee la ruta del .csv dentro del .properties
                 linea = streamReader.ReadLine();
@@ -422,7 +520,6 @@ namespace Proyecto_serio_el_regreso
                 }
 
             }
-            //labelDescripcion.Text = descripcion;
 
             streamReader.Close();
             if(existeMysql)
@@ -636,6 +733,10 @@ namespace Proyecto_serio_el_regreso
             string tipoDato = cmboxDatos.Text;
             string columna = cmBoxColumnas.Text;
 
+            //Aqui vamos a adaptar la expresion regular que recibamos para guardarla como expresion regular para el tipo de dato
+            string expresion = generarRegex();
+            txbRegex.Text = expresion;
+
             //cargando los valores en una lista para mostrarlos en el mensaje del log
             valoresColumnaAnteriores.Add(columna);
             valoresColumnaAnteriores.Add(encabezado[columna].Key);
@@ -643,7 +744,8 @@ namespace Proyecto_serio_el_regreso
 
             valoresColumnaActuales.Add(nombre);
             valoresColumnaActuales.Add(tipoDato);
-            valoresColumnaActuales.Add(txbRegex.Text);
+            //valoresColumnaActuales.Add(txbRegex.Text);
+            valoresColumnaActuales.Add(expresion);
 
             dataGridView1.Columns[cmBoxColumnas.SelectedIndex].HeaderText = nombre;
             dataGridView1.Columns[cmBoxColumnas.SelectedIndex].Name = nombre;
@@ -651,7 +753,8 @@ namespace Proyecto_serio_el_regreso
             cmBoxColumnas.Items[cmBoxColumnas.SelectedIndex] = nombre;
 
             encabezado.Remove(columna);
-            encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, txbRegex.Text);
+            //encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, txbRegex.Text);
+            encabezado[nombre] = new KeyValuePair<string, string>(tipoDato, expresion);
 
 
             List<string> instanciaAux = instancias[columna];
@@ -929,6 +1032,34 @@ namespace Proyecto_serio_el_regreso
             else
             {
                 MessageBox.Show("No se ha seleccioando ninguna tabla");
+            }
+        }
+
+        private void cmboxDatos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkRegex.Checked = true;
+            checkRegex.Enabled = false;
+
+            labelDescripcion.Text = "En cado de que el checkbox este selecionado, se tomara literalmente " +
+                "la expresion regular proporcionada" + Environment.NewLine + Environment.NewLine;
+
+            if(cmboxDatos.Text == "Numerico")
+            {    
+                checkRegex.Enabled = true;
+                labelDescripcion.Text = "Para generar la expresion del tipo de dato numerico debes introducir la " +
+                    "expresion regular completa. En caso de quedar vacio se aceptaran todos los numeros reales";
+            }
+            else if(cmboxDatos.Text == "Nominal")
+            {
+                checkRegex.Enabled = true;
+                labelDescripcion.Text = "Para generar la expresion del tipo de dato nominal " +
+                    "los valores deben estar separados por una coma cada uno y sin espacios, " +
+                    "hay diferencia entre mayusculas y minusculas. Ej. tacos|Tacos|tortas|sopes";
+            }
+            else
+            {
+                labelDescripcion.Text = "Aqui debes establecer la expresion regular completa " +
+                    @"para comprobar los datos. En caso de quedar vacio, cualquier dato es valido. Ej. \b(hola|adios)\b";
             }
         }
     }
