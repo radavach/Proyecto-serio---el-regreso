@@ -233,7 +233,6 @@ namespace Proyecto_serio_el_regreso
                 }
                 else if(extension.Equals(".properties"))
                 {
-                    //pendiente
                     guardarProperties(archivo.FileName);
                 }
             }
@@ -247,9 +246,7 @@ namespace Proyecto_serio_el_regreso
 
         private void guardarProperties(string direccionArchivo)
         {
-            //StreamWriter escribir = new StreamWriter(direccionArchivo);
-
-            //por el momento guarda el contenido de la tabla en el csv ubicado en properties
+            //guarda el contenido de la tabla en el csv ubicado en properties
             StreamReader streamReader = new StreamReader(direccionArchivo);
             streamReader.DiscardBufferedData();
             streamReader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
@@ -351,8 +348,6 @@ namespace Proyecto_serio_el_regreso
         private void cargarProperties(string direccionArchivo)
         {
             MessageBox.Show("Se cargara el archivo con la direccion " + direccionArchivo);
-            //Dictionary<string, List<string>> instancias = new Dictionary<string, List<string>>();
-
             StreamReader streamReader = new StreamReader(direccionArchivo);
 
             this.archivo.FileName = null;
@@ -362,8 +357,6 @@ namespace Proyecto_serio_el_regreso
             string tempDesc = "";
             bool existe = linea.Contains("@data");
             bool existeMysql = linea.Contains("@mysql");
-            //string tempServer = "@server=";
-            //linea = streamReader.ReadLine();
 
             //Primero lee el archivo para buscar el tag '@mysql'
             while (!streamReader.EndOfStream)
@@ -791,6 +784,7 @@ namespace Proyecto_serio_el_regreso
             {
                 Dictionary<string, int> valores = valoresFaltantes();
                 string info = "";
+                info = info + infoArchivo + "\n";
                 foreach (string columna in encabezado.Keys)
                 {
                     info = info + "\nNombre del atributo: " + columna;

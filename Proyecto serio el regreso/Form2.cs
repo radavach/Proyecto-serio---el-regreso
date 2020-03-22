@@ -171,41 +171,24 @@ namespace Proyecto_serio_el_regreso
                 double d1 = valor1 - indice1;
                 double indice2 = System.Math.Floor(valor2);
                 double d2 = valor2 - indice2;
-                //MessageBox.Show(valor1.ToString(), "Original");
-                //MessageBox.Show(indice1.ToString(), "Dollars");
-                //MessageBox.Show(d1.ToString(), "Cents");
-                //MessageBox.Show(valor2.ToString(), "Original");
-                //MessageBox.Show(indice2.ToString(), "Dollars");
-                //MessageBox.Show(d2.ToString(), "Cents");
-
-                lblDatos.Text += "1. \n" + "Original: " + valor1.ToString() + Environment.NewLine +
-                    "Dollars: " + indice1.ToString() + Environment.NewLine +
-                    "Cents: " + d1.ToString() + Environment.NewLine + Environment.NewLine;
-
-                lblDatos.Text += "2. \n" + "Original: " + valor2.ToString() + Environment.NewLine +
-                    "Dollars: " + indice2.ToString() + Environment.NewLine +
-                    "Cents: " + d2.ToString() + Environment.NewLine + Environment.NewLine;
 
                 int index1 = Convert.ToInt32(indice1);
                 int index2 = Convert.ToInt32(indice2);
                 //double xi1 = Convert.ToDouble(valoresOrdenados.ElementAt(index1));
                 //double xj1 = valoresOrdenados.ElementAt(index1+1);
-                //MessageBox.Show(xi1.ToString(), "Dollars");
-                //MessageBox.Show(xj1.ToString(), "Cents");
 
                 q1 = Convert.ToDouble(valoresOrdenados.ElementAt(index1 - 1)) + (d1 * (Convert.ToDouble(valoresOrdenados.ElementAt(index1)) - Convert.ToDouble(valoresOrdenados.ElementAt(index1 - 1))));
                 q3 = Convert.ToDouble(valoresOrdenados.ElementAt(index2 - 1)) + (d2 * (Convert.ToDouble(valoresOrdenados.ElementAt(index2)) - Convert.ToDouble(valoresOrdenados.ElementAt(index2 - 1))));
             }
 
-            //MessageBox.Show(q1.ToString(), "Cuartil 1");
-            //MessageBox.Show(q3.ToString(), "Cuartil 3");
-
-            lblDatos.Text += "Cuartil 1: " + q1.ToString() + Environment.NewLine +
-                "Cuartil 2: " + q3.ToString();
 
             iqr = q3 - q1;
             double outlierBajo = q1 - (1.5 * iqr);
             double outlierAlto = q3 + (1.5 * iqr);
+
+            lblDatos.Text += "Cuartil 1: " + q1.ToString() + Environment.NewLine +
+                "Cuartil 3: " + q3.ToString() + Environment.NewLine +
+                "Rango intercuartil: " + iqr.ToString();
 
             for (int m = 0; m < cant_instancias; m++)
             {
