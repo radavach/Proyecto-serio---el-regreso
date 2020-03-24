@@ -486,35 +486,69 @@ namespace Proyecto_serio_el_regreso
                     if (linea.Contains("@attribute"))
                     {
 
-                        if (linea.Contains("["))
+                        if (linea.Contains("numeric")||linea.Contains("Numerico"))
                         {
                             //se obtiene la expresión regular
-                            string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
+                            string domNum = "";
                             //se limpia la cadena
                             if (linea.Contains("numeric"))
                             {
+                                domNum = /*@"^" +*/ linea.Substring(linea.LastIndexOf("numeric")) /*+ @"$"*/;
+                                domNum = domNum.Replace("numeric ", "");
                                 nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
                             }
                             else if (linea.Contains("Numerico"))
                             {
+                                domNum = /*@"^" +*/ linea.Substring(linea.LastIndexOf("Numerico")) /*+ @"$"*/;
+                                domNum = domNum.Replace("Numerico ", "");
                                 nombreColumna = linea.Substring(0, linea.IndexOf("Numerico"));
                             }
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Numerico", domNum));
                         }
-                        else if (linea.Contains("("))
+                        else if (linea.Contains("nominal")||linea.Contains("Nominal"))
                         {
-                            string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
+                            string domNom = "";
                             if (linea.Contains("nominal"))
                             {
+                                domNom = /*@"\b" +*/ linea.Substring(linea.IndexOf("nominal"))/* + @"\b"*/;
+                                domNom = domNom.Replace("nominal ","");
                                 nombreColumna = linea.Substring(0, linea.IndexOf("nominal"));
                             }
                             if (linea.Contains("Nominal"))
                             {
+                                domNom = /*@"\b" +*/ linea.Substring(linea.IndexOf("Nominal"))/* + @"\b"*/;
+                                domNom = domNom.Replace("Nominal ","");
                                 nombreColumna = linea.Substring(0, linea.IndexOf("Nominal"));
                             }
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
+                        }
+                        else if (linea.Contains("Binario Simetrico"))
+                        {
+                            string domBinSim = "";
+                            if (linea.Contains("Binario Simetrico"))
+                            {
+                                domBinSim = /*@"\b" +*/ linea.Substring(linea.IndexOf("Binario Simetrico"))/* + @"\b"*/;
+                                domBinSim = domBinSim.Replace("Binario Simetrico ", "");
+                                nombreColumna = linea.Substring(0, linea.IndexOf("Binario Simetrico"));
+                            }
+                            
+                            nombreColumna = nombreColumna.Replace("@attribute", "");
+                            encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Binario Simetrico", domBinSim));
+                        }
+                        else if (linea.Contains("Binario Asimetrico"))
+                        {
+                            string domBinAsim = "";
+                            if (linea.Contains("Binario Asimetrico"))
+                            {
+                                domBinAsim = /*@"\b" +*/ linea.Substring(linea.IndexOf("Binario Asimetrico"))/* + @"\b"*/;
+                                domBinAsim = domBinAsim.Replace("Binario Asimetrico ", "");
+                                nombreColumna = linea.Substring(0, linea.IndexOf("Binario Asimetrico"));
+                            }
+
+                            nombreColumna = nombreColumna.Replace("@attribute", "");
+                            encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Binario Asimetrico", domBinAsim));
                         }
 
                     }
@@ -855,7 +889,7 @@ namespace Proyecto_serio_el_regreso
                     info += "\nValores faltantes: " + valores[columna] + "(" + Convert.ToDecimal(valores[columna] * 100 / cant_instancias).ToString() + "%" + ")";
                     info += "\n\n";
                 }
-                MessageBox.Show(info);
+                MessageBox.Show(info,relation);
             }
             catch (System.NullReferenceException)
             {
