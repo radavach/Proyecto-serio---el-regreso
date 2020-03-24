@@ -39,6 +39,10 @@ namespace Proyecto_serio_el_regreso
         private OpenFileDialog archivo;
         private OpenFileDialog properties;
         private string infoArchivo;
+        private string rutaProperties;
+        private string direccionCsv;
+        private string relation;
+        private string mv;
 
         private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
 
@@ -207,6 +211,7 @@ namespace Proyecto_serio_el_regreso
                 else if(extension.Equals(".properties"))
                 {
                     this.properties = archivo;
+                    rutaProperties = archivo.FileName;
                     cargarProperties(archivo.FileName);
                 }
                 if (archivoTieneMysql == false)
@@ -252,6 +257,7 @@ namespace Proyecto_serio_el_regreso
             string linea = streamReader.ReadLine();
             bool existeRuta = linea.Contains("C:");
             string rutaCSV = "";
+            MessageBox.Show("1");
             while (existeRuta!=true)
             {
                 linea = streamReader.ReadLine();
@@ -268,11 +274,26 @@ namespace Proyecto_serio_el_regreso
             guardarCsv(rutaCSV);
         }
 
-
         //Guardar propiedades pendiente
         private void guardarPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            string prop = "";
+            prop = prop +"%% "+ infoArchivo + "\n";
+            prop += "@relation "+relation+"\n";
+            foreach (string columna in encabezado.Keys)
+            {
+                prop = prop + "@attribute " + columna + " ";
+                prop += encabezado[columna].Key;
+                prop += " " + encabezado[columna].Value;
+                prop += "\n";
+                
+            }
+            prop += "@missingValue "+mv+"\n";
+            prop += "@data\n";
+            prop += direccionCsv;
+            File.WriteAllText(rutaProperties, String.Empty);
+            File.WriteAllText(rutaProperties, prop);
+            MessageBox.Show(prop);
         }
 
         private void cargarCsv(string direccionArchivo)
@@ -350,10 +371,14 @@ namespace Proyecto_serio_el_regreso
             StreamReader streamReader = new StreamReader(direccionArchivo);
 
             this.archivo.FileName = null;
-            string nombreColumna;
+            string nombreColumna="";
             string linea = streamReader.ReadLine();
             string descripcion="";
             string tempDesc = "";
+            relation = "";
+            mv = "";
+            string tempRelation = "";
+            string tempMv = "";
             bool existe = linea.Contains("@data");
             bool existeMysql = linea.Contains("@mysql");
 
@@ -429,6 +454,18 @@ namespace Proyecto_serio_el_regreso
                         //descripcion = tempDesc + Environment.NewLine;
 
                     }
+
+                    if (linea.Contains("@relation"))
+                    {
+                        tempRelation = linea.Replace("@relation ", "");
+                        relation = relation + tempRelation;
+                    }
+
+                    if (linea.Contains("@missingValue"))
+                    {
+                        tempMv = linea.Replace("@missingValue ", "");
+                        mv = mv + tempMv;
+                    }
                     //descripcion = descripcion + tempDesc;
 
                     linea = streamReader.ReadLine();
@@ -443,17 +480,32 @@ namespace Proyecto_serio_el_regreso
                             //se obtiene la expresión regular
                             string domNum = @"^" + linea.Substring(linea.IndexOf('[')) + @"$";
                             //se limpia la cadena
-                            nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
+                            if (linea.Contains("numeric"))
+                            {
+                                nombreColumna = linea.Substring(0, linea.IndexOf("numeric"));
+                            }
+                            else if (linea.Contains("Numerico"))
+                            {
+                                nombreColumna = linea.Substring(0, linea.IndexOf("Numerico"));
+                            }
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Numerico", domNum));
                         }
                         else if (linea.Contains("("))
                         {
                             string domNom = @"\b" + linea.Substring(linea.IndexOf('(')) + @"\b";
-                            nombreColumna = linea.Substring(0, linea.IndexOf("nominal"));
+                            if (linea.Contains("nominal"))
+                            {
+                                nombreColumna = linea.Substring(0, linea.IndexOf("nominal"));
+                            }
+                            if (linea.Contains("Nominal"))
+                            {
+                                nombreColumna = linea.Substring(0, linea.IndexOf("Nominal"));
+                            }
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
                         }
+                        
                     }
                     
                 }
@@ -462,6 +514,7 @@ namespace Proyecto_serio_el_regreso
                 //se lee la ruta del .csv dentro del .properties
                 linea = streamReader.ReadLine();
                 this.archivo.FileName = linea;
+                direccionCsv = linea;
                 streamReader = new StreamReader(File.OpenRead(linea));
 
                 while (!streamReader.EndOfStream)
