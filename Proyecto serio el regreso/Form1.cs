@@ -38,13 +38,14 @@ namespace Proyecto_serio_el_regreso
 
         private OpenFileDialog archivo;
         private OpenFileDialog properties;
+        private SaveFileDialog saveArchivos;
         private string infoArchivo;
         private string rutaProperties;
         private string direccionCsv;
         private string relation;
         private string mv;
 
-        private KeyValuePair<string,string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
+        private KeyValuePair<string, string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
 
         Dictionary<string, List<KeyValuePair<int, string>>> valoresFueraDeDominio2 = new Dictionary<string, List<KeyValuePair<int, string>>>();
         HashSet<int> instanciasFuerasDeDominio = new HashSet<int>();
@@ -53,16 +54,16 @@ namespace Proyecto_serio_el_regreso
         private string database;
         private string uid;
         private string password;
-        private bool esProperties=false;
+        private bool esProperties = false;
         private bool archivoTieneMysql = false;
         private MySqlConnection connection;
         private MySqlDataAdapter mySqlDataAdapter;
 
-        private Dictionary<string,int> valoresFaltantes()
+        private Dictionary<string, int> valoresFaltantes()
         {
             Dictionary<string, int> lista = new Dictionary<string, int>();
 
-            foreach(string columna in encabezado.Keys)
+            foreach (string columna in encabezado.Keys)
             {
 
                 lista[columna] = instancias[columna].FindAll(x => x.Equals("?")).Count();
@@ -92,8 +93,8 @@ namespace Proyecto_serio_el_regreso
         private string generarRegex()
         {
             string expresion = @"^[\w\W]*$";
-            
-            if(!checkRegex.Checked)
+
+            if (!checkRegex.Checked)
             {
                 //Para numericos
                 //Se espera una expresion tipo 1,23
@@ -168,7 +169,7 @@ namespace Proyecto_serio_el_regreso
                     expresion = "^(";
                     foreach (string valores in txbRegex.Text.Split(','))
                     {
-                        if(valores.Length > 0)
+                        if (valores.Length > 0)
                         {
                             expresion += valores + "|";
                         }
@@ -184,7 +185,7 @@ namespace Proyecto_serio_el_regreso
             }
             else
             {
-                if (!string.IsNullOrEmpty(txbRegex.Text)){ expresion = txbRegex.Text;}
+                if (!string.IsNullOrEmpty(txbRegex.Text)) { expresion = txbRegex.Text; }
             }
             return expresion;
         }
@@ -193,7 +194,7 @@ namespace Proyecto_serio_el_regreso
         {
             OpenFileDialog archivo = new OpenFileDialog
             {
-                Filter = "Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data|Archivo propiedades(*.properties)|*.properties",
+                Filter = "Archivo propiedades(*.properties)|*.properties|Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data",
                 Title = "Indica el archivo que deseas abrir"
             };
             if (archivo.ShowDialog().Equals(DialogResult.OK))
@@ -209,7 +210,7 @@ namespace Proyecto_serio_el_regreso
                     this.archivo = archivo;
                     cargarCsv(archivo.FileName);
                 }
-                else if(extension.Equals(".properties"))
+                else if (extension.Equals(".properties"))
                 {
                     this.properties = archivo;
                     rutaProperties = archivo.FileName;
@@ -221,7 +222,8 @@ namespace Proyecto_serio_el_regreso
                     recalcularValores();
                 }
             }
-            else {
+            else
+            {
                 MessageBox.Show("El archivo no se abrio");
             }
         }
@@ -236,16 +238,16 @@ namespace Proyecto_serio_el_regreso
                 {
                     guardarCsv(archivo.FileName);
                 }
-                else if(extension.Equals(".properties"))
+                else if (extension.Equals(".properties"))
                 {
                     guardarProperties(archivo.FileName);
                 }
             }
-            catch(System.NullReferenceException)
+            catch (System.NullReferenceException)
             {
                 MessageBox.Show("Aún no has abierto archivo");
             }
-            
+
 
         }
 
@@ -259,11 +261,11 @@ namespace Proyecto_serio_el_regreso
             bool existeRuta = linea.Contains("C:");
             string rutaCSV = "";
             MessageBox.Show("1");
-            while (existeRuta!=true)
+            while (existeRuta != true)
             {
                 linea = streamReader.ReadLine();
                 existeRuta = linea.Contains("C:");
-                if (linea.Contains("C:")==true)
+                if (linea.Contains("C:") == true)
                 {
                     rutaCSV = linea;
 
@@ -271,46 +273,53 @@ namespace Proyecto_serio_el_regreso
 
             }
             streamReader.Close();
-            MessageBox.Show(rutaCSV,"La tabla se guardará en");
+            MessageBox.Show(rutaCSV, "La tabla se guardará en");
             guardarCsv(rutaCSV);
         }
 
         //Guardar propiedades pendiente
         private void guardarPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string prop = "";
-            prop = prop +"%% "+ infoArchivo + "\n";
-            prop += "@relation "+relation+"\n";
-            foreach (string columna in encabezado.Keys)
+            try
             {
-                prop = prop + "@attribute " + columna + " ";
-                prop += encabezado[columna].Key;
-                prop += " " + encabezado[columna].Value;
-                prop += "\n";
-                
+                string prop = "";
+                prop = prop + "%% " + infoArchivo + "\n";
+                prop += "@relation " + relation + "\n";
+                foreach (string columna in encabezado.Keys)
+                {
+                    prop = prop + "@attribute " + columna + " ";
+                    prop += encabezado[columna].Key;
+                    prop += " " + encabezado[columna].Value;
+                    prop += "\n";
+
+                }
+                prop += "@missingValue " + mv + "\n";
+                prop += "@data\n";
+                prop += direccionCsv;
+                File.WriteAllText(rutaProperties, String.Empty);
+                File.WriteAllText(rutaProperties, prop);
+                MessageBox.Show(prop);
             }
-            prop += "@missingValue "+mv+"\n";
-            prop += "@data\n";
-            prop += direccionCsv;
-            File.WriteAllText(rutaProperties, String.Empty);
-            File.WriteAllText(rutaProperties, prop);
-            MessageBox.Show(prop);
+            catch (System.NullReferenceException)
+            {
+                MessageBox.Show("No se ha cargado el archivo");
+            }
         }
 
         private void cargarCsv(string direccionArchivo)
         {
             MessageBox.Show("Se cargara el archivo con la direccion " + direccionArchivo);
             StreamReader leerCsv = new StreamReader(direccionArchivo);
-            
+
             if (!leerCsv.EndOfStream)
             {
-                foreach(string columna in leerCsv.ReadLine().Split(','))
+                foreach (string columna in leerCsv.ReadLine().Split(','))
                 {
                     encabezado.Add(columna, new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value));
                 }
 
                 cant_columnas = encabezado.Count();
-                
+
                 while (!leerCsv.EndOfStream)
                 {
                     string[] instancia = leerCsv.ReadLine().Split(',');
@@ -321,11 +330,11 @@ namespace Proyecto_serio_el_regreso
 
                     cant_instancias++;
 
-                    while(indice >= 0)
+                    while (indice >= 0)
                     {
                         try
-                        { 
-                            for (; indice >= 0;  indice--)
+                        {
+                            for (; indice >= 0; indice--)
                             {
                                 if (instancias.ContainsKey(iterador[indice]))
                                 {
@@ -339,8 +348,9 @@ namespace Proyecto_serio_el_regreso
                                 elementos.Add(instancia[indice]);
                             }
                         }
-                        catch (System.IndexOutOfRangeException) {
-                        
+                        catch (System.IndexOutOfRangeException)
+                        {
+
                             if (instancias.ContainsKey(iterador[indice]))
                             {
                                 elementos = instancias[iterador[indice]];
@@ -372,9 +382,9 @@ namespace Proyecto_serio_el_regreso
             StreamReader streamReader = new StreamReader(direccionArchivo);
 
             this.archivo.FileName = null;
-            string nombreColumna="";
+            string nombreColumna = "";
             string linea = streamReader.ReadLine();
-            string descripcion="";
+            string descripcion = "";
             string tempDesc = "";
             relation = "";
             mv = "";
@@ -406,31 +416,31 @@ namespace Proyecto_serio_el_regreso
                 {
                     if (linea.Contains("@server") == true)
                     {
-                        server = linea.Substring(linea.IndexOf('=')+1);
-                        
+                        server = linea.Substring(linea.IndexOf('=') + 1);
+
                     }
 
                     if (linea.Contains("@database") == true)
                     {
                         database = linea.Substring(linea.IndexOf('=') + 1);
-                        
+
                     }
 
                     if (linea.Contains("@uid") == true)
                     {
                         uid = linea.Substring(linea.IndexOf('=') + 1);
-                       
+
                     }
 
                     if (linea.Contains("@password") == true)
                     {
                         password = linea.Substring(linea.IndexOf('=') + 1);
-                        
+
                     }
                 }
             }
-            
-            if (archivoTieneMysql==true)
+
+            if (archivoTieneMysql == true)
             {
                 infoArchivo = descripcion;
                 rellenarCombobox();
@@ -447,7 +457,7 @@ namespace Proyecto_serio_el_regreso
                 //se obtiene el encabezado
                 while (existe != true)
                 {
-                    
+
                     if (linea.Contains("%%"))
                     {
                         tempDesc = linea.Replace("%% ", "");
@@ -471,7 +481,7 @@ namespace Proyecto_serio_el_regreso
 
                     linea = streamReader.ReadLine();
                     existe = linea.Contains("@data");
-                   
+
 
                     if (linea.Contains("@attribute"))
                     {
@@ -506,9 +516,9 @@ namespace Proyecto_serio_el_regreso
                             nombreColumna = nombreColumna.Replace("@attribute", "");
                             encabezado.Add(nombreColumna, new KeyValuePair<string, string>("Nominal", Regex.Replace(domNom, @"\s+", "")));
                         }
-                        
+
                     }
-                    
+
                 }
                 infoArchivo = descripcion;
 
@@ -569,7 +579,7 @@ namespace Proyecto_serio_el_regreso
             }
 
             streamReader.Close();
-            if(existeMysql)
+            if (existeMysql)
             {
                 rellenarCombobox();
             }
@@ -589,13 +599,13 @@ namespace Proyecto_serio_el_regreso
                 {
                     //En encabezado, con columna accedes a los datos de la columna, key es para el tipo de dato y value para la expresion regular
                     Regex regex = new Regex(encabezado[columna].Value);
-                    
+
                     if (!regex.IsMatch(instancias[columna][indice].Replace(" ", "")))
                     {
                         dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.Yellow;
 
                         instanciasFuerasDeDominio.Add(indice);
-                        
+
                         if (!valoresFueraDeDominio2.ContainsKey(columna))
                         {
                             valoresFueraDeDominio2[columna] = new List<KeyValuePair<int, string>>();
@@ -640,7 +650,7 @@ namespace Proyecto_serio_el_regreso
                 }
             }
 
-            for(int fila = 0; fila < cant_instancias; fila+=1)
+            for (int fila = 0; fila < cant_instancias; fila += 1)
             {
                 contador = 1;
                 foreach (string columna in encabezado.Keys)
@@ -664,7 +674,7 @@ namespace Proyecto_serio_el_regreso
 
         private void actualizarCsv(string accion)
         {
-            if(properties.FileName != null && !archivoTieneMysql)
+            if (properties.FileName != null && !archivoTieneMysql)
             {
                 //Genera la variante del nombre para guardar el archivo
                 DateTime time = System.DateTime.Now;
@@ -689,7 +699,7 @@ namespace Proyecto_serio_el_regreso
 
         private void actualizarLog(string direccion, string accion)
         {
-            if(properties.FileName != "")
+            if (properties.FileName != "")
             {
                 StreamWriter escribir = File.AppendText(Path.GetDirectoryName(properties.FileName) + "\\" + Path.GetFileNameWithoutExtension(properties.FileName) + ".log");
                 escribir.WriteLine(direccion + " => " + accion);
@@ -702,9 +712,9 @@ namespace Proyecto_serio_el_regreso
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
             cmBoxColumnas.Items.Clear();
-            foreach(string a in encabezado.Keys)
+            foreach (string a in encabezado.Keys)
             {
-                DataGridViewTextBoxColumn columna = new DataGridViewTextBoxColumn { HeaderText = a, Name = a, SortMode = DataGridViewColumnSortMode.NotSortable};
+                DataGridViewTextBoxColumn columna = new DataGridViewTextBoxColumn { HeaderText = a, Name = a, SortMode = DataGridViewColumnSortMode.NotSortable };
                 dataGridView1.Columns.Add(columna);
 
                 cmBoxColumnas.Items.Add(a);
@@ -714,7 +724,7 @@ namespace Proyecto_serio_el_regreso
             int renglon = 0;
 
             dataGridView1.Rows.Add(cant_instancias);
-            
+
             while (indice != cant_instancias)
             {
                 //renglon = dataGridView1.Rows.Add();
@@ -730,7 +740,7 @@ namespace Proyecto_serio_el_regreso
                 indice++;
                 renglon++;
             }
-            
+
 
         }
 
@@ -743,7 +753,7 @@ namespace Proyecto_serio_el_regreso
             cmboxDatos.SelectedItem = encabezado[texto].Key;
             cmBoxColumnas.SelectedItem = texto;
         }
-        
+
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             string texto, textoAnterior;
@@ -751,7 +761,7 @@ namespace Proyecto_serio_el_regreso
             {
                 texto = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
             }
-            catch(System.NullReferenceException)
+            catch (System.NullReferenceException)
             {
                 texto = datoTexto;
             }
@@ -761,7 +771,7 @@ namespace Proyecto_serio_el_regreso
             textoAnterior = instancias[dataGridView1.Columns[e.ColumnIndex].HeaderText][e.RowIndex];
             instancias[dataGridView1.Columns[e.ColumnIndex].HeaderText][e.RowIndex] = texto;
 
-            if(texto == "?")
+            if (texto == "?")
             {
                 dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Red;
             }
@@ -822,10 +832,10 @@ namespace Proyecto_serio_el_regreso
                     verificarDominios();
                     actualizarCsv("editar columna - " + string.Join("|", valoresColumnaAnteriores) + " => " + string.Join("|", valoresColumnaActuales));
                 }
-                catch(System.Collections.Generic.KeyNotFoundException)
+                catch (System.Collections.Generic.KeyNotFoundException)
                 { MessageBox.Show("No se ha seleccionado ninguna columna"); }
             }
-            catch(System.NullReferenceException)
+            catch (System.NullReferenceException)
             {
                 MessageBox.Show("Aun no se ha abierto el archivo");
             }
@@ -833,7 +843,7 @@ namespace Proyecto_serio_el_regreso
 
         private void btnInfo_Click(object sender, EventArgs e)//Obteniendo informacion de las instancias
         {
-           try
+            try
             {
                 Dictionary<string, int> valores = valoresFaltantes();
                 string info = "";
@@ -847,7 +857,7 @@ namespace Proyecto_serio_el_regreso
                 }
                 MessageBox.Show(info);
             }
-            catch(System.NullReferenceException)
+            catch (System.NullReferenceException)
             {
                 MessageBox.Show("No se ha cargado el archivo");
             }
@@ -875,7 +885,7 @@ namespace Proyecto_serio_el_regreso
                     actualizarCsv("eliminar instancia - " + string.Join(",", atributosInstancia));
                 }
             }
-            catch(System.NullReferenceException)
+            catch (System.NullReferenceException)
             {
                 MessageBox.Show("No se ha cargado el archivo");
             }
@@ -921,18 +931,18 @@ namespace Proyecto_serio_el_regreso
                 }
                 recalcularValores();
             }
-            catch(System.InvalidOperationException)
+            catch (System.InvalidOperationException)
             {
                 MessageBox.Show("No se ha cargado el archivo");
             }
-           
+
         }
 
         //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
             //pendiente revalidar el contenido de la nueva columna con la expresion regular
-           try
+            try
             {
                 string columna = "columnaN";
                 encabezado[columna] = new KeyValuePair<string, string>(tipoTexto.Key, tipoTexto.Value);
@@ -942,7 +952,7 @@ namespace Proyecto_serio_el_regreso
                 cargarGrid();
                 recalcularValores();
             }
-            catch(System.NullReferenceException)
+            catch (System.NullReferenceException)
             {
                 MessageBox.Show("No se ha cargado el archivo");
             }
@@ -964,7 +974,7 @@ namespace Proyecto_serio_el_regreso
                 }
                 cant_instanciasParametro = instanciasParametro[columna].Count();
             }
-            
+
             Form2 form2 = new Form2(this, encabezado, instanciasParametro, valores_faltantes, valoresFueraDeDominio2, cant_instanciasParametro);
             form2.Show();
         }
@@ -1051,6 +1061,9 @@ namespace Proyecto_serio_el_regreso
             sentenciaBox.Show();
             enviarButton.Show();
             label3.Show();
+            guardarPropiedadescsvToolStripMenuItem.Visible = true;
+            guardarPropertiesToolStripMenuItem.Visible = false;
+            guardarToolStripMenuItem.Visible = false;
             //server = "localhost";
             //database = "hotel";
             //uid = "root";
@@ -1059,7 +1072,7 @@ namespace Proyecto_serio_el_regreso
             connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
             connection = new MySqlConnection(connectionString);
-            string cmdstr = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='"+database+"';";
+            string cmdstr = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='" + database + "';";
             DataTable dt = new DataTable();
             MySqlDataAdapter sda = new MySqlDataAdapter(cmdstr, connection);
             try
@@ -1118,11 +1131,11 @@ namespace Proyecto_serio_el_regreso
                     //cmboxDatos.Items.AddRange(tipos_dato);
                     valores_faltantes = valoresFaltantes();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-                
+
             }
         }
 
@@ -1143,7 +1156,7 @@ namespace Proyecto_serio_el_regreso
 
         private void enviarButton_Click(object sender, EventArgs e)
         {
-            if(comboBoxTablas.SelectedIndex != -1)
+            if (comboBoxTablas.SelectedIndex != -1)
             {
                 dataGridView1.DataSource = null;
                 encabezado = null;
@@ -1164,13 +1177,13 @@ namespace Proyecto_serio_el_regreso
             labelDescripcion.Text = "En cado de que el checkbox este selecionado, se tomara literalmente " +
                 "la expresion regular proporcionada" + Environment.NewLine + Environment.NewLine;
 
-            if(cmboxDatos.Text == "Numerico")
-            {    
+            if (cmboxDatos.Text == "Numerico")
+            {
                 checkRegex.Enabled = true;
                 labelDescripcion.Text = "Para generar la expresion del tipo de dato numerico debes introducir la " +
                     "expresion regular completa. En caso de quedar vacio se aceptaran todos los numeros reales";
             }
-            else if(cmboxDatos.Text == "Nominal")
+            else if (cmboxDatos.Text == "Nominal")
             {
                 checkRegex.Enabled = true;
                 labelDescripcion.Text = "Para generar la expresion del tipo de dato nominal " +
@@ -1181,6 +1194,96 @@ namespace Proyecto_serio_el_regreso
             {
                 labelDescripcion.Text = "Aqui debes establecer la expresion regular completa " +
                     @"para comprobar los datos. En caso de quedar vacio, cualquier dato es valido. Ej. \b(hola|adios)\b";
+            }
+        }
+
+        private void guardarPropiedadescsvToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (comboBoxTablas.SelectedIndex != -1)
+            {
+                saveArchivos = new SaveFileDialog();
+                saveArchivos.Title = "Guardar base de datos en properties";
+                saveArchivos.Filter = "Archivo propiedades(*.properties)|*.properties";
+                saveArchivos.ShowDialog();
+                SaveFileDialog saveCsv = new SaveFileDialog();
+                saveCsv.Title = "Guardar base de datos en csv";
+                saveCsv.Filter = "Archivo separado por comas (*.csv)|*.csv";
+                saveCsv.ShowDialog();
+                if (saveArchivos.FileName != "" && saveCsv.FileName != "")
+                {
+                    rutaProperties = saveArchivos.FileName;
+                    direccionCsv = saveCsv.FileName;
+                    guardarCsv(direccionCsv);
+                    string tabla = comboBoxTablas.SelectedItem.ToString();
+                    infoArchivo = "Informacion tomada de la tabla: " + tabla;
+                    mv = null;
+                    relation = tabla;
+                    string prop = "";
+                    prop = prop + "%% " + infoArchivo + "\n";
+                    prop += "@relation " + relation + "\n";
+                    foreach (string columna in encabezado.Keys)
+                    {
+                        prop = prop + "@attribute " + columna + " ";
+                        prop += encabezado[columna].Key;
+                        prop += " " + encabezado[columna].Value;
+                        prop += "\n";
+
+                    }
+                    prop += "@missingValue " + mv + "\n";
+                    prop += "@data\n";
+                    prop += direccionCsv;
+                    File.WriteAllText(rutaProperties, String.Empty);
+                    File.WriteAllText(rutaProperties, prop);
+                    MessageBox.Show(prop);
+                }
+                else
+                    MessageBox.Show("No se selecciono alguna de las direcciones");
+            }
+            else
+                MessageBox.Show("Selecciona una tabla primero");
+        }
+
+        private void guardarComoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                saveArchivos = new SaveFileDialog();
+                saveArchivos.Title = "Guardar properties";
+                saveArchivos.Filter = "Archivo propiedades(*.properties)|*.properties";
+                saveArchivos.ShowDialog();
+                SaveFileDialog saveCsv = new SaveFileDialog();
+                saveCsv.Title = "Guardar csv";
+                saveCsv.Filter = "Archivo separado por comas (*.csv)|*.csv";
+                saveCsv.ShowDialog();
+                if (saveArchivos.FileName != "" && saveCsv.FileName != "")
+                {
+                    rutaProperties = saveArchivos.FileName;
+                    direccionCsv = saveCsv.FileName;
+                    guardarCsv(direccionCsv);
+                    string prop = "";
+                    prop = prop + "%% " + infoArchivo + "\n";
+                    prop += "@relation " + relation + "\n";
+                    foreach (string columna in encabezado.Keys)
+                    {
+                        prop = prop + "@attribute " + columna + " ";
+                        prop += encabezado[columna].Key;
+                        prop += " " + encabezado[columna].Value;
+                        prop += "\n";
+
+                    }
+                    prop += "@missingValue " + mv + "\n";
+                    prop += "@data\n";
+                    prop += direccionCsv;
+                    File.WriteAllText(rutaProperties, String.Empty);
+                    File.WriteAllText(rutaProperties, prop);
+                    MessageBox.Show(prop);
+                }
+                else
+                    MessageBox.Show("No se selecciono alguna de las direcciones");
+            }
+            catch(System.NullReferenceException)
+            {
+                MessageBox.Show("No se ha cargado un archivo");
             }
         }
     }

@@ -65,6 +65,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.labelDescripcion = new System.Windows.Forms.Label();
             this.checkRegex = new System.Windows.Forms.CheckBox();
+            this.guardarPropiedadescsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.guardarComoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -232,7 +234,9 @@
             this.archivoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.abrirToolStripMenuItem,
             this.guardarToolStripMenuItem,
-            this.guardarPropertiesToolStripMenuItem});
+            this.guardarPropertiesToolStripMenuItem,
+            this.guardarPropiedadescsvToolStripMenuItem,
+            this.guardarComoToolStripMenuItem});
             this.archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
             this.archivoToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.archivoToolStripMenuItem.Text = "Archivo";
@@ -240,21 +244,21 @@
             // abrirToolStripMenuItem
             // 
             this.abrirToolStripMenuItem.Name = "abrirToolStripMenuItem";
-            this.abrirToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.abrirToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.abrirToolStripMenuItem.Text = "Abrir";
             this.abrirToolStripMenuItem.Click += new System.EventHandler(this.abrirToolStripMenuItem_Click);
             // 
             // guardarToolStripMenuItem
             // 
             this.guardarToolStripMenuItem.Name = "guardarToolStripMenuItem";
-            this.guardarToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.guardarToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.guardarToolStripMenuItem.Text = "Guardar";
             this.guardarToolStripMenuItem.Click += new System.EventHandler(this.guardarToolStripMenuItem_Click);
             // 
             // guardarPropertiesToolStripMenuItem
             // 
             this.guardarPropertiesToolStripMenuItem.Name = "guardarPropertiesToolStripMenuItem";
-            this.guardarPropertiesToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.guardarPropertiesToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.guardarPropertiesToolStripMenuItem.Text = "Guardar propiedades";
             this.guardarPropertiesToolStripMenuItem.Click += new System.EventHandler(this.guardarPropertiesToolStripMenuItem_Click);
             // 
@@ -399,6 +403,21 @@
             this.checkRegex.Text = "Expresion regular literal";
             this.checkRegex.UseVisualStyleBackColor = true;
             // 
+            // guardarPropiedadescsvToolStripMenuItem
+            // 
+            this.guardarPropiedadescsvToolStripMenuItem.Name = "guardarPropiedadescsvToolStripMenuItem";
+            this.guardarPropiedadescsvToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.guardarPropiedadescsvToolStripMenuItem.Text = "Guardar propiedades+csv";
+            this.guardarPropiedadescsvToolStripMenuItem.Visible = false;
+            this.guardarPropiedadescsvToolStripMenuItem.Click += new System.EventHandler(this.guardarPropiedadescsvToolStripMenuItem_Click);
+            // 
+            // guardarComoToolStripMenuItem
+            // 
+            this.guardarComoToolStripMenuItem.Name = "guardarComoToolStripMenuItem";
+            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.guardarComoToolStripMenuItem.Text = "Guardar como";
+            this.guardarComoToolStripMenuItem.Click += new System.EventHandler(this.guardarComoToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -479,6 +498,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label labelDescripcion;
         private System.Windows.Forms.CheckBox checkRegex;
+        private System.Windows.Forms.ToolStripMenuItem guardarPropiedadescsvToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem guardarComoToolStripMenuItem;
     }
 }
 
