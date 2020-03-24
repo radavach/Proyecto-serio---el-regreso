@@ -189,10 +189,55 @@ namespace Proyecto_serio_el_regreso
             }
             return expresion;
         }
+        private void reiniciarParametros()
+        {
+            while(dataGridView1.Columns.Count > 0)
+            {
+                dataGridView1.Columns.RemoveAt(0);
+            }
+            cant_columnas = 0;
+            cant_instancias = 0;
+            encabezado = null;
+            instancias = null;
+            esProperties = false;
+            archivoTieneMysql = false;
+            infoArchivo = "";
+            rutaProperties = "";
+            direccionCsv = "";
+            relation = "";
+            mv = "";
+            server = "";
+            database = "";
+            uid = "";
+            password = "";
+            connection = null;
+            mySqlDataAdapter = null;
+            button1.Show();
+            comboBoxTablas.Hide();
+            label1.Hide();
+            sentenciaBox.Hide();
+            enviarButton.Hide();
+            label3.Hide();
+            guardarPropiedadescsvToolStripMenuItem.Visible = false;
+            guardarPropertiesToolStripMenuItem.Visible = true;
+            guardarToolStripMenuItem.Visible = true;
+            guardarComoToolStripMenuItem.Visible = true;
+            cmboxDatos.Items.Clear();
+            enviarButton.Hide();
+            button1.Hide();
+            dataGridView1.DataSource = null;
+            try
+            {
+                instancias.Clear();
+            }
+            catch(System.NullReferenceException)
+            { }
+        }
 
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog archivo = new OpenFileDialog
+            reiniciarParametros();
+        OpenFileDialog archivo = new OpenFileDialog
             {
                 Filter = "Archivo propiedades(*.properties)|*.properties|Archivo separado por comas (*.csv)|*.csv|Archivo data(*.data)|*.data",
                 Title = "Indica el archivo que deseas abrir"
@@ -1098,6 +1143,7 @@ namespace Proyecto_serio_el_regreso
             guardarPropiedadescsvToolStripMenuItem.Visible = true;
             guardarPropertiesToolStripMenuItem.Visible = false;
             guardarToolStripMenuItem.Visible = false;
+            guardarComoToolStripMenuItem.Visible = false;
             //server = "localhost";
             //database = "hotel";
             //uid = "root";
@@ -1178,7 +1224,6 @@ namespace Proyecto_serio_el_regreso
             if (comboBoxTablas.SelectedIndex != -1)
             {
                 string tabla = comboBoxTablas.SelectedItem.ToString();
-                dataGridView1.DataSource = null;
                 encabezado = null;
                 cargarBase(tabla, "select * from " + tabla);
             }
