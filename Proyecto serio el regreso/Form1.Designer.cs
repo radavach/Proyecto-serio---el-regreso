@@ -49,6 +49,8 @@
             this.abrirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.guardarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.guardarPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.guardarPropiedadescsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.guardarComoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.proyectoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tratamientoDeLosDatosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.analisisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,8 +67,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.labelDescripcion = new System.Windows.Forms.Label();
             this.checkRegex = new System.Windows.Forms.CheckBox();
-            this.guardarPropiedadescsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.guardarComoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.descripcionBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -262,6 +264,21 @@
             this.guardarPropertiesToolStripMenuItem.Text = "Guardar propiedades";
             this.guardarPropertiesToolStripMenuItem.Click += new System.EventHandler(this.guardarPropertiesToolStripMenuItem_Click);
             // 
+            // guardarPropiedadescsvToolStripMenuItem
+            // 
+            this.guardarPropiedadescsvToolStripMenuItem.Name = "guardarPropiedadescsvToolStripMenuItem";
+            this.guardarPropiedadescsvToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.guardarPropiedadescsvToolStripMenuItem.Text = "Guardar propiedades+csv";
+            this.guardarPropiedadescsvToolStripMenuItem.Visible = false;
+            this.guardarPropiedadescsvToolStripMenuItem.Click += new System.EventHandler(this.guardarPropiedadescsvToolStripMenuItem_Click);
+            // 
+            // guardarComoToolStripMenuItem
+            // 
+            this.guardarComoToolStripMenuItem.Name = "guardarComoToolStripMenuItem";
+            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.guardarComoToolStripMenuItem.Text = "Guardar como";
+            this.guardarComoToolStripMenuItem.Click += new System.EventHandler(this.guardarComoToolStripMenuItem_Click);
+            // 
             // proyectoToolStripMenuItem
             // 
             this.proyectoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -390,7 +407,7 @@
             // 
             this.labelDescripcion.Location = new System.Drawing.Point(862, 307);
             this.labelDescripcion.Name = "labelDescripcion";
-            this.labelDescripcion.Size = new System.Drawing.Size(182, 132);
+            this.labelDescripcion.Size = new System.Drawing.Size(182, 83);
             this.labelDescripcion.TabIndex = 31;
             // 
             // checkRegex
@@ -403,26 +420,30 @@
             this.checkRegex.Text = "Expresion regular literal";
             this.checkRegex.UseVisualStyleBackColor = true;
             // 
-            // guardarPropiedadescsvToolStripMenuItem
+            // descripcionBox
             // 
-            this.guardarPropiedadescsvToolStripMenuItem.Name = "guardarPropiedadescsvToolStripMenuItem";
-            this.guardarPropiedadescsvToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.guardarPropiedadescsvToolStripMenuItem.Text = "Guardar propiedades+csv";
-            this.guardarPropiedadescsvToolStripMenuItem.Visible = false;
-            this.guardarPropiedadescsvToolStripMenuItem.Click += new System.EventHandler(this.guardarPropiedadescsvToolStripMenuItem_Click);
+            this.descripcionBox.Location = new System.Drawing.Point(861, 412);
+            this.descripcionBox.Multiline = true;
+            this.descripcionBox.Name = "descripcionBox";
+            this.descripcionBox.Size = new System.Drawing.Size(182, 47);
+            this.descripcionBox.TabIndex = 33;
             // 
-            // guardarComoToolStripMenuItem
+            // label2
             // 
-            this.guardarComoToolStripMenuItem.Name = "guardarComoToolStripMenuItem";
-            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.guardarComoToolStripMenuItem.Text = "Guardar como";
-            this.guardarComoToolStripMenuItem.Click += new System.EventHandler(this.guardarComoToolStripMenuItem_Click);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(862, 396);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 13);
+            this.label2.TabIndex = 34;
+            this.label2.Text = "Descripción";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 492);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.descripcionBox);
             this.Controls.Add(this.checkRegex);
             this.Controls.Add(this.labelDescripcion);
             this.Controls.Add(this.label3);
@@ -500,6 +521,8 @@
         private System.Windows.Forms.CheckBox checkRegex;
         private System.Windows.Forms.ToolStripMenuItem guardarPropiedadescsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem guardarComoToolStripMenuItem;
+        private System.Windows.Forms.TextBox descripcionBox;
+        private System.Windows.Forms.Label label2;
     }
 }
 
