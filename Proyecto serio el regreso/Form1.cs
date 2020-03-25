@@ -218,6 +218,7 @@ namespace Proyecto_serio_el_regreso
             sentenciaBox.Hide();
             enviarButton.Hide();
             label3.Hide();
+            descripcionBox.Text = "";
             guardarPropiedadescsvToolStripMenuItem.Visible = false;
             guardarPropertiesToolStripMenuItem.Visible = true;
             guardarToolStripMenuItem.Visible = true;
@@ -328,7 +329,12 @@ namespace Proyecto_serio_el_regreso
             try
             {
                 string prop = "";
-                prop = prop + "%% " + infoArchivo + "\n";
+                if(descripcionBox.Text=="")
+                {
+                    descripcionBox.Text = "Informacion tomada de la tabla: " + relation;
+                }
+
+                prop = prop + "%% " + descripcionBox.Text + "\n";
                 prop += "@relation " + relation + "\n";
                 foreach (string columna in encabezado.Keys)
                 {
@@ -600,6 +606,7 @@ namespace Proyecto_serio_el_regreso
 
                 }
                 infoArchivo = descripcion;
+                descripcionBox.Text = infoArchivo;
 
                 //se lee la ruta del .csv dentro del .properties
                 linea = streamReader.ReadLine();
@@ -1298,7 +1305,12 @@ namespace Proyecto_serio_el_regreso
                     mv = null;
                     relation = tabla;
                     string prop = "";
-                    prop = prop + "%% " + infoArchivo + "\n";
+                    if (descripcionBox.Text == "")
+                    {
+                        descripcionBox.Text = "Informacion tomada de la tabla: " + relation;
+                    }
+
+                    prop = prop + "%% " + descripcionBox.Text + "\n";
                     prop += "@relation " + relation + "\n";
                     foreach (string columna in encabezado.Keys)
                     {
