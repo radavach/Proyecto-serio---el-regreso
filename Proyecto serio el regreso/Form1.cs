@@ -96,73 +96,12 @@ namespace Proyecto_serio_el_regreso
 
             if (!checkRegex.Checked)
             {
-                //Para numericos
-                //Se espera una expresion tipo 1,23
-                //Se deberia generar ^([0-9]|[0-2][0-9]|[,3])|[2,])$
+
                 if (cmboxDatos.Text == "Numerico")
                 {
                     if (string.IsNullOrEmpty(txbRegex.Text)) { expresion = @"^(\-)?(0|[1-9][0-9]*)(\.[0-9]*[1-9])?$"; }
                     else { expresion = txbRegex.Text; }
 
-                    //    //pendiente, establecer un rango para los numeros de dos digitos
-                    //        expresion += "^";
-                    //    //Comprueba que el rango de valores sea solo numeros
-                    //    if(txbRegex.Text.Split(',').Count() == 2 && Regex.IsMatch(txbRegex.Text.Split(',')[0], "^[0-9]+$") && Regex.IsMatch(txbRegex.Text.Split(',')[1], "^[0-9]+$"))
-                    //    {
-                    //        expresion += "(";
-                    //        //se obtienen los rangos
-                    //        string rangoMin, rangoMax;
-                    //        rangoMin = txbRegex.Text.Split(',')[0];
-                    //        rangoMax = txbRegex.Text.Split(',')[1];
-
-                    //        //se busca el menor para comprobar errores Ej. se recibe 99,1
-                    //        int min = Int16.Parse(rangoMin), max = Int16.Parse(rangoMax);
-                    //        if(min > max){ int temp = max; max = min; min = temp; }
-
-                    //        rangoMax = max.ToString();
-                    //        rangoMin = max.ToString();
-
-                    //        //solo hace falta completar la decena cuando el rango maximo tiene 2 digitos o más
-                    //        if(rangoMax.Count() >= 2)
-                    //        {
-                    //            //ayuda a generar el rango para la expresion regular
-                    //            string[] numeros = new string[10]{ "0","1","2","3","4","5","6","7","8","9" };
-
-                    //            int indiceMin = Array.IndexOf(numeros, rangoMin.Last());
-                    //            for (int indice = indiceMin; indice < numeros.Count(); indice++)
-                    //            {
-                    //                if((rangoMin.Remove(rangoMin.Length - 1) + numeros[indice]) == rangoMax)
-                    //                {
-                    //                    break;
-                    //                }
-                    //                expresion += rangoMin.Remove(rangoMin.Length - 1) + numeros[indice] + "|";
-                    //            }
-
-                    //            int indiceMax = Array.IndexOf(numeros, rangoMax.Last());
-                    //            for (int indice = indiceMax; indice < numeros.Count(); indice++)
-                    //            {
-                    //                expresion += rangoMin.Remove(rangoMax.Length - 1) + numeros[indice] + "|";
-                    //            }
-                    //        }
-
-
-                    //        expresion += "[" + "-" + "]";
-                    //    }
-                    //    else
-                    //    {
-                    //        expresion += "[0-9]+";
-                    //    }
-
-                    //    //,100|2,|1,97
-
-
-                    //    //Si no es discreto debe agregarse la posibilidad del punto decimal y decimales
-                    //    if(!checkDiscreto.Checked)
-                    //    {
-                    //        expresion += @"(.[0-9]+)?";
-                    //    }
-
-                    //expresion += "$";
                 }
                 else if (cmboxDatos.Text == "Nominal")
                 {
@@ -323,7 +262,6 @@ namespace Proyecto_serio_el_regreso
             guardarCsv(rutaCSV);
         }
 
-        //Guardar propiedades pendiente
         private void guardarPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -1024,10 +962,8 @@ namespace Proyecto_serio_el_regreso
 
         }
 
-        //pendiente se debe preguntar con que valor rellenar por defecto? si es asi, habilitar en una ventana emergente
         private void btnAgregarColumna_Click(object sender, EventArgs e)//Creando una nueva columna
         {
-            //pendiente revalidar el contenido de la nueva columna con la expresion regular
             try
             {
                 string columna = "columnaN";
@@ -1067,7 +1003,7 @@ namespace Proyecto_serio_el_regreso
 
         private void bivariableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //declaro estos nuevo valore ya que se editan las instancias por los valores faltantes
+            //declaro estos nuevo valores ya que se editan las instancias por los valores faltantes
             Dictionary<string, List<string>> instanciasParametro = new Dictionary<string, List<string>>();
 
             foreach (string columna in instancias.Keys)
@@ -1104,10 +1040,7 @@ namespace Proyecto_serio_el_regreso
             }
             catch (MySqlException ex)
             {
-                //When handling errors, you can your application's response based on the error number.
-                //The two most common error numbers when connecting are as follows:
-                //0: Cannot connect to server.
-                //1045: Invalid user name and/or password.
+
                 switch (ex.Number)
                 {
                     case 0:
