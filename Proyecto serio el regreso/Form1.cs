@@ -44,6 +44,7 @@ namespace Proyecto_serio_el_regreso
         private string direccionCsv;
         private string relation;
         private string mv;
+        private string target;
 
         private KeyValuePair<string, string> tipoTexto = new KeyValuePair<string, string>("Texto", @"\b(?<word>)\b");
 
@@ -144,6 +145,7 @@ namespace Proyecto_serio_el_regreso
             rutaProperties = "";
             direccionCsv = "";
             relation = "";
+            target = "";
             mv = "";
             server = "";
             database = "";
@@ -379,6 +381,7 @@ namespace Proyecto_serio_el_regreso
             mv = "";
             string tempRelation = "";
             string tempMv = "";
+            string tempTar = "";
             bool existe = linea.Contains("@data");
             bool existeMysql = linea.Contains("@mysql");
 
@@ -465,6 +468,12 @@ namespace Proyecto_serio_el_regreso
                     {
                         tempMv = linea.Replace("@missingValue ", "");
                         mv = mv + tempMv;
+                    }
+
+                    if (linea.Contains("@target"))
+                    {
+                        tempTar = linea.Replace("@target", "");
+                        target = target + tempTar;
                     }
                     //descripcion = descripcion + tempDesc;
 
@@ -875,6 +884,10 @@ namespace Proyecto_serio_el_regreso
                 foreach (string columna in encabezado.Keys)
                 {
                     info = info + "\nNombre del atributo: " + columna;
+                    if(target.Replace(" ","")== columna.Replace(" ",""))
+                    {
+                        info += " (target)";
+                    }
                     info += "\nTipo de dato: " + encabezado[columna].Key;
                     info += "\nValores faltantes: " + valores[columna] + "(" + Convert.ToDecimal(valores[columna] * 100 / cant_instancias).ToString() + "%" + ")";
                     info += "\n\n";

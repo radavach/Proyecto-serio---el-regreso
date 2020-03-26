@@ -189,7 +189,7 @@ namespace Proyecto_serio_el_regreso
             lblDatos.Text += "Cuartil 1: " + q1.ToString() + Environment.NewLine +
                 "Cuartil 3: " + q3.ToString() + Environment.NewLine +
                 "Rango intercuartil: " + iqr.ToString();
-
+            
             for (int m = 0; m < cant_instancias; m++)
             {
                 //if (Convert.ToDouble(dataGridView1.Rows[m].Cells[nuValor].Value) > outlierAlto || Convert.ToDouble(dataGridView1.Rows[m].Cells[nuValor].Value) < outlierBajo)
