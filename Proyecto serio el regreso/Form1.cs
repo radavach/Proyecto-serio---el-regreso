@@ -285,6 +285,7 @@ namespace Proyecto_serio_el_regreso
 
                 }
                 prop += "@missingValue " + mv + "\n";
+                if (target != "") { prop += "@target " + target + "\n"; }
                 prop += "@data\n";
                 prop += direccionCsv;
                 File.WriteAllText(rutaProperties, String.Empty);
@@ -649,6 +650,12 @@ namespace Proyecto_serio_el_regreso
                     {
                         dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.WhiteSmoke;
                     }
+
+                    if (instancias[columna][indice] == mv)
+                    {
+                        dataGridView1.Rows[indice].Cells[columna].Style.BackColor = Color.Red;
+                    }
+
                 }
                 indice++;
             }
