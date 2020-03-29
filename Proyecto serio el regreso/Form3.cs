@@ -48,19 +48,19 @@ namespace Proyecto_serio_el_regreso
             Dictionary<string, int> totales_B = new Dictionary<string, int>();
 
             //Aumenta 1 a la matriz de frecuencias para no tener errores y dividir por 0
-            for(int i = 0; i < posiblesValoresA.Count; i++)
-            {
-                for(int j = 0; j < posiblesValoresB.Count; j++)
-                {
-                    frecuencias[i,j] = 1;
+            //for(int i = 0; i < posiblesValoresA.Count; i++)
+            //{
+            //    for(int j = 0; j < posiblesValoresB.Count; j++)
+            //    {
+            //        frecuencias[i,j] = 1;
                     
-                    //Aqui se evalua si el valor esta en la lista de totales, si esta se obtiene el valor y se suma uno, en caso contrario se asigna el 1
-                    totales_A[posiblesValoresA[i]] = totales_A.ContainsKey(posiblesValoresA[i]) ? totales_A[posiblesValoresA[i]] + 1 : 1;
-                    totales_B[posiblesValoresB[j]] = totales_B.ContainsKey(posiblesValoresB[j]) ? totales_B[posiblesValoresB[j]] + 1 : 1;
+            //        //Aqui se evalua si el valor esta en la lista de totales, si esta se obtiene el valor y se suma uno, en caso contrario se asigna el 1
+            //        totales_A[posiblesValoresA[i]] = totales_A.ContainsKey(posiblesValoresA[i]) ? totales_A[posiblesValoresA[i]] + 1 : 1;
+            //        totales_B[posiblesValoresB[j]] = totales_B.ContainsKey(posiblesValoresB[j]) ? totales_B[posiblesValoresB[j]] + 1 : 1;
 
-                    totalInstancias++;
-                }
-            }
+            //        totalInstancias++;
+            //    }
+            //}
 
             //Recorre las instancias y llena la matriz
             for (int i = 0, j = 0; i < a.Count && j < b.Count; i++, j++)
@@ -74,11 +74,11 @@ namespace Proyecto_serio_el_regreso
                     //cuenta el total de elementos de cada dominio
                     if (!totales_A.ContainsKey(elementoA))
                     {
-                        totales_A[elementoA] = 1;
+                        totales_A[elementoA] = 0;
                     }
                     if (!totales_B.ContainsKey(elementoB))
                     {
-                        totales_B[elementoB] = 1;
+                        totales_B[elementoB] = 0;
                     }
                     totales_A[elementoA]++;
                     totales_B[elementoB]++;
@@ -94,8 +94,12 @@ namespace Proyecto_serio_el_regreso
             //Recorre los dominios para hacer los calculos de la matriz
             foreach (string valorA in posiblesValoresA.ToList())
             {
+                if (!totales_A.ContainsKey(valorA)) { posiblesValoresA.Remove(valorA); continue; }
+
                 foreach (string valorB in posiblesValoresB.ToList())
                 {
+                    if (!totales_B.ContainsKey(valorB)) { posiblesValoresB.Remove(valorB); continue; }
+
                     e = 0;
                     temp = 0;
                     e = (totales_A[valorA] * totales_B[valorB]) / totalInstancias;
