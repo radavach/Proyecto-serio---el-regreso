@@ -329,8 +329,9 @@
             // knnYKmeansToolStripMenuItem
             // 
             this.knnYKmeansToolStripMenuItem.Name = "knnYKmeansToolStripMenuItem";
-            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.knnYKmeansToolStripMenuItem.Text = "KNN y KMeans";
+            this.knnYKmeansToolStripMenuItem.Click += new System.EventHandler(this.knnYKmeansToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 

@@ -1330,5 +1330,11 @@ namespace Proyecto_serio_el_regreso
                 MessageBox.Show("No se ha cargado un archivo");
             }
         }
+
+        private void knnYKmeansToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form4 form4 = new Form4(this, encabezado, instancias, cant_instancias);
+            form4.Show();
+        }
     }
 }
