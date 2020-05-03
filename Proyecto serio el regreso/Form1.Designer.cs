@@ -69,6 +69,7 @@
             this.checkRegex = new System.Windows.Forms.CheckBox();
             this.descripcionBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.zeroROneRNBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -307,21 +308,22 @@
             // univariableToolStripMenuItem
             // 
             this.univariableToolStripMenuItem.Name = "univariableToolStripMenuItem";
-            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.univariableToolStripMenuItem.Text = "Univariable";
             this.univariableToolStripMenuItem.Click += new System.EventHandler(this.univariableToolStripMenuItem_Click);
             // 
             // bivariableToolStripMenuItem
             // 
             this.bivariableToolStripMenuItem.Name = "bivariableToolStripMenuItem";
-            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.bivariableToolStripMenuItem.Text = "Bivariable";
             this.bivariableToolStripMenuItem.Click += new System.EventHandler(this.bivariableToolStripMenuItem_Click);
             // 
             // aprendizajeAutomaticoToolStripMenuItem
             // 
             this.aprendizajeAutomaticoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.knnYKmeansToolStripMenuItem});
+            this.knnYKmeansToolStripMenuItem,
+            this.zeroROneRNBToolStripMenuItem});
             this.aprendizajeAutomaticoToolStripMenuItem.Name = "aprendizajeAutomaticoToolStripMenuItem";
             this.aprendizajeAutomaticoToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.aprendizajeAutomaticoToolStripMenuItem.Text = "Aprendizaje Automatico";
@@ -438,6 +440,13 @@
             this.label2.TabIndex = 34;
             this.label2.Text = "Descripción";
             // 
+            // zeroROneRNBToolStripMenuItem
+            // 
+            this.zeroROneRNBToolStripMenuItem.Name = "zeroROneRNBToolStripMenuItem";
+            this.zeroROneRNBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.zeroROneRNBToolStripMenuItem.Text = "ZeroR, OneR, NB";
+            this.zeroROneRNBToolStripMenuItem.Click += new System.EventHandler(this.zeroROneRNBToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -524,6 +533,7 @@
         private System.Windows.Forms.ToolStripMenuItem guardarComoToolStripMenuItem;
         private System.Windows.Forms.TextBox descripcionBox;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolStripMenuItem zeroROneRNBToolStripMenuItem;
     }
 }
 
