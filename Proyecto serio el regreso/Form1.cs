@@ -1336,5 +1336,11 @@ namespace Proyecto_serio_el_regreso
             Form4 form4 = new Form4(this, encabezado, instancias, cant_instancias);
             form4.Show();
         }
+
+        private void zeroROneRNBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form5 form5 = new Form5(this, encabezado, instancias, valores_faltantes, valoresFueraDeDominio2, cant_instancias, 4, target);
+            form5.Show();
+        }
     }
 }
