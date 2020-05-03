@@ -477,12 +477,12 @@ namespace Proyecto_serio_el_regreso
                         acumulado = 0;
                         for (int j = 0; j < posiblesValA.Count; j++)
                         {
-                            acumulado += Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value);
+                            acumulado += Convert.ToDouble(dataGridView1.Rows[j + almacenado].Cells[i + 1].Value);
 
                         }
                         for (int j = 0; j < posiblesValA.Count; j++)
                         {
-                            dataGridView1.Rows[i + almacenado].Cells[j + 1].Value = Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value) / acumulado;
+                            dataGridView1.Rows[j + almacenado].Cells[i + 1].Value = Convert.ToDouble(dataGridView1.Rows[j + almacenado].Cells[i + 1].Value) / acumulado;
 
                         }
                     }
@@ -520,7 +520,7 @@ namespace Proyecto_serio_el_regreso
                                 if (ingreso.ElementAt(m) == posiblesValA.ElementAt(i))
                                 {
                                     porcentaje *= Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value);
-                                    cadena += Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value).ToString() + " x ";
+                                    cadena += Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value).ToString("#.0000") + " x ";
                                 }
                             }
                             almacenado += posiblesValA.Count;
@@ -530,12 +530,12 @@ namespace Proyecto_serio_el_regreso
                             double res = 0;
                             res = (1 / (Math.Sqrt(2 * Math.PI) * desviacionEstandar.ElementAt(j)) * Math.Pow(Math.E, -1 * ((Convert.ToDouble(ingreso.ElementAt(m)) - media.ElementAt(j)) / (2 * Math.Pow(desviacionEstandar.ElementAt(j), 2)))));
                             porcentaje *= res;
-                            cadena += res.ToString() + " x ";
+                            cadena += res.ToString("#.0000") + " x ";
                         }
                     }
                 }
                 porcentaje *= Convert.ToDouble(clases.ElementAt(j) / valorClase);
-                cadena += Convert.ToDouble(clases.ElementAt(j) / valorClase).ToString() + " = " + porcentaje.ToString() + "\n";
+                cadena += Convert.ToDouble(clases.ElementAt(j) / valorClase).ToString("#.0000") + " = " + porcentaje.ToString("#.0000") + "\n";
                 label3.Text += cadena;
                 resultados.Add(porcentaje);
             }
