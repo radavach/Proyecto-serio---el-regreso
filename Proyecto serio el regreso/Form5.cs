@@ -42,10 +42,10 @@ namespace Proyecto_serio_el_regreso
             public int coulmaSeleccionada;
         }
 
-        void llenarFrecuenciasGrid()
+        void llenarFrecuenciasGrid(Dictionary<string, List<string>> instancias)
         {
             matrices max = new matrices();
-            List<string> posiblesValC = posiblesValores(clase);
+            List<string> posiblesValC = posiblesValores(clase, instancias);
             List<string> posiblesValA = new List<string>();
             List<int> probabilidades = new List<int>();
             int frecuencia = 0;
@@ -58,13 +58,13 @@ namespace Proyecto_serio_el_regreso
                 if (m != clase && (encabezado[encabezado.ElementAt(m).Key].Key == "Nominal" || encabezado[encabezado.ElementAt(m).Key].Key == "Nominal"))
                 {
                     posiblesValA.Clear();
-                    posiblesValA = posiblesValores(m);
+                    posiblesValA = posiblesValores(m, instancias);
                     max.frecuencias = new int[posiblesValA.Count, posiblesValC.Count];
                     for (int i = 0; i < posiblesValC.Count; i++)
                     {
                         for (int j = 0; j < posiblesValA.Count; j++)
                         {
-                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j));
+                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j), instancias);
                             max.frecuencias[j, i] = frecuencia;
                         }
                     }
@@ -107,10 +107,10 @@ namespace Proyecto_serio_el_regreso
                 almacenado += posiblesValA.Count();
             }
         }
-        void llenarFrecuenciasGridNB()
+        void llenarFrecuenciasGridNB(Dictionary<string, List<string>> instancias)
         {
             matrices max = new matrices();
-            List<string> posiblesValC = posiblesValores(clase);
+            List<string> posiblesValC = posiblesValores(clase, instancias);
             List<string> posiblesValA = new List<string>();
             List<int> probabilidades = new List<int>();
             int frecuencia = 0;
@@ -125,13 +125,13 @@ namespace Proyecto_serio_el_regreso
                 if (m != clase && (encabezado[encabezado.ElementAt(m).Key].Key == "Nominal" || encabezado[encabezado.ElementAt(m).Key].Key == "Ordinal"))
                 {
                     posiblesValA.Clear();
-                    posiblesValA = posiblesValores(m);
+                    posiblesValA = posiblesValores(m, instancias);
                     max.frecuencias = new int[posiblesValA.Count, posiblesValC.Count];
                     for (int i = 0; i < posiblesValC.Count; i++)
                     {
                         for (int j = 0; j < posiblesValA.Count; j++)
                         {
-                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j)) + 1;
+                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j), instancias) + 1;
                             max.frecuencias[j, i] = frecuencia;
                         }
                     }
@@ -182,7 +182,7 @@ namespace Proyecto_serio_el_regreso
                 almacenado += posiblesValA.Count();
             }
         }
-        public List<string> posiblesValores(int clase)
+        public List<string> posiblesValores(int clase, Dictionary<string, List<string>> instancias)
         {
             List<string> valores = new List<string>();
             for (int j = 0; j < instancias[encabezado.Keys.ElementAt(clase)].Count; j++)
@@ -228,7 +228,7 @@ namespace Proyecto_serio_el_regreso
             double media = datos_m / tamano_muestra;
             return media;
         }
-        public List<int> zeroR(List<string> valores, int clase)
+        public List<int> zeroR(List<string> valores, int clase, Dictionary<string, List<string>> instancias)
         {
             List<int> probabilidades = new List<int>();
             int cantidad = 0;
@@ -245,7 +245,7 @@ namespace Proyecto_serio_el_regreso
             return probabilidades;
         }
 
-        int frecuencias(int column, int clas, string clase, string col)
+        int frecuencias(int column, int clas, string clase, string col, Dictionary<string, List<string>> instancias)
         {
             int frec = 0;
             for (int i = 0; i < instancias[encabezado.Keys.ElementAt(column)].Count; i++)
@@ -312,27 +312,28 @@ namespace Proyecto_serio_el_regreso
 
 
 
-        matrices oneR()
+        matrices oneR(Dictionary<string, List<string>> instancias)
         {
             matrices max = new matrices();
-            List<string> posiblesValC = posiblesValores(clase);
+            List<string> posiblesValC = posiblesValores(clase, instancias);
             List<string> posiblesValA = new List<string>();
             List<int> probabilidades = new List<int>();
             double menorFrec = 1;
             int frecuencia = 0;
+
             int[,] ultimaTab = new int[posiblesValA.Count, posiblesValC.Count]; ;
             for (int m = 0; m < encabezado.Keys.Count; m++)
             {
                 if (m != clase && (encabezado[encabezado.ElementAt(m).Key].Key == "Nominal" || encabezado[encabezado.ElementAt(m).Key].Key == "Ordinal"))
                 {
                     posiblesValA.Clear();
-                    posiblesValA = posiblesValores(m);
+                    posiblesValA = posiblesValores(m, instancias);
                     max.frecuencias = new int[posiblesValA.Count, posiblesValC.Count];
                     for (int i = 0; i < posiblesValC.Count; i++)
                     {
                         for (int j = 0; j < posiblesValA.Count; j++)
                         {
-                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j));
+                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j), instancias);
                             max.frecuencias[j, i] = frecuencia;
                         }
                     }
@@ -352,19 +353,380 @@ namespace Proyecto_serio_el_regreso
             return max;
         }
 
+        private void kFoldZeroR(int k)
+        {
+            Dictionary<string, List<string>> pruebas = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> entrenamiento = new Dictionary<string, List<string>>();
+            List<string> posiblesValC = posiblesValores(clase, instancias);
+            int separador = 0;
+            int divicion = cant_instancias/k;
+            double exactitud = 0;
+            double especificidad = 0;
+            double recall = 0;
+            int[,] matrizConfusion = new int[posiblesValC.Count, posiblesValC.Count];
+            for(int i = 0; i < k; i++)
+            {
+                for (int oA = 0; oA < posiblesValC.Count; oA++)
+                {
+                    for (int j = 0; j < posiblesValC.Count; j++)
+                    {
+                        matrizConfusion[oA, j] = 0;
+                    }
+                }
+                pruebas.Clear();
+                entrenamiento.Clear();
+                for(int m = 0; m < instancias.Count; m++)
+                {
+                    List<string> pruebasTemp = new List<string>();
+                    List<string> entrenamientoTemp = new List<string>();
+                    for (int j = separador; j < divicion + separador; j++)
+                    {
+                        pruebasTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                    }
+                    for (int j = 0; j < cant_instancias; j++)
+                    {
+                        if(j < separador)
+                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                        if (j > separador + divicion)
+                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                    }
+                    pruebas.Add(encabezado.Keys.ElementAt(m), pruebasTemp);
+                    entrenamiento.Add(encabezado.Keys.ElementAt(m), entrenamientoTemp);
+                }
+                matrices max = oneR(entrenamiento);
+                List<string> posiblesValA = posiblesValores(max.coulmaSeleccionada, instancias);
+                for(int x = 0; x < pruebas[encabezado.Keys.ElementAt(0)].Count; x++)
+                {
+                    for(int z = 0; z < posiblesValA.Count; z++)
+                    {
+                        if (pruebas[encabezado.Keys.ElementAt(max.coulmaSeleccionada)].ElementAt(x) == posiblesValA.ElementAt(z))
+                        {
+                            for(int g = 0; g < posiblesValC.Count; g++)
+                            {
+                                if(pruebas[encabezado.Keys.ElementAt(clase)].ElementAt(x) == posiblesValC.ElementAt(g))
+                                {
+                                    matrizConfusion[max.fila[z],g]++;
+                                }
+                            }
+                        }
+                    }
+                } 
+                double temp = 0;
+                double temp2 = 0;
+                for(int m = 0; m < posiblesValC.Count; m++)
+                {
+                    temp += matrizConfusion[m, m];
+                }
+                for (int m = 0; m < posiblesValC.Count; m++)
+                {
+                    for (int n = 0; n < posiblesValC.Count; n++)
+                    {
+                        temp2 += matrizConfusion[n, m];
+                    }
+                }
+                temp = temp / temp2;
+                exactitud = (exactitud + temp);
+                temp = 0;
+                for(int m = 0; m < posiblesValC.Count; m++)
+                {
+                    temp2 = 0;
+                    for (int n = 0; n < posiblesValC.Count; n++)
+                    {
+                        temp2 += matrizConfusion[n, m];
+                    }
+                    temp += matrizConfusion[m, m] / temp2; 
+                }
+                temp = temp / posiblesValC.Count;
+                recall = recall + temp;
+                temp = 0;
+                for (int m = 0; m < posiblesValC.Count; m++)
+                {
+                    temp2 = 0;
+                    for (int n = 0; n < posiblesValC.Count; n++)
+                    {
+                        temp2 += matrizConfusion[m, n];
+                    }
+                    temp += matrizConfusion[m, m] / temp2;
+                }
+                temp = temp / posiblesValC.Count;
+                especificidad += temp;
+                separador += divicion;
+
+            }
+            exactitud = exactitud / k;
+            recall = recall / k;
+            especificidad = especificidad / k;
+        }
+
+        void naiveBayes(Dictionary<string, List<string>> instancias, List<double> desviacionEstandar, List<double> media)
+        {
+            List<string> posiblesValC = posiblesValores(clase, instancias);
+            List<string> posiblesValA = new List<string>();
+            List<double> resultados = new List<double>();
+            List<int> clases = zeroR(posiblesValC, clase, instancias);
+            double porcentaje = 1;
+            double valorClase = 0;
+            double acumulado = 0;
+            int frecuencia = 0;
+            double mejor = 0;
+            int almacenado = 0;
+            string cadena = "";
+            llenarFrecuenciasGridNB(instancias);
+            for (int m = 0; m < encabezado.Keys.Count; m++)
+            {
+                if (m != clase && encabezado[encabezado.ElementAt(m).Key].Key == "Numerico")
+                {
+                    posiblesValA.Clear();
+                    posiblesValA = posiblesValores(m, instancias);
+                    List<string> fr = new List<string>();
+                    for (int i = 0; i < posiblesValC.Count; i++)
+                    {
+                        for (int j = 0; j < posiblesValA.Count; j++)
+                        {
+                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j), instancias);
+                            for (int x = 0; x < frecuencia; x++)
+                                fr.Add(posiblesValA.ElementAt(j));
+                        }
+                        desviacionEstandar.Add(calcular_desviacion(fr));
+                        media.Add(calcularMedia(fr));
+                    }
+                }
+            }
+            for (int m = 0; m < encabezado.Keys.Count; m++)
+            {
+                if (m != clase && encabezado[encabezado.ElementAt(m).Key].Key != "Numerico" && encabezado[encabezado.ElementAt(m).Key].Key != "Texto")
+                {
+                    posiblesValA.Clear();
+                    posiblesValA = posiblesValores(m, instancias);
+                    for (int i = 0; i < posiblesValC.Count; i++)
+                    {
+                        acumulado = 0;
+                        for (int j = 0; j < posiblesValA.Count; j++)
+                        {
+                            acumulado += Convert.ToDouble(dataGridView1.Rows[j + almacenado].Cells[i + 1].Value);
+
+                        }
+                        for (int j = 0; j < posiblesValA.Count; j++)
+                        {
+                            dataGridView1.Rows[j + almacenado].Cells[i + 1].Value = Convert.ToDouble(dataGridView1.Rows[j + almacenado].Cells[i + 1].Value) / acumulado;
+
+                        }
+                    }
+                }
+                almacenado += posiblesValA.Count();
+            }
+        }
+
+        string prediccionesNB(List<string> ingreso, List<double> desviacionEstandar, List<double> media, Dictionary<string, List<string>> instancias)
+        {
+            List<string> posiblesValC = posiblesValores(clase, instancias);
+            List<string> posiblesValA = new List<string>();
+            List<double> resultados = new List<double>();
+            List<int> clases = zeroR(posiblesValC, clase, instancias);
+            double porcentaje = 1;
+            double valorClase = 0;
+            double mejor = 0;
+            int almacenado = 0;
+            string cadena = "";
+            for (int i = 0; i < posiblesValC.Count; i++)
+            {
+                valorClase += clases.ElementAt(i);
+            }
+            for (int j = 0; j < posiblesValC.Count; j++)
+            {
+                almacenado = 0;
+                porcentaje = 1;
+                cadena = "";
+                cadena += "P(" + posiblesValC.ElementAt(j) + "|A" + ") = ";
+                for (int m = 0; m < encabezado.Keys.Count; m++)
+                {
+                    if (m != clase)
+                    {
+                        if (encabezado[encabezado.ElementAt(m).Key].Key != "Numerico")
+                        {
+                            posiblesValA.Clear();
+                            posiblesValA = posiblesValores(m, instancias);
+                            for (int i = 0; i < posiblesValA.Count; i++)
+                            {
+                                if (ingreso.ElementAt(m) == posiblesValA.ElementAt(i))
+                                {
+                                    porcentaje *= Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value);
+                                    cadena += Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value).ToString("#.0000") + " x ";
+                                }
+                            }
+                            almacenado += posiblesValA.Count;
+                        }
+                        else if (encabezado[encabezado.ElementAt(m).Key].Key == "Numerico")
+                        {
+                            double res = 0;
+                            res = (1 / (Math.Sqrt(2 * Math.PI) * desviacionEstandar.ElementAt(j)) * Math.Pow(Math.E, -1 * ((Convert.ToDouble(ingreso.ElementAt(m)) - media.ElementAt(j)) / (2 * Math.Pow(desviacionEstandar.ElementAt(j), 2)))));
+                            porcentaje *= res;
+                            cadena += res.ToString("#.0000") + " x ";
+                            almacenado += posiblesValA.Count;
+                        }
+                    }
+                }
+                porcentaje *= Convert.ToDouble(clases.ElementAt(j) / valorClase);
+                cadena += Convert.ToDouble(clases.ElementAt(j) / valorClase).ToString("#.0000") + " = " + porcentaje.ToString("#.0000") + "\n";
+                textBox1.Text += cadena + "\n";
+                resultados.Add(porcentaje);
+            }
+            double a = 0;
+            double b = 0;
+            int ultimo = 0;
+            foreach (double d in resultados)
+            {
+                a += d;
+            }
+            for (int j = 0; j < resultados.Count; j++)
+            {
+                b = resultados.ElementAt(j) / a;
+                if (mejor < b)
+                {
+                    mejor = b;
+                    ultimo = j;
+                }
+            }
+            textBox1.Text += "Prediccion: " + posiblesValC.ElementAt(ultimo) + " con " + (mejor * 100) + "%\n";
+            return posiblesValC.ElementAt(ultimo);
+        }
+        void kfoldNB(int k)
+        {
+            List<double> desviacionEstandar = new List<double>();
+            List<double> media = new List<double>();
+            dataGridView1.Rows.Clear();
+            dataGridView1.Columns.Clear();
+            List<string> ingreso = new List<string>();
+            Dictionary<string, List<string>> pruebas = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> entrenamiento = new Dictionary<string, List<string>>();
+            List<string> posiblesValC = posiblesValores(clase, instancias);
+            int separador = 0;
+            int divicion = cant_instancias / k;
+            double exactitud = 0;
+            double especificidad = 0;
+            double recall = 0;
+            int[,] matrizConfusion = new int[posiblesValC.Count, posiblesValC.Count];
+            for (int m = 0; m < k; m++)
+            {
+                dataGridView1.Rows.Clear();
+                dataGridView1.Columns.Clear();
+                desviacionEstandar.Clear();
+                media.Clear();
+                textBox1.Text += "Aqui!!!!!";
+                for (int oA = 0; oA < posiblesValC.Count; oA++)
+                {
+                    for (int j = 0; j < posiblesValC.Count; j++)
+                    {
+                        matrizConfusion[oA, j] = 0;
+                    }
+                }
+                pruebas.Clear();
+                entrenamiento.Clear();
+                for (int i = 0; i < instancias.Count; i++)
+                {
+                    List<string> pruebasTemp = new List<string>();
+                    List<string> entrenamientoTemp = new List<string>();
+                    for (int j = separador; j < divicion + separador; j++)
+                    {
+                        pruebasTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                    }
+                    for (int j = 0; j < cant_instancias; j++)
+                    {
+                        if (j < separador)
+                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                        if (j > separador + divicion)
+                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                    }
+                    pruebas.Add(encabezado.Keys.ElementAt(i), pruebasTemp);
+                    entrenamiento.Add(encabezado.Keys.ElementAt(i), entrenamientoTemp);
+                }
+                naiveBayes(entrenamiento, desviacionEstandar, media);
+                for (int i = 0; i < pruebas[encabezado.Keys.ElementAt(0)].Count; i++)
+                {
+                    ingreso.Clear();
+                    for(int j = 0; j < encabezado.Keys.Count; j++)
+                    {
+                        if (j != clase)
+                        {
+                            string respuesta = pruebas[encabezado.Keys.ElementAt(j)].ElementAt(i);
+                            ingreso.Add(respuesta);
+                        }
+                    }
+                    string prediccion = prediccionesNB(ingreso, desviacionEstandar, media, entrenamiento);
+                    int fila = 0;
+                    int columna = 0;
+                    for (int g = 0; g < posiblesValC.Count; g++)
+                    {
+                        if(prediccion == posiblesValC.ElementAt(g))
+                        {
+                            fila = g;
+                        }
+                        if (pruebas[encabezado.Keys.ElementAt(clase)].ElementAt(i) == posiblesValC.ElementAt(g))
+                        {
+                            columna = g;
+                        }
+                    }
+                    matrizConfusion[fila, columna]++;
+                }
+                double temp = 0;
+                double temp2 = 0;
+                for (int i = 0; i < posiblesValC.Count; i++)
+                {
+                    temp += matrizConfusion[i, i];
+                }
+                for (int i = 0; i < posiblesValC.Count; i++)
+                {
+                    for (int n = 0; n < posiblesValC.Count; n++)
+                    {
+                        temp2 += matrizConfusion[n, i];
+                    }
+                }
+                temp = temp / temp2;
+                exactitud = (exactitud + temp);
+                temp = 0;
+                for (int i = 0; i < posiblesValC.Count; i++)
+                {
+                    temp2 = 0;
+                    for (int n = 0; n < posiblesValC.Count; n++)
+                    {
+                        temp2 += matrizConfusion[n, i];
+                    }
+                    temp += matrizConfusion[i, i] / temp2;
+                }
+                temp = temp / posiblesValC.Count;
+                recall = recall + temp;
+                temp = 0;
+                for (int i = 0; i < posiblesValC.Count; i++)
+                {
+                    temp2 = 0;
+                    for (int n = 0; n < posiblesValC.Count; n++)
+                    {
+                        temp2 += matrizConfusion[i, n];
+                    }
+                    temp += matrizConfusion[i, i] / temp2;
+                }
+                temp = temp / posiblesValC.Count;
+                especificidad += temp;
+                separador += divicion;
+            }
+            exactitud = exactitud / k;
+            recall = recall / k;
+            especificidad = especificidad / k;
+            textBox1.Text = "Recall = " + recall*100 + "%  Especificidad = " + especificidad*100 + "%  Exactitud = " + exactitud*100 + "%";
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
-            llenarFrecuenciasGrid();
+            llenarFrecuenciasGrid(instancias);
             Form1 f1 = new Form1();
             int rec = 0;
             int max = 0;
             List<string> columna = new List<string>();
             List<string> posiblesVal = new List<string>();
             List<int> resultados = new List<int>();
-            posiblesVal = posiblesValores(clase);
-            resultados = zeroR(posiblesVal, clase);
+            posiblesVal = posiblesValores(clase, instancias);
+            resultados = zeroR(posiblesVal, clase, instancias);
             foreach (string col in posiblesVal)
             {
                 DataGridViewTextBoxColumn dgvIdColumn = new DataGridViewTextBoxColumn { HeaderText = col, Name = col };
@@ -389,9 +751,10 @@ namespace Proyecto_serio_el_regreso
         {
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
-            matrices max = oneR();
-            List<string> posiblesValC = posiblesValores(clase);
-            List<string> posiblesValA = posiblesValores(max.coulmaSeleccionada);
+            llenarFrecuenciasGrid(instancias);
+            matrices max = oneR(instancias);
+            List<string> posiblesValC = posiblesValores(clase, instancias);
+            List<string> posiblesValA = posiblesValores(max.coulmaSeleccionada, instancias);
             double porcentaje = (1 - max.mejor) * 100;
             string reglas = "Columna: " + encabezado.Keys.ElementAt(max.coulmaSeleccionada);
             if (porcentaje != 0)
@@ -422,6 +785,7 @@ namespace Proyecto_serio_el_regreso
                 {
                     dataGridView1.Rows[i].Cells[0].Value = posiblesValA.ElementAt(i);
                 }
+                kFoldZeroR(2);
             }
             else
                 MessageBox.Show("No hay suficientes valores para predecir valores");
@@ -429,133 +793,7 @@ namespace Proyecto_serio_el_regreso
 
         private void button3_Click(object sender, EventArgs e)
         {
-            dataGridView1.Rows.Clear();
-            dataGridView1.Columns.Clear();
-            List<string> posiblesValC = posiblesValores(clase);
-            List<string> posiblesValA = new List<string>();
-            List<double> resultados = new List<double>();
-            List<int> clases = zeroR(posiblesValC, clase);
-            double porcentaje = 1;
-            double valorClase = 0;
-            double acumulado = 0;
-            int frecuencia = 0;
-            double mejor = 0;
-            int almacenado = 0;
-            string cadena = "";
-            List<double> desviacionEstandar = new List<double>();
-            List<double> media = new List<double>();
-            List<string> ingreso = new List<string>();
-            llenarFrecuenciasGridNB();
-            for (int m = 0; m < encabezado.Keys.Count; m++)
-            {
-                if (m != clase && encabezado[encabezado.ElementAt(m).Key].Key == "Numerico" && encabezado[encabezado.ElementAt(m).Key].Key != "Texto")
-                {
-                    posiblesValA.Clear();
-                    posiblesValA = posiblesValores(m);
-                    List<string> fr = new List<string>();
-                    for (int i = 0; i < posiblesValC.Count; i++)
-                    {
-                        for (int j = 0; j < posiblesValA.Count; j++)
-                        {
-                            frecuencia = frecuencias(m, clase, posiblesValC.ElementAt(i), posiblesValA.ElementAt(j));
-                            for (int x = 0; x < frecuencia; x++)
-                                fr.Add(posiblesValA.ElementAt(j));
-                        }
-                        desviacionEstandar.Add(calcular_desviacion(fr));
-                        media.Add(calcularMedia(fr));
-                    }
-                }
-            }
-            for (int m = 0; m < encabezado.Keys.Count; m++)
-            {
-                if (m != clase && encabezado[encabezado.ElementAt(m).Key].Key != "Numerico" && encabezado[encabezado.ElementAt(m).Key].Key != "Texto")
-                {
-                    posiblesValA.Clear();
-                    posiblesValA = posiblesValores(m);
-                    for (int i = 0; i < posiblesValC.Count; i++)
-                    {
-                        acumulado = 0;
-                        for (int j = 0; j < posiblesValA.Count; j++)
-                        {
-                            acumulado += Convert.ToDouble(dataGridView1.Rows[j + almacenado].Cells[i + 1].Value);
-
-                        }
-                        for (int j = 0; j < posiblesValA.Count; j++)
-                        {
-                            dataGridView1.Rows[j + almacenado].Cells[i + 1].Value = Convert.ToDouble(dataGridView1.Rows[j + almacenado].Cells[i + 1].Value) / acumulado;
-
-                        }
-                    }
-                }
-                almacenado += posiblesValA.Count();
-            }
-            for (int i = 0; i < posiblesValC.Count; i++)
-            {
-                valorClase += clases.ElementAt(i);
-            }
-            for (int i = 0; i < encabezado.Keys.Count; i++)
-            {
-                if (i != clase)
-                {
-                    string respuesta = Microsoft.VisualBasic.Interaction.InputBox("Agregue el valor de: " + this.encabezado.Keys.ElementAt(i), "Valores", "?");
-                    ingreso.Add(respuesta);
-                }
-            }
-            for (int j = 0; j < posiblesValC.Count; j++)
-            {
-                almacenado = 0;
-                porcentaje = 1;
-                cadena = "";
-                cadena += "P(" + posiblesValC.ElementAt(j) + "|A" + ") = ";
-                for (int m = 0; m < encabezado.Keys.Count; m++)
-                {
-                    if (m != clase)
-                    {
-                        if (encabezado[encabezado.ElementAt(m).Key].Key != "Numerico")
-                        {
-                            posiblesValA.Clear();
-                            posiblesValA = posiblesValores(m);
-                            for (int i = 0; i < posiblesValA.Count; i++)
-                            {
-                                if (ingreso.ElementAt(m) == posiblesValA.ElementAt(i))
-                                {
-                                    porcentaje *= Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value);
-                                    cadena += Convert.ToDouble(dataGridView1.Rows[i + almacenado].Cells[j + 1].Value).ToString("#.0000") + " x ";
-                                }
-                            }
-                            almacenado += posiblesValA.Count;
-                        }
-                        else if(encabezado[encabezado.ElementAt(m).Key].Key == "Numerico")
-                        {
-                            double res = 0;
-                            res = (1 / (Math.Sqrt(2 * Math.PI) * desviacionEstandar.ElementAt(j)) * Math.Pow(Math.E, -1 * ((Convert.ToDouble(ingreso.ElementAt(m)) - media.ElementAt(j)) / (2 * Math.Pow(desviacionEstandar.ElementAt(j), 2)))));
-                            porcentaje *= res;
-                            cadena += res.ToString("#.0000") + " x ";
-                        }
-                    }
-                }
-                porcentaje *= Convert.ToDouble(clases.ElementAt(j) / valorClase);
-                cadena += Convert.ToDouble(clases.ElementAt(j) / valorClase).ToString("#.0000") + " = " + porcentaje.ToString("#.0000") + "\n";
-                label3.Text += cadena;
-                resultados.Add(porcentaje);
-            }
-            double a = 0;
-            double b = 0;
-            int ultimo = 0;
-            foreach (double d in resultados)
-            {
-                a += d;
-            }
-            for (int j = 0; j < resultados.Count; j++)
-            {
-                b = resultados.ElementAt(j) / a;
-                if (mejor < b)
-                {
-                    mejor = b;
-                    ultimo = j;
-                }
-            }
-            label3.Text += "Prediccion: " + posiblesValC.ElementAt(ultimo) + " con " + (mejor * 100) + "%";
+            kfoldNB(2);
         }
     }
 }
