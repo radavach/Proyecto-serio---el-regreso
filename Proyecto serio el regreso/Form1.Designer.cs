@@ -58,6 +58,7 @@
             this.bivariableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aprendizajeAutomaticoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.knnYKmeansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zeroROneRNBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.button1 = new System.Windows.Forms.Button();
             this.comboBoxTablas = new System.Windows.Forms.ComboBox();
@@ -69,7 +70,6 @@
             this.checkRegex = new System.Windows.Forms.CheckBox();
             this.descripcionBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.zeroROneRNBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -308,14 +308,14 @@
             // univariableToolStripMenuItem
             // 
             this.univariableToolStripMenuItem.Name = "univariableToolStripMenuItem";
-            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.univariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.univariableToolStripMenuItem.Text = "Univariable";
             this.univariableToolStripMenuItem.Click += new System.EventHandler(this.univariableToolStripMenuItem_Click);
             // 
             // bivariableToolStripMenuItem
             // 
             this.bivariableToolStripMenuItem.Name = "bivariableToolStripMenuItem";
-            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bivariableToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.bivariableToolStripMenuItem.Text = "Bivariable";
             this.bivariableToolStripMenuItem.Click += new System.EventHandler(this.bivariableToolStripMenuItem_Click);
             // 
@@ -331,9 +331,16 @@
             // knnYKmeansToolStripMenuItem
             // 
             this.knnYKmeansToolStripMenuItem.Name = "knnYKmeansToolStripMenuItem";
-            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.knnYKmeansToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.knnYKmeansToolStripMenuItem.Text = "KNN y KMeans";
             this.knnYKmeansToolStripMenuItem.Click += new System.EventHandler(this.knnYKmeansToolStripMenuItem_Click);
+            // 
+            // zeroROneRNBToolStripMenuItem
+            // 
+            this.zeroROneRNBToolStripMenuItem.Name = "zeroROneRNBToolStripMenuItem";
+            this.zeroROneRNBToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.zeroROneRNBToolStripMenuItem.Text = "ZeroR, OneR, NB";
+            this.zeroROneRNBToolStripMenuItem.Click += new System.EventHandler(this.zeroROneRNBToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -439,13 +446,6 @@
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 34;
             this.label2.Text = "Descripción";
-            // 
-            // zeroROneRNBToolStripMenuItem
-            // 
-            this.zeroROneRNBToolStripMenuItem.Name = "zeroROneRNBToolStripMenuItem";
-            this.zeroROneRNBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.zeroROneRNBToolStripMenuItem.Text = "ZeroR, OneR, NB";
-            this.zeroROneRNBToolStripMenuItem.Click += new System.EventHandler(this.zeroROneRNBToolStripMenuItem_Click);
             // 
             // Form1
             // 
