@@ -502,6 +502,5 @@ namespace Proyecto_serio_el_regreso
         {
             radiobtnEuclidiana.Checked = (radiobtnManhattan.Checked) ? false: true;
         }
-
     }
 }
