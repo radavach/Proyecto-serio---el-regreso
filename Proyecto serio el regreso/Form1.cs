@@ -1183,8 +1183,7 @@ namespace Proyecto_serio_el_regreso
         {
             if (comboBoxTablas.SelectedIndex != -1)
             {
-                string tabla = comboBoxTablas.SelectedItem.ToString();
-                encabezado = null;
+                string tabla = comboBoxTablas.SelectedItem.ToString();               encabezado = null;
                 cargarBase(tabla, "select * from " + tabla);
             }
             else
@@ -1339,7 +1338,7 @@ namespace Proyecto_serio_el_regreso
 
         private void zeroROneRNBToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form5 form5 = new Form5(this, encabezado, instancias, valores_faltantes, valoresFueraDeDominio2, cant_instancias, 4, target);
+            Form5 form5 = new Form5(this, encabezado, instancias, valores_faltantes, valoresFueraDeDominio2, cant_instancias, encabezado.Keys.Count - 1, target);
             form5.Show();
         }
     }
