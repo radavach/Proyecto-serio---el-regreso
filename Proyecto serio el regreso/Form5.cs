@@ -30,10 +30,16 @@ namespace Proyecto_serio_el_regreso
             this.cant_instancias = cant_instancias;
             this.clase = clase;
             this.clase2 = clase2;
+            comboBox1.Items.Add("ZeroR");
+            comboBox1.Items.Add("OneR");
+            comboBox1.Items.Add("Naive Bayes");
+            comboBox2.Items.Add("Hold Out");
+            comboBox2.Items.Add("K Fold Cross Validation");
         }
         string tipoDato;
         int clase;
         string clase2;
+        string metodoEvaluacion = "";
         public struct matrices
         {
             public int[,] frecuencias;
@@ -353,11 +359,12 @@ namespace Proyecto_serio_el_regreso
             return max;
         }
 
-        private void kFoldZeroR(int k)
+        private void kFoldZeroR(int k, int hold)
         {
             Dictionary<string, List<string>> pruebas = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> entrenamiento = new Dictionary<string, List<string>>();
             List<string> posiblesValC = posiblesValores(clase, instancias);
+            List<int> numGen = new List<int>();
             int separador = 0;
             int divicion = cant_instancias/k;
             double exactitud = 0;
@@ -375,23 +382,31 @@ namespace Proyecto_serio_el_regreso
                 }
                 pruebas.Clear();
                 entrenamiento.Clear();
-                for(int m = 0; m < instancias.Count; m++)
+                if(comboBox2.SelectedItem.ToString() == "K Fold Cross Validation")
                 {
-                    List<string> pruebasTemp = new List<string>();
-                    List<string> entrenamientoTemp = new List<string>();
-                    for (int j = separador; j < divicion + separador; j++)
+                    for (int m = 0; m < instancias.Count; m++)
                     {
-                        pruebasTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                        List<string> pruebasTemp = new List<string>();
+                        List<string> entrenamientoTemp = new List<string>();
+                        for (int j = separador; j < divicion + separador; j++)
+                        {
+                            pruebasTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                        }
+                        for (int j = 0; j < cant_instancias; j++)
+                        {
+                            if (j < separador)
+                                entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                            if (j > separador + divicion)
+                                entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
+                        }
+                        pruebas.Add(encabezado.Keys.ElementAt(m), pruebasTemp);
+                        entrenamiento.Add(encabezado.Keys.ElementAt(m), entrenamientoTemp);
                     }
-                    for (int j = 0; j < cant_instancias; j++)
-                    {
-                        if(j < separador)
-                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
-                        if (j > separador + divicion)
-                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(m)].ElementAt(j));
-                    }
-                    pruebas.Add(encabezado.Keys.ElementAt(m), pruebasTemp);
-                    entrenamiento.Add(encabezado.Keys.ElementAt(m), entrenamientoTemp);
+                }
+                if(comboBox2.SelectedItem.ToString() == "Hold Out")
+                {
+                    pruebas = llenarPruebas(hold, numGen);
+                    entrenamiento = llenarEntrenamiento(numGen);
                 }
                 matrices max = oneR(entrenamiento);
                 List<string> posiblesValA = posiblesValores(max.coulmaSeleccionada, instancias);
@@ -456,6 +471,7 @@ namespace Proyecto_serio_el_regreso
             exactitud = exactitud / k;
             recall = recall / k;
             especificidad = especificidad / k;
+            textBox1.Text = "Recall = " + recall * 100 + "%  Especificidad = " + especificidad * 100 + "%  Exactitud = " + exactitud * 100 + "%";
         }
 
         void naiveBayes(Dictionary<string, List<string>> instancias, List<double> desviacionEstandar, List<double> media)
@@ -590,7 +606,54 @@ namespace Proyecto_serio_el_regreso
             textBox1.Text += "Prediccion: " + posiblesValC.ElementAt(ultimo) + " con " + (mejor * 100) + "%\n";
             return posiblesValC.ElementAt(ultimo);
         }
-        void kfoldNB(int k)
+
+        Dictionary<string, List<string>> llenarPruebas(int cantidad, List<int> numerosGenerados)
+        {
+            Dictionary<string, List<string>> pruebas = new Dictionary<string, List<string>>();
+            var seed = Environment.TickCount;
+            var random = new Random(seed);
+            for(int i = 0; i < encabezado.Keys.Count; i++)
+            {
+                List<string> pruebasTemp = new List<string>();
+                pruebas.Add(encabezado.Keys.ElementAt(i),pruebasTemp);
+            }
+            while (numerosGenerados.Count < cantidad)
+            {
+                int numRam = random.Next(0, cant_instancias - 1);
+                if (!numerosGenerados.Contains(numRam))
+                    numerosGenerados.Add(numRam);
+            }
+            for(int j = 0; j < numerosGenerados.Count; j++)
+            {
+                for (int i = 0; i < encabezado.Keys.Count; i++)
+                {
+                    pruebas[encabezado.Keys.ElementAt(i)].Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(numerosGenerados[j]));
+                }
+            }
+            return pruebas;
+        }
+
+        Dictionary<string, List<string>> llenarEntrenamiento(List<int> numerosGenerados)
+        {
+            Dictionary<string, List<string>> entrenamiento = new Dictionary<string, List<string>>();
+            for (int i = 0; i < encabezado.Keys.Count; i++)
+            {
+                List<string> pruebasTemp = new List<string>();
+                entrenamiento.Add(encabezado.Keys.ElementAt(i), pruebasTemp);
+            }
+            for (int j = 0; j < cant_instancias; j++)
+            {
+                if(!numerosGenerados.Contains(j))
+                {
+                    for (int i = 0; i < encabezado.Keys.Count; i++)
+                    {
+                        entrenamiento[encabezado.Keys.ElementAt(i)].Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                    }
+                }
+            }
+            return entrenamiento;
+        }
+        void kfoldNB(int k, int hold)
         {
             List<double> desviacionEstandar = new List<double>();
             List<double> media = new List<double>();
@@ -600,6 +663,7 @@ namespace Proyecto_serio_el_regreso
             Dictionary<string, List<string>> pruebas = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> entrenamiento = new Dictionary<string, List<string>>();
             List<string> posiblesValC = posiblesValores(clase, instancias);
+            List<int> numGen = new List<int>();
             int separador = 0;
             int divicion = cant_instancias / k;
             double exactitud = 0;
@@ -612,7 +676,6 @@ namespace Proyecto_serio_el_regreso
                 dataGridView1.Columns.Clear();
                 desviacionEstandar.Clear();
                 media.Clear();
-                textBox1.Text += "Aqui!!!!!";
                 for (int oA = 0; oA < posiblesValC.Count; oA++)
                 {
                     for (int j = 0; j < posiblesValC.Count; j++)
@@ -622,23 +685,31 @@ namespace Proyecto_serio_el_regreso
                 }
                 pruebas.Clear();
                 entrenamiento.Clear();
-                for (int i = 0; i < instancias.Count; i++)
+                if(comboBox2.SelectedItem.ToString() == "K Fold Cross Validation")
                 {
-                    List<string> pruebasTemp = new List<string>();
-                    List<string> entrenamientoTemp = new List<string>();
-                    for (int j = separador; j < divicion + separador; j++)
+                    for (int i = 0; i < instancias.Count; i++)
                     {
-                        pruebasTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                        List<string> pruebasTemp = new List<string>();
+                        List<string> entrenamientoTemp = new List<string>();
+                        for (int j = separador; j < divicion + separador; j++)
+                        {
+                            pruebasTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                        }
+                        for (int j = 0; j < cant_instancias; j++)
+                        {
+                            if (j < separador)
+                                entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                            if (j > separador + divicion)
+                                entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
+                        }
+                        pruebas.Add(encabezado.Keys.ElementAt(i), pruebasTemp);
+                        entrenamiento.Add(encabezado.Keys.ElementAt(i), entrenamientoTemp);
                     }
-                    for (int j = 0; j < cant_instancias; j++)
-                    {
-                        if (j < separador)
-                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
-                        if (j > separador + divicion)
-                            entrenamientoTemp.Add(instancias[encabezado.Keys.ElementAt(i)].ElementAt(j));
-                    }
-                    pruebas.Add(encabezado.Keys.ElementAt(i), pruebasTemp);
-                    entrenamiento.Add(encabezado.Keys.ElementAt(i), entrenamientoTemp);
+                }
+                if(comboBox2.SelectedItem.ToString() == "Hold Out")
+                {
+                    pruebas = llenarPruebas(hold, numGen);
+                    entrenamiento = llenarEntrenamiento(numGen);
                 }
                 naiveBayes(entrenamiento, desviacionEstandar, media);
                 for (int i = 0; i < pruebas[encabezado.Keys.ElementAt(0)].Count; i++)
@@ -716,55 +787,56 @@ namespace Proyecto_serio_el_regreso
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            textBox1.Clear();
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
-            llenarFrecuenciasGrid(instancias);
-            Form1 f1 = new Form1();
+            dataGridView2.Rows.Clear();
+            dataGridView2.Columns.Clear();
             int rec = 0;
-            int max = 0;
+            int max2 = 0;
             List<string> columna = new List<string>();
             List<string> posiblesVal = new List<string>();
             List<int> resultados = new List<int>();
+            double porcentaje = 1;
+            int k = 1;
             posiblesVal = posiblesValores(clase, instancias);
             resultados = zeroR(posiblesVal, clase, instancias);
-            foreach (string col in posiblesVal)
+            if (comboBox1.SelectedItem.ToString() == "ZeroR")
             {
-                DataGridViewTextBoxColumn dgvIdColumn = new DataGridViewTextBoxColumn { HeaderText = col, Name = col };
-                dataGridView1.Columns.Add(dgvIdColumn);
-            }
-            for (int i = 0; i < resultados.Count; i++)
-            {
-                if (resultados.ElementAt(i) > max)
+                llenarFrecuenciasGrid(instancias);
+                foreach (string col in posiblesVal)
                 {
-                    max = resultados.ElementAt(i);
-                    rec = i;
+                    DataGridViewTextBoxColumn dgvIdColumn = new DataGridViewTextBoxColumn { HeaderText = col, Name = col };
+                    dataGridView1.Columns.Add(dgvIdColumn);
                 }
+                for (int i = 0; i < resultados.Count; i++)
+                {
+                    if (resultados.ElementAt(i) > max2)
+                    {
+                        max2 = resultados.ElementAt(i);
+                        rec = i;
+                    }
+                }
+
+                dataGridView1.Rows.Add();
+                for (int i = 0; i < posiblesVal.Count; i++)
+                    dataGridView1.Rows[0].Cells[i].Value = resultados.ElementAt(i);
             }
-
-            dataGridView1.Rows.Add();
-            for (int i = 0; i < posiblesVal.Count; i++)
-                dataGridView1.Rows[0].Cells[i].Value = resultados.ElementAt(i);
-            label1.Text = "Prediccion: " + posiblesVal.ElementAt(rec) + " Con " + ((max * 100) / instancias[encabezado.Keys.ElementAt(clase)].Count) + "%";
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            dataGridView1.Rows.Clear();
-            dataGridView1.Columns.Clear();
-            llenarFrecuenciasGrid(instancias);
-            matrices max = oneR(instancias);
+            else if(comboBox1.SelectedItem.ToString() == "OneR")
+            {
+                llenarFrecuenciasGrid(instancias);
+                matrices max = oneR(instancias);
             List<string> posiblesValC = posiblesValores(clase, instancias);
             List<string> posiblesValA = posiblesValores(max.coulmaSeleccionada, instancias);
-            double porcentaje = (1 - max.mejor) * 100;
+            double porcentaje2 = (1 - max.mejor) * 100;
             string reglas = "Columna: " + encabezado.Keys.ElementAt(max.coulmaSeleccionada);
-            if (porcentaje != 0)
+            if (porcentaje2 != 0)
             {
                 reglas += "\nReglas:\n";
                 for (int i = 0; i < posiblesValA.Count; i++)
                 {
                     reglas += posiblesValA.ElementAt(i) + "--> " + posiblesValC.ElementAt(max.fila[i]) + "\n";
                 }
-                reglas += "Con una presicion de: " + porcentaje + "%";
                 label2.Text = reglas;
                 DataGridViewTextBoxColumn dgvIdColumn1 = new DataGridViewTextBoxColumn { HeaderText = "columna/clase", Name = "columna/clase" };
                 dataGridView1.Columns.Add(dgvIdColumn1);
@@ -785,15 +857,33 @@ namespace Proyecto_serio_el_regreso
                 {
                     dataGridView1.Rows[i].Cells[0].Value = posiblesValA.ElementAt(i);
                 }
-                kFoldZeroR(2);
             }
-            else
-                MessageBox.Show("No hay suficientes valores para predecir valores");
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            kfoldNB(2);
+                if(comboBox2.SelectedItem.ToString() == "Hold Out")
+                {
+                    porcentaje = Convert.ToDouble(Microsoft.VisualBasic.Interaction.InputBox("Ingrese el porcentaje de pruebas: ", "Valores", "20"));
+                    porcentaje = Convert.ToInt32((cant_instancias * porcentaje) / 100);
+                    kFoldZeroR(10, Convert.ToInt32(porcentaje));
+                }
+                if (comboBox2.SelectedItem.ToString() == "K Fold Cross Validation")
+                {
+                    k = Convert.ToInt32(Microsoft.VisualBasic.Interaction.InputBox("Ingrese el numero de folders: ", "Valores", "2"));
+                    kFoldZeroR(k, 0);
+                }
+            }
+            else if(comboBox1.SelectedItem.ToString() == "Naive Bayes")
+            {
+                if (comboBox2.SelectedItem.ToString() == "Hold Out")
+                {
+                    porcentaje = Convert.ToDouble(Microsoft.VisualBasic.Interaction.InputBox("Ingrese el porcentaje de pruebas: ", "Valores", "20"));
+                    porcentaje = Convert.ToInt32((cant_instancias * porcentaje) / 100);
+                    kfoldNB(10, Convert.ToInt32(porcentaje));
+                }
+                if (comboBox2.SelectedItem.ToString() == "K Fold Cross Validation")
+                {
+                    k = Convert.ToInt32(Microsoft.VisualBasic.Interaction.InputBox("Ingrese el numero de folders: ", "Valores", "2"));
+                    kfoldNB(k, 0);
+                }
+            }
         }
     }
 }
