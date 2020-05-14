@@ -42,27 +42,27 @@
             this.cmBoxColumna = new System.Windows.Forms.ComboBox();
             this.dataGridViewKNN = new System.Windows.Forms.DataGridView();
             this.tabKmeans = new System.Windows.Forms.TabPage();
-            this.tabOneR = new System.Windows.Forms.TabPage();
-            this.dataGridViewKM = new System.Windows.Forms.DataGridView();
-            this.dataGridViewClusters = new System.Windows.Forms.DataGridView();
-            this.btnKMeans = new System.Windows.Forms.Button();
-            this.distanciaBox = new System.Windows.Forms.ComboBox();
-            this.numClusters = new System.Windows.Forms.NumericUpDown();
-            this.numIteraciones = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numIteraciones = new System.Windows.Forms.NumericUpDown();
+            this.numClusters = new System.Windows.Forms.NumericUpDown();
+            this.distanciaBox = new System.Windows.Forms.ComboBox();
+            this.btnKMeans = new System.Windows.Forms.Button();
+            this.dataGridViewClusters = new System.Windows.Forms.DataGridView();
+            this.dataGridViewKM = new System.Windows.Forms.DataGridView();
+            this.tabOneR = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabKNN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInstancia)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NudVecinos)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKNN)).BeginInit();
             this.tabKmeans.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numClusters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIteraciones)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numClusters)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -225,68 +225,41 @@
             this.tabKmeans.Text = "K-Means";
             this.tabKmeans.UseVisualStyleBackColor = true;
             // 
-            // tabOneR
+            // label4
             // 
-            this.tabOneR.Location = new System.Drawing.Point(4, 22);
-            this.tabOneR.Name = "tabOneR";
-            this.tabOneR.Size = new System.Drawing.Size(768, 400);
-            this.tabOneR.TabIndex = 3;
-            this.tabOneR.Text = "One-R";
-            this.tabOneR.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(38, 243);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(165, 13);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Valores generados de los clusters";
             // 
-            // dataGridViewKM
+            // label3
             // 
-            this.dataGridViewKM.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewKM.Location = new System.Drawing.Point(297, 24);
-            this.dataGridViewKM.Name = "dataGridViewKM";
-            this.dataGridViewKM.Size = new System.Drawing.Size(447, 346);
-            this.dataGridViewKM.TabIndex = 0;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(38, 142);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(54, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Distancia:";
             // 
-            // dataGridViewClusters
+            // label2
             // 
-            this.dataGridViewClusters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewClusters.Location = new System.Drawing.Point(38, 262);
-            this.dataGridViewClusters.Name = "dataGridViewClusters";
-            this.dataGridViewClusters.Size = new System.Drawing.Size(242, 108);
-            this.dataGridViewClusters.TabIndex = 1;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(38, 94);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(116, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Numero de iteraciones:";
             // 
-            // btnKMeans
+            // label1
             // 
-            this.btnKMeans.Location = new System.Drawing.Point(37, 201);
-            this.btnKMeans.Name = "btnKMeans";
-            this.btnKMeans.Size = new System.Drawing.Size(121, 23);
-            this.btnKMeans.TabIndex = 2;
-            this.btnKMeans.Text = "Iniciar K-Means";
-            this.btnKMeans.UseVisualStyleBackColor = true;
-            // 
-            // distanciaBox
-            // 
-            this.distanciaBox.FormattingEnabled = true;
-            this.distanciaBox.Items.AddRange(new object[] {
-            "Euclidiana",
-            "Manhattan",
-            "Hamming"});
-            this.distanciaBox.Location = new System.Drawing.Point(38, 162);
-            this.distanciaBox.Name = "distanciaBox";
-            this.distanciaBox.Size = new System.Drawing.Size(121, 21);
-            this.distanciaBox.TabIndex = 3;
-            // 
-            // numClusters
-            // 
-            this.numClusters.Location = new System.Drawing.Point(38, 67);
-            this.numClusters.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numClusters.Name = "numClusters";
-            this.numClusters.Size = new System.Drawing.Size(120, 20);
-            this.numClusters.TabIndex = 4;
-            this.numClusters.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(38, 48);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(117, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Numero de clusters (K):";
             // 
             // numIteraciones
             // 
@@ -310,41 +283,70 @@
             0,
             0});
             // 
-            // label1
+            // numClusters
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(38, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Numero de clusters (K):";
+            this.numClusters.Location = new System.Drawing.Point(38, 67);
+            this.numClusters.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numClusters.Name = "numClusters";
+            this.numClusters.Size = new System.Drawing.Size(120, 20);
+            this.numClusters.TabIndex = 4;
+            this.numClusters.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
-            // label2
+            // distanciaBox
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(38, 94);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(116, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Numero de iteraciones:";
+            this.distanciaBox.FormattingEnabled = true;
+            this.distanciaBox.Items.AddRange(new object[] {
+            "Euclidiana",
+            "Manhattan",
+            "Hamming"});
+            this.distanciaBox.Location = new System.Drawing.Point(38, 162);
+            this.distanciaBox.Name = "distanciaBox";
+            this.distanciaBox.Size = new System.Drawing.Size(121, 21);
+            this.distanciaBox.TabIndex = 3;
             // 
-            // label3
+            // btnKMeans
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(38, 142);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(54, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Distancia:";
+            this.btnKMeans.Location = new System.Drawing.Point(37, 201);
+            this.btnKMeans.Name = "btnKMeans";
+            this.btnKMeans.Size = new System.Drawing.Size(121, 23);
+            this.btnKMeans.TabIndex = 2;
+            this.btnKMeans.Text = "Iniciar K-Means";
+            this.btnKMeans.UseVisualStyleBackColor = true;
+            this.btnKMeans.Click += new System.EventHandler(this.btnKMeans_Click);
             // 
-            // label4
+            // dataGridViewClusters
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(38, 243);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(165, 13);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Valores generados de los clusters";
+            this.dataGridViewClusters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewClusters.Location = new System.Drawing.Point(38, 262);
+            this.dataGridViewClusters.Name = "dataGridViewClusters";
+            this.dataGridViewClusters.Size = new System.Drawing.Size(242, 108);
+            this.dataGridViewClusters.TabIndex = 1;
+            // 
+            // dataGridViewKM
+            // 
+            this.dataGridViewKM.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewKM.Location = new System.Drawing.Point(297, 24);
+            this.dataGridViewKM.Name = "dataGridViewKM";
+            this.dataGridViewKM.Size = new System.Drawing.Size(447, 346);
+            this.dataGridViewKM.TabIndex = 0;
+            this.dataGridViewKM.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewKM_CellContentClick);
+            // 
+            // tabOneR
+            // 
+            this.tabOneR.Location = new System.Drawing.Point(4, 22);
+            this.tabOneR.Name = "tabOneR";
+            this.tabOneR.Size = new System.Drawing.Size(768, 400);
+            this.tabOneR.TabIndex = 3;
+            this.tabOneR.Text = "One-R";
+            this.tabOneR.UseVisualStyleBackColor = true;
             // 
             // Form4
             // 
@@ -363,10 +365,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKNN)).EndInit();
             this.tabKmeans.ResumeLayout(false);
             this.tabKmeans.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numClusters)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numIteraciones)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numClusters)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).EndInit();
             this.ResumeLayout(false);
 
         }
