@@ -188,17 +188,17 @@ namespace Proyecto_serio_el_regreso
                 {
                     lblresultado.Text += "El tipo de dato es Nominal, el resultado es basado en la moda: ";
                     lblresultado.Text += valor_asignar.ToString();
-                    dataGridViewOneR.DataSource = (from f in frecuencias 
-                                                   orderby f.Value 
-                                                   select new { f.Key, f.Value}).ToList();
-                    tabControl1.SelectTab("tabOneR");
+                    //dataGridViewOneR.DataSource = (from f in frecuencias 
+                    //                               orderby f.Value 
+                    //                               select new { f.Key, f.Value}).ToList();
+                    //tabControl1.SelectTab("tabOneR");
                 }
                 else if(this.encabezado[col_seleccionada].Key == "Numerico")
                 {
                     lblresultado.Text += "El tipo de dato es Numerico, el resultado es un promedio: ";
                     lblresultado.Text += valor_asignar.ToString();
-                    dataGridViewOneR.DataSource = instancias[col_seleccionada].Select(x => new { Value = x}).ToList();
-                    tabControl1.SelectTab("tabOneR");
+                    //dataGridViewOneR.DataSource = instancias[col_seleccionada].Select(x => new { Value = x}).ToList();
+                    //tabControl1.SelectTab("tabOneR");
                 }
 
                 dataGridViewInstancia.Rows[0].Cells[col_seleccionada].Value = valor_asignar;
@@ -390,7 +390,7 @@ namespace Proyecto_serio_el_regreso
             return valor_asignar;
         }
 
-        private string zeroR_valor(Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias, string col_seleccionada)
+        private string zeroR_valor(Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias, string col_seleccionada, Dictionary<string, int> frecuencias)
         {
             string valor_asignar = "NA";
             if (encabezado.ContainsKey(col_seleccionada))

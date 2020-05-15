@@ -30,6 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabKNN = new System.Windows.Forms.TabPage();
+            this.lblResultados = new System.Windows.Forms.Label();
             this.radiobtnManhattan = new System.Windows.Forms.RadioButton();
             this.radiobtnEuclidiana = new System.Windows.Forms.RadioButton();
             this.btnIniciarOneR = new System.Windows.Forms.Button();
@@ -64,7 +65,7 @@
             this.NudFold = new System.Windows.Forms.NumericUpDown();
             this.btnKfold = new System.Windows.Forms.Button();
             this.lblFold = new System.Windows.Forms.Label();
-            this.lblResultados = new System.Windows.Forms.Label();
+            this.lblresultado = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabKNN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInstancia)).BeginInit();
@@ -75,13 +76,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.numClusters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).BeginInit();
-
             this.tabOneR.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NudVecinosKFold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKFold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NudFold)).BeginInit();
-
             this.SuspendLayout();
             // 
             // tabControl1
@@ -116,6 +115,13 @@
             this.tabKNN.TabIndex = 0;
             this.tabKNN.Text = "K-NN";
             this.tabKNN.UseVisualStyleBackColor = true;
+            // 
+            // lblResultados
+            // 
+            this.lblResultados.Location = new System.Drawing.Point(7, 162);
+            this.lblResultados.Name = "lblResultados";
+            this.lblResultados.Size = new System.Drawing.Size(187, 235);
+            this.lblResultados.TabIndex = 10;
             // 
             // radiobtnManhattan
             // 
@@ -272,31 +278,6 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Numero de iteraciones:";
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(38, 243);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(165, 13);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Valores generados de los clusters";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(38, 142);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(54, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Distancia:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(38, 94);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(116, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Numero de iteraciones:";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -328,19 +309,30 @@
             0,
             0});
             // 
-            // label1
+            // numClusters
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(38, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(117, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Numero de clusters (K):";
+            this.numClusters.Location = new System.Drawing.Point(38, 67);
+            this.numClusters.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numClusters.Name = "numClusters";
+            this.numClusters.Size = new System.Drawing.Size(120, 20);
+            this.numClusters.TabIndex = 4;
+            this.numClusters.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // distanciaBox
             // 
             this.distanciaBox.FormattingEnabled = true;
             this.distanciaBox.Items.AddRange(new object[] {
+            "Euclidiana",
+            "Manhattan",
+            "Hamming",
             "Euclidiana",
             "Manhattan",
             "Hamming"});
@@ -357,6 +349,7 @@
             this.btnKMeans.TabIndex = 2;
             this.btnKMeans.Text = "Iniciar K-Means";
             this.btnKMeans.UseVisualStyleBackColor = true;
+            this.btnKMeans.Click += new System.EventHandler(this.btnKMeans_Click);
             // 
             // dataGridViewClusters
             // 
@@ -373,6 +366,7 @@
             this.dataGridViewKM.Name = "dataGridViewKM";
             this.dataGridViewKM.Size = new System.Drawing.Size(447, 346);
             this.dataGridViewKM.TabIndex = 0;
+            this.dataGridViewKM.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewKM_CellContentClick);
             // 
             // tabOneR
             // 
@@ -496,71 +490,7 @@
             0,
             0,
             0});
-            //
-            // numClusters
             // 
-            this.numClusters.Location = new System.Drawing.Point(38, 67);
-            this.numClusters.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numClusters.Name = "numClusters";
-            this.numClusters.Size = new System.Drawing.Size(120, 20);
-            this.numClusters.TabIndex = 4;
-            this.numClusters.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // distanciaBox
-            // 
-            this.distanciaBox.FormattingEnabled = true;
-            this.distanciaBox.Items.AddRange(new object[] {
-            "Euclidiana",
-            "Manhattan",
-            "Hamming"});
-            this.distanciaBox.Location = new System.Drawing.Point(38, 162);
-            this.distanciaBox.Name = "distanciaBox";
-            this.distanciaBox.Size = new System.Drawing.Size(121, 21);
-            this.distanciaBox.TabIndex = 3;
-            // 
-            // btnKMeans
-            // 
-            this.btnKMeans.Location = new System.Drawing.Point(37, 201);
-            this.btnKMeans.Name = "btnKMeans";
-            this.btnKMeans.Size = new System.Drawing.Size(121, 23);
-            this.btnKMeans.TabIndex = 2;
-            this.btnKMeans.Text = "Iniciar K-Means";
-            this.btnKMeans.UseVisualStyleBackColor = true;
-            this.btnKMeans.Click += new System.EventHandler(this.btnKMeans_Click);
-            // 
-            // dataGridViewClusters
-            // 
-            this.dataGridViewClusters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewClusters.Location = new System.Drawing.Point(38, 262);
-            this.dataGridViewClusters.Name = "dataGridViewClusters";
-            this.dataGridViewClusters.Size = new System.Drawing.Size(242, 108);
-            this.dataGridViewClusters.TabIndex = 1;
-            // 
-            // dataGridViewKM
-            // 
-            this.dataGridViewKM.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewKM.Location = new System.Drawing.Point(297, 24);
-            this.dataGridViewKM.Name = "dataGridViewKM";
-            this.dataGridViewKM.Size = new System.Drawing.Size(447, 346);
-            this.dataGridViewKM.TabIndex = 0;
-            this.dataGridViewKM.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewKM_CellContentClick);
-            // 
-            // tabOneR
-            // 
-            this.tabOneR.Location = new System.Drawing.Point(4, 22);
-            this.tabOneR.Name = "tabOneR";
-            this.tabOneR.Size = new System.Drawing.Size(768, 400);
-            this.tabOneR.TabIndex = 3;
-            this.tabOneR.Text = "One-R";
-            this.tabOneR.UseVisualStyleBackColor = true;
             // btnKfold
             // 
             this.btnKfold.Location = new System.Drawing.Point(7, 132);
@@ -580,12 +510,12 @@
             this.lblFold.TabIndex = 0;
             this.lblFold.Text = "Folders";
             // 
-            // lblResultados
+            // lblresultado
             // 
-            this.lblResultados.Location = new System.Drawing.Point(7, 162);
-            this.lblResultados.Name = "lblResultados";
-            this.lblResultados.Size = new System.Drawing.Size(187, 235);
-            this.lblResultados.TabIndex = 10;
+            this.lblresultado.Location = new System.Drawing.Point(591, 240);
+            this.lblresultado.Name = "lblresultado";
+            this.lblresultado.Size = new System.Drawing.Size(171, 157);
+            this.lblresultado.TabIndex = 11;
             // 
             // Form4
             // 
@@ -608,7 +538,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numClusters)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).EndInit();
-
             this.tabOneR.ResumeLayout(false);
             this.tabOneR.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -659,5 +588,6 @@
         private System.Windows.Forms.RadioButton radioBtnManhattanKfold;
         private System.Windows.Forms.Button btnHoldOut;
         private System.Windows.Forms.Label lblResultados;
+        private System.Windows.Forms.Label lblresultado;
     }
 }
