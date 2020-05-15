@@ -17,7 +17,7 @@ namespace Proyecto_serio_el_regreso
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
         private int cant_instancias;
-        private int cant_columnas=0; // ================================================================
+        private int cant_columnas = 0; // ================================================================
         private Form1 form1;
 
         public Form4(Form1 form1)
@@ -136,7 +136,7 @@ namespace Proyecto_serio_el_regreso
                         distancia_instancias += Math.Pow(Math.Abs(valor1 - valor2), potencia);
                     }
                 }
-                distancia_total = Convert.ToDouble(distancia_total) + Math.Pow(distancia_instancias, 1 / Convert.ToDouble(potencia)); 
+                distancia_total = Convert.ToDouble(distancia_total) + Math.Pow(distancia_instancias, 1 / Convert.ToDouble(potencia));
                 resultados.Add(new KeyValuePair<int, double>(indice, distancia_total));
             }
 
@@ -206,7 +206,7 @@ namespace Proyecto_serio_el_regreso
                 Dictionary<string, List<string>> instancias = new Dictionary<string, List<string>>();
                 Dictionary<string, string> instancia_prueba = new Dictionary<string, string>();
 
-                foreach(KeyValuePair<string, KeyValuePair<string,string>> columna in this.encabezado)
+                foreach (KeyValuePair<string, KeyValuePair<string, string>> columna in this.encabezado)
                 {
                     //Version 1. Solo toma en cuenta las columnas nominales (aunque la funcion automaticamente detecta las nominales)
                     //pero no diferencia si la celda esta vacia...
@@ -221,12 +221,12 @@ namespace Proyecto_serio_el_regreso
                     //}
 
                     //Version 2. Toma en cuenta todas las celdas que no estan vacias
-                    if(col_seleccionada == columna.Key)
+                    if (col_seleccionada == columna.Key)
                     {
                         encabezado[columna.Key] = new KeyValuePair<string, string>(columna.Value.Key, columna.Value.Value);
                         instancias[columna.Key] = new List<string>(this.instancias[columna.Key]);
                     }
-                    else if(dataGridViewInstancia.Rows[0].Cells[columna.Key].Value != null)
+                    else if (dataGridViewInstancia.Rows[0].Cells[columna.Key].Value != null)
                     {
                         encabezado[columna.Key] = new KeyValuePair<string, string>(columna.Value.Key, columna.Value.Value);
                         instancias[columna.Key] = new List<string>(this.instancias[columna.Key]);
@@ -260,28 +260,28 @@ namespace Proyecto_serio_el_regreso
 
             dataGridViewKNN.ClearSelection();
 
-            if(!string.IsNullOrEmpty(cmBoxColumna.Text))
+            if (!string.IsNullOrEmpty(cmBoxColumna.Text))
             {
                 col_seleccionada = cmBoxColumna.Text;
             }
 
             foreach (var columna in this.encabezado)
             {
-                if(col_seleccionada == columna.Key)
+                if (col_seleccionada == columna.Key)
                 {
                     continue;
                 }
-                if(dataGridViewInstancia.Rows[0].Cells[columna.Key].Value != null)
+                if (dataGridViewInstancia.Rows[0].Cells[columna.Key].Value != null)
                 {
-                    encabezado[columna.Key] = new KeyValuePair<string,string>(columna.Value.Key, columna.Value.Value);
+                    encabezado[columna.Key] = new KeyValuePair<string, string>(columna.Value.Key, columna.Value.Value);
                     instancias[columna.Key] = new List<string>(this.instancias[columna.Key]);
                     instancia_prueba[columna.Key] = dataGridViewInstancia.Rows[0].Cells[columna.Key].Value.ToString();
                 }
             }
 
-            List<KeyValuePair<int,double>> distancias = kNearest(encabezado, instancias, instancia_prueba, cant_instancias, potencia);
+            List<KeyValuePair<int, double>> distancias = kNearest(encabezado, instancias, instancia_prueba, cant_instancias, potencia);
 
-            if(!dataGridViewKNN.Columns.Contains("Distancia"))
+            if (!dataGridViewKNN.Columns.Contains("Distancia"))
             {
                 DataGridViewTextBoxColumn col_distancia = new DataGridViewTextBoxColumn
                 {
@@ -293,7 +293,7 @@ namespace Proyecto_serio_el_regreso
                 dataGridViewKNN.Columns.Add(col_distancia);
             }
 
-            foreach (KeyValuePair<int,double> distancia in distancias)
+            foreach (KeyValuePair<int, double> distancia in distancias)
             {
                 dataGridViewKNN.Rows[distancia.Key].Cells["Distancia"].Value = distancia.Value;
             }
@@ -307,21 +307,21 @@ namespace Proyecto_serio_el_regreso
             dataGridViewInstancia.Rows[0].Cells[col_seleccionada].Value = valor_asignar;
         }
 
-        private string knn_valor(Dictionary<string, KeyValuePair<string,string>> encabezado_calculo, Dictionary<string, List<string>> instancias_calculo,
+        private string knn_valor(Dictionary<string, KeyValuePair<string, string>> encabezado_calculo, Dictionary<string, List<string>> instancias_calculo,
                 int cant_instancias, Dictionary<string, string> instancia_prueba, int cant_vecinos, string col_seleccionada, int potencia,
                 Dictionary<string, KeyValuePair<string, string>> encabezado = null, Dictionary<string, List<string>> instancias = null,
                 List<KeyValuePair<int, double>> distancias = null)
         {
-            if(encabezado == null)
+            if (encabezado == null)
             {
                 encabezado = encabezado_calculo;
             }
-            if(instancias == null)
+            if (instancias == null)
             {
                 instancias = instancias_calculo;
             }
-            if(distancias == null)
-            { 
+            if (distancias == null)
+            {
                 distancias = kNearest(encabezado_calculo, instancias_calculo, instancia_prueba, cant_instancias, potencia);
             }
 
@@ -370,10 +370,10 @@ namespace Proyecto_serio_el_regreso
             return valor_asignar;
         }
 
-        private string zeroR_valor(Dictionary<string, KeyValuePair<string,string>> encabezado, Dictionary<string, List<string>>instancias, string col_seleccionada)
+        private string zeroR_valor(Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias, string col_seleccionada)
         {
             string valor_asignar = "NA";
-            if(encabezado.ContainsKey(col_seleccionada))
+            if (encabezado.ContainsKey(col_seleccionada))
             {
                 if (encabezado[col_seleccionada].Key == "Nominal")
                 {
@@ -416,36 +416,36 @@ namespace Proyecto_serio_el_regreso
             return valor_asignar;
         }
 
-        private string oneR_valor(Dictionary<string, KeyValuePair<string,string>>encabezado, Dictionary<string, List<string>>instancias, 
+        private string oneR_valor(Dictionary<string, KeyValuePair<string, string>> encabezado, Dictionary<string, List<string>> instancias,
                 Dictionary<string, string> instancia_prueba, string col_seleccionada, int cant_instancias)
         {
             string valor_asignar = "NA";
             var valores = new Dictionary<string, KeyValuePair<double, Dictionary<string, KeyValuePair<List<string>, List<int>>>>>();
 
-            if(encabezado[col_seleccionada].Key != "Nominal")
+            if (encabezado[col_seleccionada].Key != "Nominal")
             {
                 return valor_asignar;
             }
 
-            foreach (KeyValuePair<string, KeyValuePair<string,string>> columnas in encabezado)
-            { 
-                if(columnas.Key == col_seleccionada){ continue; }
-                if(columnas.Value.Key == "Nominal")
+            foreach (KeyValuePair<string, KeyValuePair<string, string>> columnas in encabezado)
+            {
+                if (columnas.Key == col_seleccionada) { continue; }
+                if (columnas.Value.Key == "Nominal")
                 {
                     Dictionary<string, KeyValuePair<List<string>, List<int>>> frecuencias = new Dictionary<string, KeyValuePair<List<string>, List<int>>>();
                     double error_total;
 
-                    for(int i = 0; i < cant_instancias; i++)
+                    for (int i = 0; i < cant_instancias; i++)
                     {
                         string columna = instancias[columnas.Key][i];
                         string clase = instancias[col_seleccionada][i];
 
-                        if(!frecuencias.ContainsKey(columna))
+                        if (!frecuencias.ContainsKey(columna))
                         {
                             frecuencias[columna] = new KeyValuePair<List<string>, List<int>>(new List<string>(), new List<int>());
                         }
 
-                        if(!frecuencias[columna].Key.Contains(clase))
+                        if (!frecuencias[columna].Key.Contains(clase))
                         {
                             frecuencias[columna].Key.Add(clase);
                             frecuencias[columna].Value.Add(1);
@@ -460,7 +460,7 @@ namespace Proyecto_serio_el_regreso
                     double numerador_total = 0;
                     double denominador_total = 0;
 
-                    foreach(var fila in frecuencias)
+                    foreach (var fila in frecuencias)
                     {
                         numerador_total += fila.Value.Value.Sum() - fila.Value.Value.Max();
                         denominador_total += fila.Value.Value.Sum();
@@ -476,13 +476,13 @@ namespace Proyecto_serio_el_regreso
             int maximo = 0;
             foreach (var columnas in valores)
             {
-                if(columnas.Value.Key > maximo)
+                if (columnas.Value.Key > maximo)
                 {
                     columna_seleccionada = columnas.Key;
                 }
             }
 
-            if(!string.IsNullOrEmpty(columna_seleccionada))
+            if (!string.IsNullOrEmpty(columna_seleccionada))
             {
                 string valor_prueba = instancia_prueba[columna_seleccionada];
                 int frecuencia_maximo = valores[columna_seleccionada].Value[valor_prueba].Value.Max();
@@ -505,7 +505,7 @@ namespace Proyecto_serio_el_regreso
 
         private void radiobtnManhattan_CheckedChanged(object sender, EventArgs e)
         {
-            radiobtnEuclidiana.Checked = (radiobtnManhattan.Checked) ? false: true;
+            radiobtnEuclidiana.Checked = (radiobtnManhattan.Checked) ? false : true;
         }
 
         // ========================================================================================================
@@ -518,16 +518,16 @@ namespace Proyecto_serio_el_regreso
             {
                 arrayDatos[go] = new double[cant_columnas];
             }
-            double buffer=0.0;
+            double buffer = 0.0;
 
             int numcol = 0;
             foreach (string columna in encabezado.Keys)
             {
-                
+
                 for (int i = 0; i < cant_instancias; i++)
                 {
                     // se convierten los datos a Double
-                    buffer= Convert.ToDouble(instancias[columna][i]);
+                    buffer = Convert.ToDouble(instancias[columna][i]);
                     arrayDatos[i][numcol] = buffer;
                 }
                 numcol++;
@@ -759,7 +759,7 @@ namespace Proyecto_serio_el_regreso
         {
             for (int k = 0; k < numClusters; ++k)
             {
-                Console.WriteLine("================= Cluster "+k.ToString() +" =================");
+                Console.WriteLine("================= Cluster " + k.ToString() + " =================");
                 for (int i = 0; i < data.Length; ++i)
                 {
                     int clusterID = clustering[i];
@@ -781,8 +781,8 @@ namespace Proyecto_serio_el_regreso
         {
 
         }
-    } // Program
-=======
+     // Program
+
         private void button1_Click(object sender, EventArgs e)
         {
             while(dataGridViewKFold.Columns.Count > 0)
