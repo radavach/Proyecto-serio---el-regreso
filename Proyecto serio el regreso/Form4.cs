@@ -17,6 +17,7 @@ namespace Proyecto_serio_el_regreso
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
         private int cant_instancias;
+        private int cant_columnas=0; // ================================================================
         private Form1 form1;
 
         public Form4(Form1 form1)
@@ -77,6 +78,7 @@ namespace Proyecto_serio_el_regreso
 
             foreach (string columna in encabezado.Keys)
             {
+                cant_columnas++; // ======================================================================================
                 for (int i = 0; i < cant_instancias; i++)
                 {
                     dataGridViewKNN.Rows[i].Cells[columna].Value = instancias[columna][i];
@@ -98,7 +100,7 @@ namespace Proyecto_serio_el_regreso
             }
             dataGridViewInstancia.Rows.Clear();
             dataGridViewKNN.Rows.Clear();
-
+            cant_columnas = 0; //=======================================================================================================
             cargarDataGrid();
         }
 
@@ -506,6 +508,281 @@ namespace Proyecto_serio_el_regreso
             radiobtnEuclidiana.Checked = (radiobtnManhattan.Checked) ? false: true;
         }
 
+        // ========================================================================================================
+        private void btnKMeans_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Comienza K-Means");
+
+            double[][] arrayDatos = new double[cant_instancias][];
+            for (int go = 0; go < cant_instancias; go++)
+            {
+                arrayDatos[go] = new double[cant_columnas];
+            }
+            double buffer=0.0;
+
+            int numcol = 0;
+            foreach (string columna in encabezado.Keys)
+            {
+                
+                for (int i = 0; i < cant_instancias; i++)
+                {
+                    // se convierten los datos a Double
+                    buffer= Convert.ToDouble(instancias[columna][i]);
+                    arrayDatos[i][numcol] = buffer;
+                }
+                numcol++;
+            }
+
+            Console.WriteLine("datos sin clusterizar:");
+            Console.WriteLine("-------------------");
+            ShowData(arrayDatos, 1, true, true);
+
+            int numClusters = 3;
+            Console.WriteLine("Numero de clusters: " + numClusters);
+
+            int[] clustering = Cluster(arrayDatos, numClusters);
+
+            Console.WriteLine("K-means clustering completado");
+
+            Console.WriteLine("Orden final del clustering:");
+            MostrarVector(clustering, true);
+
+            Console.WriteLine("Miembros de cada cluster:");
+            MostrarClusterizados(arrayDatos, clustering, numClusters, 1);
+
+            Console.WriteLine("Termina K-Means");
+            Console.ReadLine();
+        }
+        public static int[] Cluster(double[][] arrayDatos, int numClusters)
+        {
+            // k-means clustering
+            // indice de return es tupla ID, celda es cluster ID
+            // ex: [2 1 0 0 2 2] significa que tupla 0 es cluster 2, tupla 1 es cluster 1, tupla 2 es cluster 0, tupla 3 es cluster 0, etc.
+            double[][] data = Normalizar(arrayDatos); // para que no dominen los valores grandes
+
+            bool cambio = true; // sucedio algun cambio en al menos una asignacion de cluster?
+            bool exito = true; // se pudieron calcular todas las medias?
+
+            int[] clustering = InitClustering(data.Length, numClusters, 0); // inicializacion
+            double[][] means = Asignar(numClusters, data[0].Length);
+
+            int maxCount = data.Length * 10; // limite de iteraciones
+            int ct = 0;
+            while (cambio == true && exito == true && ct < maxCount)
+            {
+                ++ct;
+                exito = ActualizarMedias(data, clustering, means); // calcula nuevas medias del cluster si es posible. sin efecto si falla
+                cambio = ActualizarClustering(data, clustering, means); // reasigna tuplas a los clusters. sin efecto si falla
+            }
+
+            return clustering;
+        }
+
+        private static double[][] Normalizar(double[][] arrayDatos)
+        {
+            // normaliza los datos calculado (x - media) / stddev
+
+            // copia los datos
+            double[][] result = new double[arrayDatos.Length][];
+            for (int i = 0; i < arrayDatos.Length; ++i)
+            {
+                result[i] = new double[arrayDatos[i].Length];
+                Array.Copy(arrayDatos[i], result[i], arrayDatos[i].Length);
+            }
+
+            for (int j = 0; j < result[0].Length; ++j) // cada col
+            {
+                double colSum = 0.0;
+                for (int i = 0; i < result.Length; ++i)
+                    colSum += result[i][j];
+                double mean = colSum / result.Length;
+                double sum = 0.0;
+                for (int i = 0; i < result.Length; ++i)
+                    sum += (result[i][j] - mean) * (result[i][j] - mean);
+                double sd = sum / result.Length;
+                for (int i = 0; i < result.Length; ++i)
+                    result[i][j] = (result[i][j] - mean) / sd;
+            }
+            return result;
+        }
+
+        private static int[] InitClustering(int numTuplas, int numClusters, int randomSeed)
+        {
+            // init clustering semi-random (al menos una tupla en cada cluster)
+            Random random = new Random(randomSeed);
+            int[] clustering = new int[numTuplas];
+            for (int i = 0; i < numClusters; ++i) // asegura que cada cluster tenga al menos una tupla
+                clustering[i] = i;
+            for (int i = numClusters; i < clustering.Length; ++i)
+                clustering[i] = random.Next(0, numClusters); // los demas al azar
+            return clustering;
+        }
+
+        private static double[][] Asignar(int numClusters, int numColumnas)
+        {
+            double[][] result = new double[numClusters][];
+            for (int k = 0; k < numClusters; ++k)
+                result[k] = new double[numColumnas];
+            return result;
+        }
+
+        private static bool ActualizarMedias(double[][] data, int[] clustering, double[][] means)
+        {
+            //retorna false si hay un cluster que no tiene tuplas asignadas
+
+            int numClusters = means.Length;
+            int[] clusterCounts = new int[numClusters];
+            for (int i = 0; i < data.Length; ++i)
+            {
+                int cluster = clustering[i];
+                ++clusterCounts[cluster];
+            }
+
+            for (int k = 0; k < numClusters; ++k)
+                if (clusterCounts[k] == 0)
+                    return false;
+
+            for (int k = 0; k < means.Length; ++k)
+                for (int j = 0; j < means[k].Length; ++j)
+                    means[k][j] = 0.0;
+
+            for (int i = 0; i < data.Length; ++i)
+            {
+                int cluster = clustering[i];
+                for (int j = 0; j < data[i].Length; ++j)
+                    means[cluster][j] += data[i][j];
+            }
+
+            for (int k = 0; k < means.Length; ++k)
+                for (int j = 0; j < means[k].Length; ++j)
+                    means[k][j] /= clusterCounts[k];
+            return true;
+        }
+
+        private static bool ActualizarClustering(double[][] data, int[] clustering, double[][] means)
+        {
+            // reasigna cada tupla a un cluster (media mas cercana)
+            // retorna false si no cambian asignaciones de tuplas o
+            // si el reasignamiento resulta en un clustering donde
+            // uno o mas clusters no tienen tuplas.
+
+            int numClusters = means.Length;
+            bool cambio = false;
+
+            int[] newClustering = new int[clustering.Length]; // resultado propuesto
+            Array.Copy(clustering, newClustering, clustering.Length);
+
+            double[] distancias = new double[numClusters]; // distancias de tupla actual a cada media
+
+            for (int i = 0; i < data.Length; ++i) // pasa por cada tupla
+            {
+                for (int k = 0; k < numClusters; ++k)
+                    distancias[k] = DistanciaEuclidiana(data[i], means[k]); // calcula distancias de tupla actual a todo k means
+
+                int newClusterID = MinIndex(distancias); // busca el ID de la media mas cercana
+                if (newClusterID != newClustering[i])
+                {
+                    cambio = true;
+                    newClustering[i] = newClusterID; // actualiza
+                }
+            }
+
+            if (cambio == false)
+                return false;
+
+            int[] clusterCounts = new int[numClusters];
+            for (int i = 0; i < data.Length; ++i)
+            {
+                int cluster = newClustering[i];
+                ++clusterCounts[cluster];
+            }
+
+            for (int k = 0; k < numClusters; ++k)
+                if (clusterCounts[k] == 0)
+                    return false; // mal clustering 
+
+            Array.Copy(newClustering, clustering, newClustering.Length); // actualiza
+            return true; // buen clustering
+        }
+
+        private static double DistanciaEuclidiana(double[] tupla, double[] mean)
+        {
+            // Distancia Euclidiana entre dos vectores para ActualizarClustering()
+            double sumSquaredDiffs = 0.0;
+            for (int j = 0; j < tupla.Length; ++j)
+                sumSquaredDiffs += Math.Pow((tupla[j] - mean[j]), 2);
+            return Math.Sqrt(sumSquaredDiffs);
+        }
+
+        private static int MinIndex(double[] distancias)
+        {
+            // indice del valor mas pequeño en el array
+            int indexOfMin = 0;
+            double peqDist = distancias[0];
+            for (int k = 0; k < distancias.Length; ++k)
+            {
+                if (distancias[k] < peqDist)
+                {
+                    peqDist = distancias[k];
+                    indexOfMin = k;
+                }
+            }
+            return indexOfMin;
+        }
+
+        // ============================================================================
+
+
+        static void ShowData(double[][] data, int decimales, bool indices, bool newLine)
+        {
+            for (int i = 0; i < data.Length; ++i)
+            {
+                if (indices) Console.Write(i.ToString().PadLeft(3) + " ");
+                for (int j = 0; j < data[i].Length; ++j)
+                {
+                    if (data[i][j] >= 0.0) Console.Write(" ");
+                    Console.Write(data[i][j].ToString("F" + decimales) + " ");
+                }
+                Console.WriteLine("");
+            }
+            if (newLine) Console.WriteLine("");
+        } // ShowData
+
+        static void MostrarVector(int[] vector, bool newLine)
+        {
+            for (int i = 0; i < vector.Length; ++i)
+                Console.Write(vector[i] + " ");
+            if (newLine) Console.WriteLine("\n");
+        }
+
+        static void MostrarClusterizados(double[][] data, int[] clustering, int numClusters, int decimales)
+        {
+            for (int k = 0; k < numClusters; ++k)
+            {
+                Console.WriteLine("================= Cluster "+k.ToString() +" =================");
+                for (int i = 0; i < data.Length; ++i)
+                {
+                    int clusterID = clustering[i];
+                    if (clusterID != k) continue;
+                    Console.Write(i.ToString().PadLeft(3) + " ");
+                    for (int j = 0; j < data[i].Length; ++j)
+                    {
+                        if (data[i][j] >= 0.0) Console.Write(" ");
+                        Console.Write(data[i][j].ToString("F" + decimales) + " ");
+                    }
+                    Console.WriteLine("");
+                }
+                Console.WriteLine("==============================================");
+            } // k
+
+        }
+
+        private void dataGridViewKM_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+    } // Program
+=======
         private void button1_Click(object sender, EventArgs e)
         {
             while(dataGridViewKFold.Columns.Count > 0)
@@ -885,3 +1162,4 @@ namespace Proyecto_serio_el_regreso
         }
     }
 }
+//}
