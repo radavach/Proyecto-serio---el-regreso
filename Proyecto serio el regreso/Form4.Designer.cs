@@ -97,6 +97,7 @@
             // 
             // tabKNN
             // 
+            this.tabKNN.Controls.Add(this.lblresultado);
             this.tabKNN.Controls.Add(this.radiobtnManhattan);
             this.tabKNN.Controls.Add(this.radiobtnEuclidiana);
             this.tabKNN.Controls.Add(this.btnIniciarOneR);

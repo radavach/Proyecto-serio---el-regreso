@@ -15,6 +15,7 @@ namespace Proyecto_serio_el_regreso
     public partial class Form4 : Form
     {
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
+        private Dictionary<string, int> frecuencias = new Dictionary<string, int>();
         private Dictionary<string, List<string>> instancias;
         private int cant_instancias;
         private int cant_columnas = 0; // ================================================================
@@ -165,6 +166,8 @@ namespace Proyecto_serio_el_regreso
             string col_seleccionada;
             string valor_asignar;
 
+            lblresultado.Text = "";
+
             dataGridViewKNN.ClearSelection();
 
             if (string.IsNullOrEmpty(cmBoxColumna.Text))
@@ -178,8 +181,25 @@ namespace Proyecto_serio_el_regreso
                 {
                     dataGridViewKNN.Columns.Remove("Distancia");
                 }
+                this.frecuencias = new Dictionary<string, int>();
+                valor_asignar = zeroR_valor(this.encabezado, this.instancias, col_seleccionada, this.frecuencias);
 
-                valor_asignar = zeroR_valor(this.encabezado, this.instancias, col_seleccionada);
+                if(this.encabezado[col_seleccionada].Key == "Nominal")
+                {
+                    lblresultado.Text += "El tipo de dato es Nominal, el resultado es basado en la moda: ";
+                    lblresultado.Text += valor_asignar.ToString();
+                    dataGridViewOneR.DataSource = (from f in frecuencias 
+                                                   orderby f.Value 
+                                                   select new { f.Key, f.Value}).ToList();
+                    tabControl1.SelectTab("tabOneR");
+                }
+                else if(this.encabezado[col_seleccionada].Key == "Numerico")
+                {
+                    lblresultado.Text += "El tipo de dato es Numerico, el resultado es un promedio: ";
+                    lblresultado.Text += valor_asignar.ToString();
+                    dataGridViewOneR.DataSource = instancias[col_seleccionada].Select(x => new { Value = x}).ToList();
+                    tabControl1.SelectTab("tabOneR");
+                }
 
                 dataGridViewInstancia.Rows[0].Cells[col_seleccionada].Value = valor_asignar;
             }
@@ -377,7 +397,7 @@ namespace Proyecto_serio_el_regreso
             {
                 if (encabezado[col_seleccionada].Key == "Nominal")
                 {
-                    Dictionary<string, int> frecuencias = new Dictionary<string, int>();
+                    //frecuencias = new Dictionary<string, int>();
                     KeyValuePair<string, int> minimo = new KeyValuePair<string, int>("NA", -1);
                     for (int i = 0; i < instancias[col_seleccionada].Count; i++)
                     {
