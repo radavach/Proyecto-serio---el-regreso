@@ -17,7 +17,7 @@ namespace Proyecto_serio_el_regreso
         private Dictionary<string, KeyValuePair<string, string>> encabezado;
         private Dictionary<string, List<string>> instancias;
         private int cant_instancias;
-        private int cant_columnas=0;
+        private int cant_columnas=0; // ================================================================
         private Form1 form1;
 
         public Form4(Form1 form1)
@@ -75,7 +75,7 @@ namespace Proyecto_serio_el_regreso
 
             foreach (string columna in encabezado.Keys)
             {
-                cant_columnas++;
+                cant_columnas++; // ======================================================================================
                 for (int i = 0; i < cant_instancias; i++)
                 {
                     dataGridViewKNN.Rows[i].Cells[columna].Value = instancias[columna][i];
@@ -97,7 +97,7 @@ namespace Proyecto_serio_el_regreso
             }
             dataGridViewInstancia.Rows.Clear();
             dataGridViewKNN.Rows.Clear();
-            cant_columnas = 0;
+            cant_columnas = 0; //=======================================================================================================
             cargarDataGrid();
         }
 
@@ -505,6 +505,7 @@ namespace Proyecto_serio_el_regreso
             radiobtnEuclidiana.Checked = (radiobtnManhattan.Checked) ? false: true;
         }
 
+        // ========================================================================================================
         private void btnKMeans_Click(object sender, EventArgs e)
         {
             Console.WriteLine("Comienza K-Means");
