@@ -568,7 +568,7 @@ namespace Proyecto_serio_el_regreso
             MostrarVector(clustering, true);
 
             Console.WriteLine("Miembros de cada cluster:");
-            MostrarClusterizados(arrayDatos, clustering, numClusters, 1);
+            MostrarClusterizados(arrayDatos, clustering, numClusters, 1, clustering);
 
             Console.WriteLine("Termina K-Means");
             Console.ReadLine();
@@ -775,8 +775,12 @@ namespace Proyecto_serio_el_regreso
             if (newLine) Console.WriteLine("\n");
         }
 
-        static void MostrarClusterizados(double[][] data, int[] clustering, int numClusters, int decimales)
+        void MostrarClusterizados(double[][] data, int[] clustering, int numClusters, int decimales, int[] vector)
         {
+            Color []matrizColor = new Color[numClusters];
+            Random numeros = new Random();
+            for(int i = 0; i < numClusters; i++){ matrizColor[i] = Color.FromArgb(numeros.Next(100,256), numeros.Next(100,256), numeros.Next(100,256)); }
+
             for (int k = 0; k < numClusters; ++k)
             {
                 Console.WriteLine("================= Cluster " + k.ToString() + " =================");
@@ -794,7 +798,43 @@ namespace Proyecto_serio_el_regreso
                 }
                 Console.WriteLine("==============================================");
             } // k
+            foreach (string columna in encabezado.Keys)
+            {
+                DataGridViewTextBoxColumn dataGridColumnaKM = new DataGridViewTextBoxColumn
+                {
+                    Name = columna,
+                    HeaderText = columna,
+                    SortMode = DataGridViewColumnSortMode.NotSortable
+                };
+                dataGridViewKM.Columns.Add(dataGridColumnaKM);
+            }
+            dataGridViewKM.Columns.Add("Cluster ID", "Cluster ID");
+            dataGridViewKM.Rows.Add(cant_instancias);
 
+            //foreach (string columna in encabezado.Keys)
+            //{
+            for (int k = 0; k < numClusters; ++k)
+            {
+                for (int i = 0; i < data.Length; ++i)
+                {
+                    int clusterID = clustering[i];
+                    if (clusterID != k) continue;
+                    //Console.Write(i.ToString().PadLeft(3) + " ");
+                    for (int j = 0; j < data[i].Length; ++j)
+                    {
+                        if (data[i][j] >= 0.0) Console.Write(" ");
+                        //Console.Write(data[i][j].ToString("F" + decimales) + " ");
+                        dataGridViewKM.Rows[i].Cells[j].Value = data[i][j];
+                    }
+                    dataGridViewKM.Rows[i].Cells[cant_columnas].Value = vector[i];
+                    dataGridViewKM.Rows[i].Cells[cant_columnas].Style.BackColor = matrizColor[vector[i]];
+                }
+            }
+                //    for (int i = 0; i < cant_instancias; i++)
+                //{
+                //    dataGridViewKM.Rows[i].Cells[columna].Value = instancias[columna][i];
+                //}
+            //}
         }
 
         private void dataGridViewKM_CellContentClick(object sender, DataGridViewCellEventArgs e)

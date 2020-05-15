@@ -30,7 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabKNN = new System.Windows.Forms.TabPage();
-            this.lblResultados = new System.Windows.Forms.Label();
+            this.lblresultado = new System.Windows.Forms.Label();
             this.radiobtnManhattan = new System.Windows.Forms.RadioButton();
             this.radiobtnEuclidiana = new System.Windows.Forms.RadioButton();
             this.btnIniciarOneR = new System.Windows.Forms.Button();
@@ -54,6 +54,7 @@
             this.dataGridViewClusters = new System.Windows.Forms.DataGridView();
             this.dataGridViewKM = new System.Windows.Forms.DataGridView();
             this.tabOneR = new System.Windows.Forms.TabPage();
+            this.lblResultados = new System.Windows.Forms.Label();
             this.btnHoldOut = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioBtnManhattanKfold = new System.Windows.Forms.RadioButton();
@@ -65,7 +66,6 @@
             this.NudFold = new System.Windows.Forms.NumericUpDown();
             this.btnKfold = new System.Windows.Forms.Button();
             this.lblFold = new System.Windows.Forms.Label();
-            this.lblresultado = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabKNN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInstancia)).BeginInit();
@@ -116,12 +116,12 @@
             this.tabKNN.Text = "K-NN";
             this.tabKNN.UseVisualStyleBackColor = true;
             // 
-            // lblResultados
+            // lblresultado
             // 
-            this.lblResultados.Location = new System.Drawing.Point(7, 162);
-            this.lblResultados.Name = "lblResultados";
-            this.lblResultados.Size = new System.Drawing.Size(187, 235);
-            this.lblResultados.TabIndex = 10;
+            this.lblresultado.Location = new System.Drawing.Point(591, 240);
+            this.lblresultado.Name = "lblresultado";
+            this.lblresultado.Size = new System.Drawing.Size(171, 157);
+            this.lblresultado.TabIndex = 11;
             // 
             // radiobtnManhattan
             // 
@@ -332,9 +332,6 @@
             this.distanciaBox.Items.AddRange(new object[] {
             "Euclidiana",
             "Manhattan",
-            "Hamming",
-            "Euclidiana",
-            "Manhattan",
             "Hamming"});
             this.distanciaBox.Location = new System.Drawing.Point(38, 162);
             this.distanciaBox.Name = "distanciaBox";
@@ -386,6 +383,13 @@
             this.tabOneR.TabIndex = 3;
             this.tabOneR.Text = "One-R";
             this.tabOneR.UseVisualStyleBackColor = true;
+            // 
+            // lblResultados
+            // 
+            this.lblResultados.Location = new System.Drawing.Point(7, 162);
+            this.lblResultados.Name = "lblResultados";
+            this.lblResultados.Size = new System.Drawing.Size(187, 235);
+            this.lblResultados.TabIndex = 10;
             // 
             // btnHoldOut
             // 
@@ -509,13 +513,6 @@
             this.lblFold.Size = new System.Drawing.Size(41, 13);
             this.lblFold.TabIndex = 0;
             this.lblFold.Text = "Folders";
-            // 
-            // lblresultado
-            // 
-            this.lblresultado.Location = new System.Drawing.Point(591, 240);
-            this.lblresultado.Name = "lblresultado";
-            this.lblresultado.Size = new System.Drawing.Size(171, 157);
-            this.lblresultado.TabIndex = 11;
             // 
             // Form4
             // 
