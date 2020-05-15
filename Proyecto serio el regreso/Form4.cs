@@ -42,11 +42,14 @@ namespace Proyecto_serio_el_regreso
         private void iniciarNumercUpDown()
         {
             NudVecinos.Maximum = cant_instancias;
+            NudFold.Maximum = cant_instancias;
+            NudVecinosKFold.Maximum = cant_instancias;
         }
 
         private void iniciarComboBox()
         {
             cmBoxColumna.Items.AddRange(encabezado.Keys.ToArray());
+            cmboxTargetKFold.Items.AddRange(encabezado.Keys.ToArray());
         }
 
         private void cargarDataGrid()
@@ -779,5 +782,384 @@ namespace Proyecto_serio_el_regreso
 
         }
     } // Program
+=======
+        private void button1_Click(object sender, EventArgs e)
+        {
+            while(dataGridViewKFold.Columns.Count > 0)
+            {
+                dataGridViewKFold.Columns.RemoveAt(0);
+            }
+            dataGridViewKFold.Rows.Clear();
+            lblResultados.Text = "";
+            Dictionary<string, KeyValuePair<string, string>> encabezado = new Dictionary<string, KeyValuePair<string, string>>();
+            foreach(string columna in this.encabezado.Keys.OrderBy(x => x == cmboxTargetKFold.Text))
+            {
+                encabezado[columna] = this.encabezado[columna];
+            }
+
+            foreach (string columna in encabezado.Keys)
+            {
+                dataGridViewKFold.Columns.Add(columna, columna);
+            }
+            dataGridViewKFold.Rows.Add(cant_instancias);
+            foreach (string columna in encabezado.Keys)
+            {
+                for(int i = 0; i < cant_instancias; i++)
+                { 
+                    dataGridViewKFold.Rows[i].Cells[columna].Value = instancias[columna][i];
+                }
+            }
+
+            int vecinos = Decimal.ToInt32(NudVecinosKFold.Value);
+            int numero_folder = Decimal.ToInt32(NudFold.Value);
+            int instancias_por_prueba = cant_instancias / numero_folder;
+            int resto = cant_instancias - (instancias_por_prueba * numero_folder);
+            int indice = 0;
+            int potencia = (radioBtnEuclidianaKfold.Checked) ? 2 : 1;
+
+            List<string> resultados = new List<string>();
+            List<string> calculosFolder = new List<string>();
+
+
+            for (int i = 1; i <= numero_folder; i++)
+            {
+                List<string> columna1 = new List<string>();
+                List<string> columna2 = new List<string>();
+
+                Dictionary<string, List<string>> instancias_prueba = new Dictionary<string, List<string>>();
+                Dictionary<string, List<string>> instancias_modelo = new Dictionary<string, List<string>>();
+
+                if(i == numero_folder)
+                {
+                    instancias_por_prueba += resto;
+                }
+
+                foreach (string columna in encabezado.Keys)
+                {
+                    instancias_prueba[columna] = new List<string>();
+                    instancias_modelo[columna] = new List<string>();
+
+                    if (indice != 0)
+                    {
+                        instancias_modelo[columna].AddRange(instancias[columna].GetRange(0, indice));
+                    }
+                    
+                    instancias_prueba[columna].AddRange(instancias[columna].GetRange(indice, instancias_por_prueba));
+                    instancias_modelo[columna].AddRange(instancias[columna].GetRange(indice + instancias_por_prueba, cant_instancias - (indice + instancias_por_prueba)));
+                }
+
+                string elementoKnn;
+                for(int j = 0; j < instancias_por_prueba; j++)
+                {
+                    indice++;
+                    Dictionary<string, string> instancia_prueba = new Dictionary<string, string>();
+                    foreach(string columna in encabezado.Keys) { instancia_prueba[columna] = instancias_prueba[columna][j]; }
+                    elementoKnn = knn_valor(encabezado, instancias_modelo, cant_instancias - instancias_por_prueba, instancia_prueba, vecinos, cmboxTargetKFold.Text, potencia);
+                    resultados.Add(elementoKnn);
+
+                    columna1.Add(instancia_prueba[cmboxTargetKFold.Text]);
+                    columna2.Add(elementoKnn);
+                }
+
+                if(encabezado[cmboxTargetKFold.Text].Key == "Numerico")
+                {
+                    List<double> columna1ToDouble = columna1.Select(x => Double.Parse(x)).ToList();
+                    List<double> columna2ToDouble = columna2.Select(x => Double.Parse(x)).ToList();
+                    List<double> sumaColumnas = new List<double>();
+                    string calculo;
+
+                    for (int j = 0; j < instancias_por_prueba; j++)
+                    {
+                        sumaColumnas.Add(Math.Pow((columna1ToDouble[j] - columna2ToDouble[j]),2));
+                    }
+                    calculo = (sumaColumnas.Sum() / sumaColumnas.Count()).ToString();
+
+                    calculosFolder.Add(calculo);
+                }
+                else if (encabezado[cmboxTargetKFold.Text].Key == "Nominal")
+                {
+                    string calculo =  "";
+                    double presicion = 0, sensibilidad = 0, exactitud = 0;
+                    List<double> presiciones = new List<double>();
+                    List<double> sensibilidades = new List<double>();
+                    HashSet<string> columna1Valores = new HashSet<string>(columna1);
+                    HashSet<string> columna2Valores = new HashSet<string>(columna2);
+                    Dictionary<string, int> frecuenciaValores1 = new Dictionary<string, int>();
+                    Dictionary<string, int> frecuenciaValores2 = new Dictionary<string, int>();
+                    Dictionary<string, int> frecuenciaValoresRepetidos = new Dictionary<string, int>();
+
+                    foreach(string valor in columna1Valores)
+                    {
+                        frecuenciaValores1[valor] = columna1.FindAll(x => x == valor).Count();
+                    }
+                    foreach (string valor in columna2Valores)
+                    {
+                        frecuenciaValores2[valor] = columna2.FindAll(x => x == valor).Count();
+                    }
+
+                    for(int j = 0; j < instancias_por_prueba; j++)
+                    { 
+                        if(columna1[j] == columna2[j])
+                        {
+                            if(!frecuenciaValoresRepetidos.ContainsKey(columna1[j]))
+                            {
+                                frecuenciaValoresRepetidos[columna1[j]] = 0;
+                            }
+                            frecuenciaValoresRepetidos[columna1[j]]++;
+                        }
+                    }
+                    
+                    foreach(string valor in frecuenciaValoresRepetidos.Keys)
+                    {
+                        sensibilidades.Add((double)frecuenciaValoresRepetidos[valor] / (double)frecuenciaValores1[valor]);
+                        presiciones.Add((double)frecuenciaValoresRepetidos[valor] / (double)frecuenciaValores2[valor]);
+                    }
+                    sensibilidad = (sensibilidades.Sum() == 0) ? 0 : (double)sensibilidades.Sum() / (double)sensibilidades.Count();
+                    presicion = (presiciones.Sum() == 0) ? 0 : (double)presiciones.Sum() / (double)presiciones.Count();
+                    exactitud += (frecuenciaValoresRepetidos.Values.Sum() == 0) ? 0 : (double)frecuenciaValoresRepetidos.Values.Sum() / (double)frecuenciaValores1.Values.Sum();
+
+                    calculo = sensibilidad.ToString() + "," + presicion.ToString() + "," + exactitud.ToString();
+                    calculosFolder.Add(calculo);
+                }
+            }
+
+            DataGridViewColumn column = new DataGridViewColumn();
+            {
+                column.HeaderText = "R KNN";
+                column.Name = "R KNN";
+                column.CellTemplate = new DataGridViewTextBoxCell();
+                column.CellTemplate.Style.BackColor = Color.LightGray;
+            }
+
+            DataGridViewColumn comparacion = new DataGridViewColumn();
+            {
+                comparacion.HeaderText = "";
+                comparacion.Name = "SONIGUALES";
+                comparacion.CellTemplate = new DataGridViewCheckBoxCell();
+                comparacion.CellTemplate.Style.BackColor = Color.Beige;
+            }
+            dataGridViewKFold.Columns.Add(column);
+            dataGridViewKFold.Columns.Add(comparacion);
+
+            for (int i = 0; i < resultados.Count; i++)
+            {
+                dataGridViewKFold.Rows[i].Cells["R KNN"].Value = resultados[i];
+
+                if (dataGridViewKFold[cmboxTargetKFold.Text, i].Value.ToString() == dataGridViewKFold["R KNN", i].Value.ToString())
+                {
+                    dataGridViewKFold["SONIGUALES", i].Value = true;
+                    dataGridViewKFold["SONIGUALES", i].ReadOnly = true;
+                    dataGridViewKFold["SONIGUALES", i].Style.BackColor = Color.Beige;
+                }
+                else
+                {
+                    dataGridViewKFold["SONIGUALES", i].Value = false;
+                    dataGridViewKFold["SONIGUALES", i].ReadOnly = true;
+                    dataGridViewKFold["SONIGUALES", i].Style.BackColor = Color.White;
+                }
+            }
+
+            if(encabezado[cmboxTargetKFold.Text].Key == "Numerico")
+            { 
+                for(int i = 0; i < calculosFolder.Count(); i++)
+                {
+                    lblResultados.Text += "Folder " + (i + 1) + " MSE: " + calculosFolder[i].ToString() + Environment.NewLine;
+                }
+                lblResultados.Text += "Promedio: " + calculosFolder.Select(x => Double.Parse(x)).ToList().Sum() / calculosFolder.Count();
+            }
+            else if(encabezado[cmboxTargetKFold.Text].Key == "Nominal")
+            {
+                double presicion = 0, sensibilidad = 0, exactitud = 0;
+                List<double> presiciones = new List<double>();
+                List<double> sensibilidades = new List<double>();
+                List<double> exactitudes = new List<double>(); ;
+
+                for (int i = 0; i < calculosFolder.Count(); i++)
+                {
+                    sensibilidades.Add(Double.Parse(calculosFolder[i].Split(',')[0]));
+                    presiciones.Add(Double.Parse(calculosFolder[i].Split(',')[1]));
+                    exactitudes.Add(Double.Parse(calculosFolder[i].Split(',')[2]));
+                }
+                presicion = presiciones.Sum() / presiciones.Count();
+                sensibilidad = sensibilidades.Sum() / sensibilidades.Count();
+                exactitud = exactitudes.Sum() / exactitudes.Count();
+
+                lblResultados.Text += "Sensibilidad: " + sensibilidad + "\nPresicion: " + presicion + "\nExactitud: " + exactitud;
+            }
+        }
+
+        private void btnHoldOut_Click(object sender, EventArgs e)
+        {
+            List<string> calculos = new List<string>();
+            int potencia = (radioBtnManhattanKfold.Checked) ? 1 : 2;
+            int vecinos = (int)NudVecinosKFold.Value;
+            string columna_selccionada = cmboxTargetKFold.Text;
+            Random generador = new Random();
+
+            lblResultados.Text = "";
+
+            for(int numero_repeticiones = 1; numero_repeticiones <= 10; numero_repeticiones++)
+            {
+
+                HashSet<int> indices_instancias = new HashSet<int>();
+
+                List<string> columna1 = new List<string>();
+                List<string> columna2 = new List<string>();
+
+                Dictionary<string, List<string>> instancias_prueba = new Dictionary<string, List<string>>();
+                Dictionary<string, List<string>> instancias_modelo = new Dictionary<string, List<string>>();
+
+                int instancias_por_prueba = (cant_instancias * 30) / 100;
+                int resto = cant_instancias - instancias_por_prueba;
+
+                while (indices_instancias.Count != instancias_por_prueba)
+                {
+                    indices_instancias.Add(generador.Next(cant_instancias));
+                }
+
+                for(int i = 0; i < cant_instancias; i++)
+                {
+                    if (indices_instancias.Contains(i))
+                    {
+                        foreach (string columna in encabezado.Keys)
+                        {
+                            if(!instancias_prueba.ContainsKey(columna))
+                            {
+                                instancias_prueba[columna] = new List<string>();
+                            }
+                            if(columna_selccionada == columna)
+                            {
+                                columna1.Add(instancias[columna][i]);
+                            }
+                            instancias_prueba[columna].Add(instancias[columna][i]);
+                        }
+                    }
+                    else
+                    {
+                        foreach (string columna in encabezado.Keys)
+                        {
+                            if (!instancias_modelo.ContainsKey(columna))
+                            {
+                                instancias_modelo[columna] = new List<string>();
+                            }
+                            instancias_modelo[columna].Add(instancias[columna][i]);
+                        }
+                    }
+                }
+
+                for(int i = 0; i < instancias_por_prueba; i++)
+                {
+                    Dictionary<string, string> instancia_prueba = new Dictionary<string, string>();
+                    foreach (string columna in encabezado.Keys) { instancia_prueba[columna] = instancias_prueba[columna][i]; }
+                    string resultado = knn_valor(encabezado, instancias_modelo, resto, instancia_prueba, vecinos, columna_selccionada, potencia);
+                    columna2.Add(resultado);
+                }
+
+                if(encabezado[columna_selccionada].Key == "Numerico")
+                {
+                    List<double> columna1ToDouble = columna1.Select(x => Double.Parse(x)).ToList();
+                    List<double> columna2ToDouble = columna2.Select(x => Double.Parse(x)).ToList();
+                    List<double> sumaCuadrados = new List<double>();
+                    string calculo = "";
+
+                    for(int i = 0; i < instancias_por_prueba; i++)
+                    {
+                        sumaCuadrados.Add(Math.Pow(columna1ToDouble[i]-columna2ToDouble[i], 2));
+                    }
+
+                    calculo = (sumaCuadrados.Sum() / sumaCuadrados.Count()).ToString();
+                    calculos.Add(calculo);
+                }
+                else if(encabezado[columna_selccionada].Key == "Nominal")
+                {
+                    List<double> sensibilidades = new List<double>();
+                    List<double> presiciones = new List<double>();
+                    List<double> exactitudes = new List<double>();
+                    Dictionary<string, int> frecuenciaValores1 = new Dictionary<string, int>();
+                    Dictionary<string, int> frecuenciaValores2 = new Dictionary<string, int>();
+                    Dictionary<string, int> frecuenciaValoresRepetidos = new Dictionary<string, int>();
+
+                    HashSet<string> columna1Valores = new HashSet<string>(columna1);
+                    HashSet<string> columna2Valores = new HashSet<string>(columna2);
+
+                    string calculo = "";
+                    double presicion = 0, sensibilidad = 0, exactitud = 0;
+
+                    foreach (string valor in columna1Valores)
+                    {
+                        frecuenciaValores1[valor] = columna1.FindAll(x => x == valor).Count();
+                    }
+                
+                    foreach (string valor in columna2Valores)
+                    {
+                        frecuenciaValores2[valor] = columna2.FindAll(x => x == valor).Count();
+                    }
+
+                    for (int j = 0; j < instancias_por_prueba; j++)
+                    {
+                        if (columna1[j] == columna2[j])
+                        {
+                            if (!frecuenciaValoresRepetidos.ContainsKey(columna1[j]))
+                            {
+                                frecuenciaValoresRepetidos[columna1[j]] = 0;
+                            }
+                            frecuenciaValoresRepetidos[columna1[j]]++;
+                        }
+                    }
+
+                    foreach (string valor in frecuenciaValoresRepetidos.Keys)
+                    {
+                        sensibilidades.Add((double)frecuenciaValoresRepetidos[valor] / (double)frecuenciaValores1[valor]);
+                        presiciones.Add((double)frecuenciaValoresRepetidos[valor] / (double)frecuenciaValores2[valor]);
+                    }
+                    sensibilidad = (sensibilidades.Sum() == 0) ? 0 : (double)sensibilidades.Sum() / (double)sensibilidades.Count();
+                    presicion = (presiciones.Sum() == 0) ? 0 : (double)presiciones.Sum() / (double)presiciones.Count();
+                    exactitud += (frecuenciaValoresRepetidos.Values.Sum() == 0) ? 0 : (double)frecuenciaValoresRepetidos.Values.Sum() / (double)frecuenciaValores1.Values.Sum();
+
+                    if (sensibilidad > 1 || presicion > 1 || exactitud > 1 || Double.IsNaN(sensibilidad) || Double.IsNaN(presicion) || Double.IsNaN(exactitud))
+                    {
+                        Console.Write("Debuggeando ando");
+                    }
+
+                    calculo = sensibilidad.ToString() + "," + presicion.ToString() + "," + exactitud.ToString();
+                    calculos.Add(calculo);
+                }
+            }
+
+            if(encabezado[columna_selccionada].Key == "Numerico")
+            {
+                double mse = calculos.Select(x => Double.Parse(x)).ToList().Sum() / calculos.Count();
+                for(int i = 0; i < calculos.Count; i++)
+                {
+                    lblResultados.Text += "Iteracion " + i + ": " + calculos[i] + Environment.NewLine;
+                }
+                lblResultados.Text += "MSE: " + mse;
+            }
+            else if (encabezado[columna_selccionada].Key == "Nominal")
+            {
+                List<double> sensibilidades = new List<double>();
+                List<double> presiciones = new List<double>();
+                List<double> exactitudes = new List<double>();
+                double sensibilidad = 0, presicion = 0, exactitud = 0;
+                for (int i = 0; i < calculos.Count(); i++)
+                {
+                    sensibilidades.Add(Double.Parse(calculos[i].Split(',')[0]));
+                    presiciones.Add(Double.Parse(calculos[i].Split(',')[1]));
+                    exactitudes.Add(Double.Parse(calculos[i].Split(',')[2]));
+                }
+
+                sensibilidad = sensibilidades.Sum() / sensibilidades.Count();
+                presicion = presiciones.Sum() / presiciones.Count();
+                exactitud = exactitudes.Sum() / exactitudes.Count();
+
+                if (sensibilidad > 1 || presicion > 1 || exactitud > 1 || Double.IsNaN(sensibilidad) || Double.IsNaN(presicion) || Double.IsNaN(exactitud))
+                {
+                    Console.Write("Debuggeando ando");
+                }
+
+                lblResultados.Text = "Sensibilidad: " + sensibilidad + Environment.NewLine + "Presicion: " + presicion + Environment.NewLine + "Exactitud: " + exactitud;
+            }
+        }
+    }
 }
 //}

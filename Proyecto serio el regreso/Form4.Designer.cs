@@ -53,6 +53,18 @@
             this.dataGridViewClusters = new System.Windows.Forms.DataGridView();
             this.dataGridViewKM = new System.Windows.Forms.DataGridView();
             this.tabOneR = new System.Windows.Forms.TabPage();
+            this.btnHoldOut = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioBtnManhattanKfold = new System.Windows.Forms.RadioButton();
+            this.radioBtnEuclidianaKfold = new System.Windows.Forms.RadioButton();
+            this.NudVecinosKFold = new System.Windows.Forms.NumericUpDown();
+            this.lblVecinosKfold = new System.Windows.Forms.Label();
+            this.cmboxTargetKFold = new System.Windows.Forms.ComboBox();
+            this.dataGridViewKFold = new System.Windows.Forms.DataGridView();
+            this.NudFold = new System.Windows.Forms.NumericUpDown();
+            this.btnKfold = new System.Windows.Forms.Button();
+            this.lblFold = new System.Windows.Forms.Label();
+            this.lblResultados = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabKNN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInstancia)).BeginInit();
@@ -63,6 +75,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.numClusters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).BeginInit();
+
+            this.tabOneR.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NudVecinosKFold)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKFold)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NudFold)).BeginInit();
+
             this.SuspendLayout();
             // 
             // tabControl1
@@ -252,6 +271,31 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Numero de iteraciones:";
             // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(38, 243);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(165, 13);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Valores generados de los clusters";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(38, 142);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(54, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Distancia:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(38, 94);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(116, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Numero de iteraciones:";
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -283,6 +327,175 @@
             0,
             0});
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(38, 48);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(117, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Numero de clusters (K):";
+            // 
+            // distanciaBox
+            // 
+            this.distanciaBox.FormattingEnabled = true;
+            this.distanciaBox.Items.AddRange(new object[] {
+            "Euclidiana",
+            "Manhattan",
+            "Hamming"});
+            this.distanciaBox.Location = new System.Drawing.Point(38, 162);
+            this.distanciaBox.Name = "distanciaBox";
+            this.distanciaBox.Size = new System.Drawing.Size(121, 21);
+            this.distanciaBox.TabIndex = 3;
+            // 
+            // btnKMeans
+            // 
+            this.btnKMeans.Location = new System.Drawing.Point(37, 201);
+            this.btnKMeans.Name = "btnKMeans";
+            this.btnKMeans.Size = new System.Drawing.Size(121, 23);
+            this.btnKMeans.TabIndex = 2;
+            this.btnKMeans.Text = "Iniciar K-Means";
+            this.btnKMeans.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewClusters
+            // 
+            this.dataGridViewClusters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewClusters.Location = new System.Drawing.Point(38, 262);
+            this.dataGridViewClusters.Name = "dataGridViewClusters";
+            this.dataGridViewClusters.Size = new System.Drawing.Size(242, 108);
+            this.dataGridViewClusters.TabIndex = 1;
+            // 
+            // dataGridViewKM
+            // 
+            this.dataGridViewKM.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewKM.Location = new System.Drawing.Point(297, 24);
+            this.dataGridViewKM.Name = "dataGridViewKM";
+            this.dataGridViewKM.Size = new System.Drawing.Size(447, 346);
+            this.dataGridViewKM.TabIndex = 0;
+            // 
+            // tabOneR
+            // 
+            this.tabOneR.Controls.Add(this.lblResultados);
+            this.tabOneR.Controls.Add(this.btnHoldOut);
+            this.tabOneR.Controls.Add(this.groupBox1);
+            this.tabOneR.Controls.Add(this.NudVecinosKFold);
+            this.tabOneR.Controls.Add(this.lblVecinosKfold);
+            this.tabOneR.Controls.Add(this.cmboxTargetKFold);
+            this.tabOneR.Controls.Add(this.dataGridViewKFold);
+            this.tabOneR.Controls.Add(this.NudFold);
+            this.tabOneR.Controls.Add(this.btnKfold);
+            this.tabOneR.Controls.Add(this.lblFold);
+            this.tabOneR.Location = new System.Drawing.Point(4, 22);
+            this.tabOneR.Name = "tabOneR";
+            this.tabOneR.Size = new System.Drawing.Size(768, 400);
+            this.tabOneR.TabIndex = 3;
+            this.tabOneR.Text = "One-R";
+            this.tabOneR.UseVisualStyleBackColor = true;
+            // 
+            // btnHoldOut
+            // 
+            this.btnHoldOut.Location = new System.Drawing.Point(99, 132);
+            this.btnHoldOut.Name = "btnHoldOut";
+            this.btnHoldOut.Size = new System.Drawing.Size(75, 23);
+            this.btnHoldOut.TabIndex = 9;
+            this.btnHoldOut.Text = "Hold-Out";
+            this.btnHoldOut.UseVisualStyleBackColor = true;
+            this.btnHoldOut.Click += new System.EventHandler(this.btnHoldOut_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioBtnManhattanKfold);
+            this.groupBox1.Controls.Add(this.radioBtnEuclidianaKfold);
+            this.groupBox1.Location = new System.Drawing.Point(7, 100);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(167, 26);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            // 
+            // radioBtnManhattanKfold
+            // 
+            this.radioBtnManhattanKfold.AutoSize = true;
+            this.radioBtnManhattanKfold.Location = new System.Drawing.Point(88, 8);
+            this.radioBtnManhattanKfold.Name = "radioBtnManhattanKfold";
+            this.radioBtnManhattanKfold.Size = new System.Drawing.Size(76, 17);
+            this.radioBtnManhattanKfold.TabIndex = 1;
+            this.radioBtnManhattanKfold.Text = "Manhattan";
+            this.radioBtnManhattanKfold.UseVisualStyleBackColor = true;
+            // 
+            // radioBtnEuclidianaKfold
+            // 
+            this.radioBtnEuclidianaKfold.AutoSize = true;
+            this.radioBtnEuclidianaKfold.Checked = true;
+            this.radioBtnEuclidianaKfold.Location = new System.Drawing.Point(6, 9);
+            this.radioBtnEuclidianaKfold.Name = "radioBtnEuclidianaKfold";
+            this.radioBtnEuclidianaKfold.Size = new System.Drawing.Size(74, 17);
+            this.radioBtnEuclidianaKfold.TabIndex = 0;
+            this.radioBtnEuclidianaKfold.TabStop = true;
+            this.radioBtnEuclidianaKfold.Text = "Euclidiana";
+            this.radioBtnEuclidianaKfold.UseVisualStyleBackColor = true;
+            // 
+            // NudVecinosKFold
+            // 
+            this.NudVecinosKFold.Location = new System.Drawing.Point(54, 74);
+            this.NudVecinosKFold.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.NudVecinosKFold.Name = "NudVecinosKFold";
+            this.NudVecinosKFold.Size = new System.Drawing.Size(120, 20);
+            this.NudVecinosKFold.TabIndex = 6;
+            this.NudVecinosKFold.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblVecinosKfold
+            // 
+            this.lblVecinosKfold.AutoSize = true;
+            this.lblVecinosKfold.Location = new System.Drawing.Point(7, 76);
+            this.lblVecinosKfold.Name = "lblVecinosKfold";
+            this.lblVecinosKfold.Size = new System.Drawing.Size(45, 13);
+            this.lblVecinosKfold.TabIndex = 5;
+            this.lblVecinosKfold.Text = "Vecinos";
+            // 
+            // cmboxTargetKFold
+            // 
+            this.cmboxTargetKFold.FormattingEnabled = true;
+            this.cmboxTargetKFold.Location = new System.Drawing.Point(7, 48);
+            this.cmboxTargetKFold.Name = "cmboxTargetKFold";
+            this.cmboxTargetKFold.Size = new System.Drawing.Size(167, 21);
+            this.cmboxTargetKFold.TabIndex = 4;
+            // 
+            // dataGridViewKFold
+            // 
+            this.dataGridViewKFold.AllowUserToAddRows = false;
+            this.dataGridViewKFold.AllowUserToDeleteRows = false;
+            this.dataGridViewKFold.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewKFold.Location = new System.Drawing.Point(200, 3);
+            this.dataGridViewKFold.Name = "dataGridViewKFold";
+            this.dataGridViewKFold.ReadOnly = true;
+            this.dataGridViewKFold.Size = new System.Drawing.Size(565, 394);
+            this.dataGridViewKFold.TabIndex = 3;
+            // 
+            // NudFold
+            // 
+            this.NudFold.Location = new System.Drawing.Point(54, 22);
+            this.NudFold.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.NudFold.Name = "NudFold";
+            this.NudFold.Size = new System.Drawing.Size(120, 20);
+            this.NudFold.TabIndex = 2;
+            this.NudFold.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            //
             // numClusters
             // 
             this.numClusters.Location = new System.Drawing.Point(38, 67);
@@ -347,6 +560,31 @@
             this.tabOneR.TabIndex = 3;
             this.tabOneR.Text = "One-R";
             this.tabOneR.UseVisualStyleBackColor = true;
+            // btnKfold
+            // 
+            this.btnKfold.Location = new System.Drawing.Point(7, 132);
+            this.btnKfold.Name = "btnKfold";
+            this.btnKfold.Size = new System.Drawing.Size(75, 23);
+            this.btnKfold.TabIndex = 1;
+            this.btnKfold.Text = "K-Fold";
+            this.btnKfold.UseVisualStyleBackColor = true;
+            this.btnKfold.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // lblFold
+            // 
+            this.lblFold.AutoSize = true;
+            this.lblFold.Location = new System.Drawing.Point(4, 24);
+            this.lblFold.Name = "lblFold";
+            this.lblFold.Size = new System.Drawing.Size(41, 13);
+            this.lblFold.TabIndex = 0;
+            this.lblFold.Text = "Folders";
+            // 
+            // lblResultados
+            // 
+            this.lblResultados.Location = new System.Drawing.Point(7, 162);
+            this.lblResultados.Name = "lblResultados";
+            this.lblResultados.Size = new System.Drawing.Size(187, 235);
+            this.lblResultados.TabIndex = 10;
             // 
             // Form4
             // 
@@ -369,6 +607,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.numClusters)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).EndInit();
+
+            this.tabOneR.ResumeLayout(false);
+            this.tabOneR.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NudVecinosKFold)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKFold)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NudFold)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -400,5 +646,17 @@
         private System.Windows.Forms.NumericUpDown numClusters;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.DataGridView dataGridViewKFold;
+        private System.Windows.Forms.NumericUpDown NudFold;
+        private System.Windows.Forms.Button btnKfold;
+        private System.Windows.Forms.Label lblFold;
+        private System.Windows.Forms.ComboBox cmboxTargetKFold;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton radioBtnEuclidianaKfold;
+        private System.Windows.Forms.NumericUpDown NudVecinosKFold;
+        private System.Windows.Forms.Label lblVecinosKfold;
+        private System.Windows.Forms.RadioButton radioBtnManhattanKfold;
+        private System.Windows.Forms.Button btnHoldOut;
+        private System.Windows.Forms.Label lblResultados;
     }
 }
