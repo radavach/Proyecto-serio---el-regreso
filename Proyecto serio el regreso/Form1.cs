@@ -781,6 +781,10 @@ namespace Proyecto_serio_el_regreso
                 renglon++;
             }
 
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    row.HeaderCell.Value = String.Format("{0}", row.Index + 1);
+                }
 
         }
 
@@ -1341,5 +1345,6 @@ namespace Proyecto_serio_el_regreso
             Form5 form5 = new Form5(this, encabezado, instancias, valores_faltantes, valoresFueraDeDominio2, cant_instancias, encabezado.Keys.Count - 1, target);
             form5.Show();
         }
+
     }
 }
