@@ -449,7 +449,10 @@ namespace Proyecto_serio_el_regreso
                     {
                         temp2 += matrizConfusion[n, m];
                     }
-                    temp += matrizConfusion[m, m] / temp2; 
+                    if( temp2 > 0)
+                        temp += matrizConfusion[m, m] / temp2;
+                    else
+                        temp += matrizConfusion[m, m] / 1;
                 }
                 temp = temp / posiblesValC.Count;
                 recall = recall + temp;
@@ -461,7 +464,10 @@ namespace Proyecto_serio_el_regreso
                     {
                         temp2 += matrizConfusion[m, n];
                     }
-                    temp += matrizConfusion[m, m] / temp2;
+                    if (temp2 > 0)
+                        temp += matrizConfusion[m, m] / temp2;
+                    else
+                        temp += matrizConfusion[m, m] / 1;
                 }
                 temp = temp / posiblesValC.Count;
                 especificidad += temp;
@@ -762,7 +768,10 @@ namespace Proyecto_serio_el_regreso
                     {
                         temp2 += matrizConfusion[n, i];
                     }
-                    temp += matrizConfusion[i, i] / temp2;
+                    if (temp2 > 0)
+                        temp += matrizConfusion[i, i] / temp2;
+                    else
+                        temp += matrizConfusion[i, i] / 1;
                 }
                 temp = temp / posiblesValC.Count;
                 recall = recall + temp;
@@ -774,7 +783,10 @@ namespace Proyecto_serio_el_regreso
                     {
                         temp2 += matrizConfusion[i, n];
                     }
-                    temp += matrizConfusion[i, i] / temp2;
+                    if (temp2 > 0)
+                        temp += matrizConfusion[i, i] / temp2;
+                    else
+                        temp += matrizConfusion[i, i] / 1;
                 }
                 temp = temp / posiblesValC.Count;
                 especificidad += temp;
