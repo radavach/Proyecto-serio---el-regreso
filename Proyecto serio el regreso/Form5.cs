@@ -895,6 +895,13 @@ namespace Proyecto_serio_el_regreso
                     k = Convert.ToInt32(Microsoft.VisualBasic.Interaction.InputBox("Ingrese el numero de folders: ", "Valores", "2"));
                     kfoldNB(k, 0);
                 }
+                dataGridView1.Rows.Clear();
+                dataGridView1.Columns.Clear();
+                dataGridView2.Rows.Clear();
+                dataGridView2.Columns.Clear();
+                List<double> desviacion = new List<double>();
+                List<double> media = new List<double>();
+                naiveBayes(instancias,desviacion, media);
             }
         }
     }
