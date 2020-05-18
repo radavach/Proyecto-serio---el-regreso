@@ -904,5 +904,10 @@ namespace Proyecto_serio_el_regreso
                 naiveBayes(instancias,desviacion, media);
             }
         }
+
+        private void Form5_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            form1.Show();
+        }
     }
 }
