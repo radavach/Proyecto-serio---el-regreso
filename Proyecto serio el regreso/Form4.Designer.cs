@@ -48,10 +48,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.numIteraciones = new System.Windows.Forms.NumericUpDown();
-            this.numClusters = new System.Windows.Forms.NumericUpDown();
+            this.numClustersK = new System.Windows.Forms.NumericUpDown();
             this.distanciaBox = new System.Windows.Forms.ComboBox();
             this.btnKMeans = new System.Windows.Forms.Button();
-            this.dataGridViewClusters = new System.Windows.Forms.DataGridView();
             this.dataGridViewKM = new System.Windows.Forms.DataGridView();
             this.tabOneR = new System.Windows.Forms.TabPage();
             this.lblResultados = new System.Windows.Forms.Label();
@@ -66,6 +65,8 @@
             this.NudFold = new System.Windows.Forms.NumericUpDown();
             this.btnKfold = new System.Windows.Forms.Button();
             this.lblFold = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabKNN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInstancia)).BeginInit();
@@ -73,8 +74,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKNN)).BeginInit();
             this.tabKmeans.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIteraciones)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numClusters)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numClustersK)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).BeginInit();
             this.tabOneR.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -233,15 +233,16 @@
             // 
             // tabKmeans
             // 
+            this.tabKmeans.Controls.Add(this.label5);
+            this.tabKmeans.Controls.Add(this.textBox1);
             this.tabKmeans.Controls.Add(this.label4);
             this.tabKmeans.Controls.Add(this.label3);
             this.tabKmeans.Controls.Add(this.label2);
             this.tabKmeans.Controls.Add(this.label1);
             this.tabKmeans.Controls.Add(this.numIteraciones);
-            this.tabKmeans.Controls.Add(this.numClusters);
+            this.tabKmeans.Controls.Add(this.numClustersK);
             this.tabKmeans.Controls.Add(this.distanciaBox);
             this.tabKmeans.Controls.Add(this.btnKMeans);
-            this.tabKmeans.Controls.Add(this.dataGridViewClusters);
             this.tabKmeans.Controls.Add(this.dataGridViewKM);
             this.tabKmeans.Location = new System.Drawing.Point(4, 22);
             this.tabKmeans.Name = "tabKmeans";
@@ -256,9 +257,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(38, 243);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(165, 13);
+            this.label4.Size = new System.Drawing.Size(45, 13);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Valores generados de los clusters";
+            this.label4.Text = "Corridas";
             // 
             // label3
             // 
@@ -309,18 +310,18 @@
             0,
             0});
             // 
-            // numClusters
+            // numClustersK
             // 
-            this.numClusters.Location = new System.Drawing.Point(38, 67);
-            this.numClusters.Minimum = new decimal(new int[] {
+            this.numClustersK.Location = new System.Drawing.Point(38, 67);
+            this.numClustersK.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.numClusters.Name = "numClusters";
-            this.numClusters.Size = new System.Drawing.Size(120, 20);
-            this.numClusters.TabIndex = 4;
-            this.numClusters.Value = new decimal(new int[] {
+            this.numClustersK.Name = "numClustersK";
+            this.numClustersK.Size = new System.Drawing.Size(120, 20);
+            this.numClustersK.TabIndex = 4;
+            this.numClustersK.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -337,6 +338,7 @@
             this.distanciaBox.Name = "distanciaBox";
             this.distanciaBox.Size = new System.Drawing.Size(121, 21);
             this.distanciaBox.TabIndex = 3;
+            this.distanciaBox.Text = "Euclidiana";
             // 
             // btnKMeans
             // 
@@ -347,14 +349,6 @@
             this.btnKMeans.Text = "Iniciar K-Means";
             this.btnKMeans.UseVisualStyleBackColor = true;
             this.btnKMeans.Click += new System.EventHandler(this.btnKMeans_Click);
-            // 
-            // dataGridViewClusters
-            // 
-            this.dataGridViewClusters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewClusters.Location = new System.Drawing.Point(38, 262);
-            this.dataGridViewClusters.Name = "dataGridViewClusters";
-            this.dataGridViewClusters.Size = new System.Drawing.Size(242, 108);
-            this.dataGridViewClusters.TabIndex = 1;
             // 
             // dataGridViewKM
             // 
@@ -514,6 +508,22 @@
             this.lblFold.TabIndex = 0;
             this.lblFold.Text = "Folders";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(37, 259);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(240, 111);
+            this.textBox1.TabIndex = 10;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(38, 373);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(0, 13);
+            this.label5.TabIndex = 11;
+            // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -532,8 +542,7 @@
             this.tabKmeans.ResumeLayout(false);
             this.tabKmeans.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIteraciones)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numClusters)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClusters)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numClustersK)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewKM)).EndInit();
             this.tabOneR.ResumeLayout(false);
             this.tabOneR.PerformLayout();
@@ -564,13 +573,12 @@
         private System.Windows.Forms.RadioButton radiobtnEuclidiana;
         private System.Windows.Forms.Button btnIniciarOneR;
         private System.Windows.Forms.Button btnKMeans;
-        private System.Windows.Forms.DataGridView dataGridViewClusters;
         private System.Windows.Forms.DataGridView dataGridViewKM;
         private System.Windows.Forms.ComboBox distanciaBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numIteraciones;
-        private System.Windows.Forms.NumericUpDown numClusters;
+        private System.Windows.Forms.NumericUpDown numClustersK;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView dataGridViewKFold;
@@ -586,5 +594,7 @@
         private System.Windows.Forms.Button btnHoldOut;
         private System.Windows.Forms.Label lblResultados;
         private System.Windows.Forms.Label lblresultado;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label5;
     }
 }

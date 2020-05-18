@@ -20,6 +20,9 @@ namespace Proyecto_serio_el_regreso
         private int cant_instancias;
         private int cant_columnas = 0; // ================================================================
         private Form1 form1;
+        List<KeyValuePair<int, double>> listaDistancias = new List<KeyValuePair<int, double>>();
+        List<KeyValuePair<int, double>> listaPromediosDist = new List<KeyValuePair<int, double>>();
+        Dictionary<int, List<int>> listaVectores = new Dictionary<int, List<int>>();
 
         public Form4(Form1 form1)
         {
@@ -528,8 +531,14 @@ namespace Proyecto_serio_el_regreso
             radiobtnEuclidiana.Checked = (radiobtnManhattan.Checked) ? false : true;
         }
 
-        // ========================================================================================================
+        // 
+        private int corridas = 0;
         private void btnKMeans_Click(object sender, EventArgs e)
+        {
+            iniciaKMeans();
+        }
+
+        private void iniciaKMeans()
         {
             Console.WriteLine("Comienza K-Means");
 
@@ -557,7 +566,7 @@ namespace Proyecto_serio_el_regreso
             Console.WriteLine("-------------------");
             ShowData(arrayDatos, 1, true, true);
 
-            int numClusters = 3;
+            int numClusters = Convert.ToInt32(numClustersK.Value);
             Console.WriteLine("Numero de clusters: " + numClusters);
 
             int[] clustering = Cluster(arrayDatos, numClusters);
@@ -570,10 +579,10 @@ namespace Proyecto_serio_el_regreso
             Console.WriteLine("Miembros de cada cluster:");
             MostrarClusterizados(arrayDatos, clustering, numClusters, 1, clustering);
 
-            Console.WriteLine("Termina K-Means");
+            //Console.WriteLine("Termina K-Means");
             Console.ReadLine();
         }
-        public static int[] Cluster(double[][] arrayDatos, int numClusters)
+        private int[] Cluster(double[][] arrayDatos, int numClusters)
         {
             // k-means clustering
             // indice de return es tupla ID, celda es cluster ID
@@ -583,10 +592,10 @@ namespace Proyecto_serio_el_regreso
             bool cambio = true; // sucedio algun cambio en al menos una asignacion de cluster?
             bool exito = true; // se pudieron calcular todas las medias?
 
-            int[] clustering = InitClustering(data.Length, numClusters, 0); // inicializacion
+            int[] clustering = InitClustering(data.Length, numClusters); // inicializacion
             double[][] means = Asignar(numClusters, data[0].Length);
 
-            int maxCount = data.Length * 10; // limite de iteraciones
+            int maxCount = Convert.ToInt32(numIteraciones.Value); // limite de iteraciones
             int ct = 0;
             while (cambio == true && exito == true && ct < maxCount)
             {
@@ -626,10 +635,10 @@ namespace Proyecto_serio_el_regreso
             return result;
         }
 
-        private static int[] InitClustering(int numTuplas, int numClusters, int randomSeed)
+        private static int[] InitClustering(int numTuplas, int numClusters)
         {
             // init clustering semi-random (al menos una tupla en cada cluster)
-            Random random = new Random(randomSeed);
+            Random random = new Random(Guid.NewGuid().GetHashCode());
             int[] clustering = new int[numTuplas];
             for (int i = 0; i < numClusters; ++i) // asegura que cada cluster tenga al menos una tupla
                 clustering[i] = i;
@@ -679,7 +688,7 @@ namespace Proyecto_serio_el_regreso
             return true;
         }
 
-        private static bool ActualizarClustering(double[][] data, int[] clustering, double[][] means)
+        private bool ActualizarClustering(double[][] data, int[] clustering, double[][] means)
         {
             // reasigna cada tupla a un cluster (media mas cercana)
             // retorna false si no cambian asignaciones de tuplas o
@@ -693,12 +702,13 @@ namespace Proyecto_serio_el_regreso
             Array.Copy(clustering, newClustering, clustering.Length);
 
             double[] distancias = new double[numClusters]; // distancias de tupla actual a cada media
-
+            //List<KeyValuePair<int, double>> listaDistancias = new List<KeyValuePair<int, double>>();
             for (int i = 0; i < data.Length; ++i) // pasa por cada tupla
             {
                 for (int k = 0; k < numClusters; ++k)
+                {
                     distancias[k] = DistanciaEuclidiana(data[i], means[k]); // calcula distancias de tupla actual a todo k means
-
+                }
                 int newClusterID = MinIndex(distancias); // busca el ID de la media mas cercana
                 if (newClusterID != newClustering[i])
                 {
@@ -734,7 +744,7 @@ namespace Proyecto_serio_el_regreso
             return Math.Sqrt(sumSquaredDiffs);
         }
 
-        private static int MinIndex(double[] distancias)
+        private int MinIndex(double[] distancias)
         {
             // indice del valor mas pequeño en el array
             int indexOfMin = 0;
@@ -747,6 +757,7 @@ namespace Proyecto_serio_el_regreso
                     indexOfMin = k;
                 }
             }
+            listaDistancias.Add(new KeyValuePair<int, double>(indexOfMin, peqDist));
             return indexOfMin;
         }
 
@@ -768,18 +779,23 @@ namespace Proyecto_serio_el_regreso
             if (newLine) Console.WriteLine("");
         } // ShowData
 
-        static void MostrarVector(int[] vector, bool newLine)
+        private void MostrarVector(int[] vector, bool newLine)
         {
+            List<int> listaBuffer = new List<int>();
             for (int i = 0; i < vector.Length; ++i)
+            {
                 Console.Write(vector[i] + " ");
+                listaBuffer.Add(vector[i]);
+            }
             if (newLine) Console.WriteLine("\n");
+            listaVectores.Add(corridas, listaBuffer);
         }
 
         void MostrarClusterizados(double[][] data, int[] clustering, int numClusters, int decimales, int[] vector)
         {
-            Color []matrizColor = new Color[numClusters];
+            Color[] matrizColor = new Color[numClusters];
             Random numeros = new Random();
-            for(int i = 0; i < numClusters; i++){ matrizColor[i] = Color.FromArgb(numeros.Next(100,256), numeros.Next(100,256), numeros.Next(100,256)); }
+            for (int i = 0; i < numClusters; i++) { matrizColor[i] = Color.FromArgb(numeros.Next(100, 256), numeros.Next(100, 256), numeros.Next(100, 256)); }
 
             for (int k = 0; k < numClusters; ++k)
             {
@@ -798,45 +814,120 @@ namespace Proyecto_serio_el_regreso
                 }
                 Console.WriteLine("==============================================");
             } // k
-            foreach (string columna in encabezado.Keys)
+            //Console.WriteLine("LISTA DE DISTANCIAS");
+            double[] sumDistancias = new double[numClusters];
+            int[] cantDistancias = new int[numClusters];
+            double[] mediasDistancias = new double[numClusters];
+            foreach (var elemento in listaDistancias)
             {
-                DataGridViewTextBoxColumn dataGridColumnaKM = new DataGridViewTextBoxColumn
-                {
-                    Name = columna,
-                    HeaderText = columna,
-                    SortMode = DataGridViewColumnSortMode.NotSortable
-                };
-                dataGridViewKM.Columns.Add(dataGridColumnaKM);
-            }
-            dataGridViewKM.Columns.Add("Cluster ID", "Cluster ID");
-            dataGridViewKM.Rows.Add(cant_instancias);
 
-            //foreach (string columna in encabezado.Keys)
-            //{
-            for (int k = 0; k < numClusters; ++k)
+                cantDistancias[elemento.Key] += 1;
+                sumDistancias[elemento.Key] += Convert.ToDouble(elemento.Value);
+                //Console.WriteLine(elemento.ToString());
+            }
+            for (int xyz = 0; xyz < numClusters; xyz++)
             {
-                for (int i = 0; i < data.Length; ++i)
+                //sumDistancias[xyz] = sumDistancias[xyz] / numClusters;
+                //Console.WriteLine("Media de distancias en cluster "+xyz);
+                mediasDistancias[xyz] = sumDistancias[xyz] / cantDistancias[xyz];
+                //Console.WriteLine(mediasDistancias[xyz]);
+            }
+            double mediaMenor = mediasDistancias[0];
+            double sumMediasDist = 0;
+            for (int yyz = 0; yyz < numClusters; yyz++)
+            {
+                sumMediasDist += mediasDistancias[yyz];
+                if (mediasDistancias[yyz] < mediaMenor)
                 {
-                    int clusterID = clustering[i];
-                    if (clusterID != k) continue;
-                    //Console.Write(i.ToString().PadLeft(3) + " ");
-                    for (int j = 0; j < data[i].Length; ++j)
-                    {
-                        if (data[i][j] >= 0.0) Console.Write(" ");
-                        //Console.Write(data[i][j].ToString("F" + decimales) + " ");
-                        dataGridViewKM.Rows[i].Cells[j].Value = data[i][j];
-                    }
-                    dataGridViewKM.Rows[i].Cells[cant_columnas].Value = vector[i];
-                    dataGridViewKM.Rows[i].Cells[cant_columnas].Style.BackColor = matrizColor[vector[i]];
+                    mediaMenor = mediasDistancias[yyz];
                 }
             }
-                //    for (int i = 0; i < cant_instancias; i++)
-                //{
-                //    dataGridViewKM.Rows[i].Cells[columna].Value = instancias[columna][i];
-                //}
-            //}
-        }
 
+            listaPromediosDist.Add(new KeyValuePair<int, double>(corridas, sumMediasDist / numClusters));
+            //Console.WriteLine("Media menor: ");
+            //Console.WriteLine(mediaMenor);
+
+
+            //    for (int i = 0; i < cant_instancias; i++)
+            //{
+            //    dataGridViewKM.Rows[i].Cells[columna].Value = instancias[columna][i];
+            //}
+            //}
+            //Console.WriteLine("============Corrida #" + corridas);
+            if (corridas < 10)
+            {
+                corridas++;
+                iniciaKMeans();
+            }
+            else
+            {
+                double menorCorrida = listaPromediosDist.First(kvp => kvp.Key == 0).Value;
+                int menorIndice = 0;
+                int contCorridas = 0;
+                foreach (var promedio in listaPromediosDist)
+                {
+                    textBox1.Text += ("\nPromedio de promedios en corrida #" + contCorridas + ": " + promedio.Value.ToString() + "\r\n");
+                    contCorridas++;
+                    if (promedio.Value < menorCorrida)
+                    {
+                        menorIndice = promedio.Key;
+                        menorCorrida = promedio.Value;
+                    }
+                }
+                label5.Text += ("\nLa corrida #" + menorIndice + " tiene el menor promedio con: " + menorCorrida + "\r\n");
+                foreach (string columna in encabezado.Keys)
+                {
+                    DataGridViewTextBoxColumn dataGridColumnaKM = new DataGridViewTextBoxColumn
+                    {
+                        Name = columna,
+                        HeaderText = columna,
+                        SortMode = DataGridViewColumnSortMode.NotSortable
+                    };
+                    dataGridViewKM.Columns.Add(dataGridColumnaKM);
+                }
+                dataGridViewKM.Columns.Add("Cluster ID", "Cluster ID");
+                dataGridViewKM.Rows.Add(cant_instancias);
+
+                //foreach (string columna in encabezado.Keys)
+                //{
+                for (int k = 0; k < numClusters; ++k)
+                {
+                    for (int i = 0; i < data.Length; ++i)
+                    {
+                        int clusterID = clustering[i];
+                        if (clusterID != k) continue;
+                        //Console.Write(i.ToString().PadLeft(3) + " ");
+                        for (int j = 0; j < data[i].Length; ++j)
+                        {
+                            if (data[i][j] >= 0.0) Console.Write(" ");
+                            //Console.Write(data[i][j].ToString("F" + decimales) + " ");
+                            dataGridViewKM.Rows[i].Cells[j].Value = data[i][j];
+                        }
+                        //dataGridViewKM.Rows[i].Cells[cant_columnas].Value = vector[i];
+                        //dataGridViewKM.Rows[i].Cells[cant_columnas].Style.BackColor = matrizColor[vector[i]];
+                    }
+                }
+                //int j = 0;
+                foreach (var llave in listaVectores)
+                {
+                    if (llave.Key == menorIndice)
+                    {
+                        //Console.WriteLine("llave menor: "+llave.Key);
+                        int j = 0;
+                        foreach (var v in new List<int>(listaVectores.First(m => m.Key == menorIndice).Value))
+                        {
+                            Console.WriteLine(v);
+                            //v.ForEach(Console.WriteLine);
+
+                            dataGridViewKM.Rows[j].Cells[cant_columnas].Value = v;
+                            dataGridViewKM.Rows[j].Cells[cant_columnas].Style.BackColor = matrizColor[v];
+                            j++;
+                        }
+
+                    }
+                }
+            }
+        }
         private void dataGridViewKM_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
